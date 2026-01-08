@@ -17,10 +17,8 @@ const mainNavLinks = [
   { name: "Matches", href: "/matches" },
   { name: "Table", href: "/standings" },
   { name: "Statistics", href: "/statistics" },
-  { name: "Fantasy", href: "/fantasy", hasDropdown: true },
   { name: "News", href: "/news" },
   { name: "Clubs", href: "/clubs" },
-  { name: "Video", href: "/videos" },
   { name: "Watch Live", href: "/live", highlight: true },
 ];
 
