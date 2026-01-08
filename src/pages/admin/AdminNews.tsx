@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Newspaper, Star } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { format } from "date-fns";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import type { Database } from "@/integrations/supabase/types";
 
 type News = Database["public"]["Tables"]["news"]["Row"];
@@ -158,10 +159,12 @@ export default function AdminNews() {
                     <Input type="datetime-local" value={formData.published_at} onChange={(e) => setFormData({ ...formData, published_at: e.target.value })} />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Featured Image URL</Label>
-                  <Input value={formData.image_url} onChange={(e) => setFormData({ ...formData, image_url: e.target.value })} placeholder="https://..." />
-                </div>
+                <ImageUpload
+                  label="Featured Image"
+                  value={formData.image_url}
+                  onChange={(url) => setFormData({ ...formData, image_url: url })}
+                  folder="news"
+                />
                 <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                   <div>
                     <Label>Featured Article</Label>

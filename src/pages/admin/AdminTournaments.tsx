@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Trophy } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import type { Database } from "@/integrations/supabase/types";
 
 type Tournament = Database["public"]["Tables"]["tournaments"]["Row"];
@@ -144,10 +145,12 @@ export default function AdminTournaments() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label>Logo URL</Label>
-                  <Input value={formData.logo_url} onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })} placeholder="https://..." />
-                </div>
+                <ImageUpload
+                  label="Tournament Logo"
+                  value={formData.logo_url}
+                  onChange={(url) => setFormData({ ...formData, logo_url: url })}
+                  folder="tournaments"
+                />
                 <Button onClick={handleSubmit} className="w-full" disabled={createTournament.isPending || updateTournament.isPending}>
                   {editingTournament ? "Update" : "Create"} Tournament
                 </Button>
