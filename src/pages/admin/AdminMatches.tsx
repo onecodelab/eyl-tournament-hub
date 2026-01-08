@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useAllMatches, useTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { useCreateMatch, useUpdateMatch, useDeleteMatch } from "@/hooks/useAdminMutations";
+import { useReferees } from "@/hooks/useReferees";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Calendar } from "lucide-react";
+import { Plus, Pencil, Trash2, Calendar, User } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { format } from "date-fns";
 import type { Database } from "@/integrations/supabase/types";
@@ -24,6 +25,7 @@ export default function AdminMatches() {
   const { data: matches, isLoading } = useAllMatches();
   const { data: teams } = useTeams();
   const { data: tournaments } = useTournaments();
+  const { data: referees } = useReferees();
   const createMatch = useCreateMatch();
   const updateMatch = useUpdateMatch();
   const deleteMatch = useDeleteMatch();
@@ -41,10 +43,11 @@ export default function AdminMatches() {
     home_score: "",
     away_score: "",
     tagline: "",
+    referee_id: "",
   });
 
   const resetForm = () => {
-    setFormData({ home_team_id: "", away_team_id: "", tournament_id: "", match_date: "", venue: "", status: "scheduled", home_score: "", away_score: "", tagline: "" });
+    setFormData({ home_team_id: "", away_team_id: "", tournament_id: "", match_date: "", venue: "", status: "scheduled", home_score: "", away_score: "", tagline: "", referee_id: "" });
     setEditingMatch(null);
   };
 
@@ -60,6 +63,7 @@ export default function AdminMatches() {
       home_score: match.home_score?.toString() || "",
       away_score: match.away_score?.toString() || "",
       tagline: match.tagline || "",
+      referee_id: match.referee_id || "",
     });
     setDialogOpen(true);
   };
@@ -80,6 +84,7 @@ export default function AdminMatches() {
         home_score: formData.home_score ? parseInt(formData.home_score) : null,
         away_score: formData.away_score ? parseInt(formData.away_score) : null,
         tagline: formData.tagline || null,
+        referee_id: formData.referee_id || null,
       };
       if (editingMatch) {
         await updateMatch.mutateAsync({ id: editingMatch.id, ...data });
@@ -107,6 +112,12 @@ export default function AdminMatches() {
   const getTeamName = (teamId: string | null) => {
     if (!teamId) return "TBD";
     return teams?.find(t => t.id === teamId)?.short_name || teams?.find(t => t.id === teamId)?.name || "TBD";
+  };
+
+  const getRefereeName = (refereeId: string | null) => {
+    if (!refereeId) return null;
+    const referee = referees?.find(r => r.user_id === refereeId);
+    return referee ? `Referee ${referee.user_id.slice(0, 8)}...` : null;
   };
 
   const getStatusBadge = (status: string | null) => {
@@ -210,6 +221,24 @@ export default function AdminMatches() {
                   <Label>Tagline</Label>
                   <Textarea value={formData.tagline} onChange={(e) => setFormData({ ...formData, tagline: e.target.value })} placeholder="Match description" />
                 </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <User className="h-4 w-4" /> Assign Referee
+                  </Label>
+                  <Select value={formData.referee_id} onValueChange={(value) => setFormData({ ...formData, referee_id: value })}>
+                    <SelectTrigger><SelectValue placeholder="Select referee" /></SelectTrigger>
+                    <SelectContent>
+                      {referees?.length === 0 && (
+                        <p className="text-sm text-muted-foreground p-2">No referees available. Add users with referee role first.</p>
+                      )}
+                      {referees?.map((r) => (
+                        <SelectItem key={r.id} value={r.user_id}>
+                          Referee {r.user_id.slice(0, 8)}...
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <Button onClick={handleSubmit} className="w-full" disabled={createMatch.isPending || updateMatch.isPending}>
                   {editingMatch ? "Update" : "Create"} Match
                 </Button>
@@ -237,6 +266,7 @@ export default function AdminMatches() {
                     <TableHead>Match</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Venue</TableHead>
+                    <TableHead>Referee</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Score</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -252,6 +282,16 @@ export default function AdminMatches() {
                         {match.match_date ? format(new Date(match.match_date), "MMM d, yyyy HH:mm") : "-"}
                       </TableCell>
                       <TableCell>{match.venue || "-"}</TableCell>
+                      <TableCell>
+                        {match.referee_id ? (
+                          <Badge variant="outline" className="gap-1">
+                            <User className="h-3 w-3" />
+                            {getRefereeName(match.referee_id) || "Assigned"}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">Unassigned</span>
+                        )}
+                      </TableCell>
                       <TableCell>{getStatusBadge(match.status)}</TableCell>
                       <TableCell>
                         {match.status === "completed" ? `${match.home_score ?? 0} - ${match.away_score ?? 0}` : "-"}
