@@ -29,9 +29,10 @@ export function Navbar() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
 
-  const handleAuthClick = () => {
+  const handleAuthClick = async () => {
     if (user) {
-      signOut();
+      await signOut();
+      navigate("/");
     } else {
       navigate("/auth");
     }
