@@ -13,6 +13,15 @@ function formatViews(count: number | null): string {
   return `${count} views`;
 }
 
+// Convert short youtu.be URLs to full youtube.com/watch URLs
+function getFullYouTubeUrl(url: string): string {
+  const shortMatch = url.match(/youtu\.be\/([a-zA-Z0-9_-]{11})/);
+  if (shortMatch) {
+    return `https://www.youtube.com/watch?v=${shortMatch[1]}`;
+  }
+  return url;
+}
+
 export function LatestNewsSection() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { data: news = [], isLoading } = useNews({ limit: 4, category: selectedCategory });
@@ -129,7 +138,7 @@ export function LatestNewsSection() {
               videos.map((video) => (
                 <a 
                   key={video.id}
-                  href={video.youtube_url}
+                  href={getFullYouTubeUrl(video.youtube_url)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="glass-card p-3 flex items-center gap-4 hover:border-primary/50 transition-all cursor-pointer group block"
