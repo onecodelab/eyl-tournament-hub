@@ -87,13 +87,16 @@ export function useAllMatches() {
   });
 }
 
-export function useNews(options?: { featured?: boolean; limit?: number }) {
+export function useNews(options?: { featured?: boolean; limit?: number; category?: string }) {
   return useQuery({
     queryKey: ["news", options],
     queryFn: async () => {
       let query = supabase.from("news").select("*").order("published_at", { ascending: false });
       if (options?.featured) {
         query = query.eq("is_featured", true);
+      }
+      if (options?.category && options.category !== "All") {
+        query = query.eq("category", options.category);
       }
       if (options?.limit) {
         query = query.limit(options.limit);

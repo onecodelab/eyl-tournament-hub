@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play, Clock } from "lucide-react";
 import { useNews } from "@/hooks/useSupabaseData";
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { NEWS_CATEGORIES } from "@/lib/constants";
 
 const mockVideos = [
   { id: 1, title: "Goals of the Week: Matchday 12", views: "8.5K views", thumbnail: null },
@@ -11,7 +14,8 @@ const mockVideos = [
 ];
 
 export function LatestNewsSection() {
-  const { data: news = [], isLoading } = useNews({ limit: 4 });
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const { data: news = [], isLoading } = useNews({ limit: 4, category: selectedCategory });
 
   const featuredNews = news[0];
   const otherNews = news.slice(1, 4);
@@ -21,7 +25,7 @@ export function LatestNewsSection() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Latest News */}
         <div>
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="section-title">
               Latest <span className="section-title-accent">News</span>
             </h2>
@@ -32,6 +36,21 @@ export function LatestNewsSection() {
               All News
               <ArrowRight className="h-3 w-3" />
             </Link>
+          </div>
+
+          {/* Category Filters */}
+          <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+            {NEWS_CATEGORIES.slice(0, 5).map((category) => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setSelectedCategory(category)}
+                className="text-xs whitespace-nowrap"
+              >
+                {category}
+              </Button>
+            ))}
           </div>
 
           {isLoading ? (
