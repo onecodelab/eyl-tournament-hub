@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Play, Clock } from "lucide-react";
-import { useNews } from "@/hooks/useSupabaseData";
+import { useNews, useVideos } from "@/hooks/useSupabaseData";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { NEWS_CATEGORIES } from "@/lib/constants";
 
-const mockVideos = [
-  { id: 1, title: "Goals of the Week: Matchday 12", views: "8.5K views", thumbnail: null },
-  { id: 2, title: "Best Saves: U-17 Addis Premier", views: "6K views", thumbnail: null },
-  { id: 3, title: "Skills Showcase: Biruk Hailu", views: "12K views", thumbnail: null },
-  { id: 4, title: "Behind the Scenes: Arada FC Training", views: "9K views", thumbnail: null },
-];
+function formatViews(count: number | null): string {
+  if (!count) return "0 views";
+  if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M views`;
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}K views`;
+  return `${count} views`;
+}
 
 export function LatestNewsSection() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const { data: news = [], isLoading } = useNews({ limit: 4, category: selectedCategory });
+  const { data: videos = [] } = useVideos({ limit: 4 });
 
   const featuredNews = news[0];
   const otherNews = news.slice(1, 4);
@@ -122,23 +123,33 @@ export function LatestNewsSection() {
           </div>
 
           <div className="space-y-3">
-            {mockVideos.map((video) => (
-              <div 
-                key={video.id}
-                className="glass-card p-3 flex items-center gap-4 hover:border-primary/50 transition-all cursor-pointer group"
-              >
-                <div className="w-20 h-14 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
-                  <Play className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium truncate group-hover:text-primary transition-colors">
-                    {video.title}
-                  </h4>
-                  <span className="text-xs text-muted-foreground">{video.views}</span>
-                </div>
-              </div>
-            ))}
+            {videos.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No videos available yet.</p>
+            ) : (
+              videos.map((video) => (
+                <a 
+                  key={video.id}
+                  href={video.youtube_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass-card p-3 flex items-center gap-4 hover:border-primary/50 transition-all cursor-pointer group block"
+                >
+                  <div 
+                    className="w-20 h-14 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 relative overflow-hidden bg-cover bg-center"
+                    style={video.thumbnail_url ? { backgroundImage: `url('${video.thumbnail_url}')` } : {}}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
+                    <Play className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                      {video.title}
+                    </h4>
+                    <span className="text-xs text-muted-foreground">{formatViews(video.views_count)}</span>
+                  </div>
+                </a>
+              ))
+            )}
           </div>
         </div>
       </div>

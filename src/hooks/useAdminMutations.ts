@@ -199,3 +199,47 @@ export function useDeleteNews() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["news"] }),
   });
 }
+
+// Video mutations
+interface VideoInsert {
+  title: string;
+  youtube_url: string;
+  thumbnail_url?: string;
+  views_count?: number;
+  is_featured?: boolean;
+}
+
+export function useCreateVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (video: VideoInsert) => {
+      const { data, error } = await supabase.from("videos").insert(video).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["videos"] }),
+  });
+}
+
+export function useUpdateVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...video }: VideoInsert & { id: string }) => {
+      const { data, error } = await supabase.from("videos").update(video).eq("id", id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["videos"] }),
+  });
+}
+
+export function useDeleteVideo() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("videos").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["videos"] }),
+  });
+}

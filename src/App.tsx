@@ -17,6 +17,8 @@ import AdminTeams from "./pages/admin/AdminTeams";
 import AdminPlayers from "./pages/admin/AdminPlayers";
 import AdminMatches from "./pages/admin/AdminMatches";
 import AdminNews from "./pages/admin/AdminNews";
+import AdminVideos from "./pages/admin/AdminVideos";
+import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,7 @@ const App = () => (
             <Route path="/standings" element={<Standings />} />
             <Route path="/statistics" element={<Statistics />} />
             <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/clubs" element={<Clubs />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<AdminDashboard />} />
@@ -42,6 +45,7 @@ const App = () => (
             <Route path="/admin/players" element={<AdminPlayers />} />
             <Route path="/admin/matches" element={<AdminMatches />} />
             <Route path="/admin/news" element={<AdminNews />} />
+            <Route path="/admin/videos" element={<AdminVideos />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
