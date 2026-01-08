@@ -62,9 +62,9 @@ export function Navbar() {
       {/* Main Nav */}
       <div className="bg-background/95 backdrop-blur border-b border-border/50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center h-14">
             {/* Left: Hamburger + Logo */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <Button
                 variant="ghost"
                 size="icon"
@@ -74,12 +74,12 @@ export function Navbar() {
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
               <Link to="/" className="flex items-center gap-2">
-                <img src={eylLogo} alt="EYL" className="h-12 md:h-14 w-auto drop-shadow-[0_0_8px_hsl(187,100%,50%,0.3)]" />
+                <img src={eylLogo} alt="EYL" className="h-10 md:h-12 w-auto drop-shadow-[0_0_8px_hsl(187,100%,50%,0.3)]" />
               </Link>
             </div>
 
             {/* Center: Main Nav Links */}
-            <nav className="hidden lg:flex items-center gap-6">
+            <nav className="hidden lg:flex items-center justify-center gap-6 flex-1">
               {mainNavLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -98,7 +98,7 @@ export function Navbar() {
             </nav>
 
             {/* Right: Search + Auth */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 shrink-0">
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
