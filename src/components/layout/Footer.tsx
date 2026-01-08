@@ -98,18 +98,22 @@ export function Footer() {
 
           {/* Column 4: Logo + Social */}
           <div className="flex flex-col items-end gap-4">
-            <img src={eylLogo} alt="EYL" className="h-12 w-auto opacity-80" />
+            <img 
+              src={eylLogo} 
+              alt="Ethiopian Youth League" 
+              className="h-20 md:h-24 w-auto drop-shadow-[0_0_20px_hsl(187,100%,50%,0.4)]" 
+            />
             <div className="flex items-center gap-3">
-              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
+              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-[hsl(187,100%,50%)] hover:text-background transition-all duration-300">
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
+              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-[hsl(187,100%,50%)] hover:text-background transition-all duration-300">
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
+              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-[hsl(187,100%,50%)] hover:text-background transition-all duration-300">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-secondary/80 transition-colors">
+              <a href="#" className="p-2 rounded-full bg-secondary hover:bg-[hsl(187,100%,50%)] hover:text-background transition-all duration-300">
                 <Youtube className="h-4 w-4" />
               </a>
             </div>

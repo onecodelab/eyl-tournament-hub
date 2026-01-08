@@ -62,8 +62,8 @@ export function Navbar() {
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
-              <Link to="/" className="flex items-center">
-                <img src={eylLogo} alt="EYL" className="h-8 w-auto" />
+              <Link to="/" className="flex items-center gap-2">
+                <img src={eylLogo} alt="EYL" className="h-12 md:h-14 w-auto drop-shadow-[0_0_8px_hsl(187,100%,50%,0.3)]" />
               </Link>
             </div>
 
