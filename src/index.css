@@ -50,8 +50,8 @@
     --eyl-gold: 39 52% 56%;
     --eyl-gold-dark: 39 45% 45%;
     --eyl-success: 142 70% 45%;
-    --eyl-live: 0 84% 60%;
-    --eyl-cyan: 190 90% 50%;
+    --eyl-live: 187 100% 50%;
+    --eyl-cyan: 187 100% 50%;
 
     /* Sidebar */
     --sidebar-background: 218 57% 10%;
@@ -112,7 +112,10 @@
   }
 
   .live-badge {
-    @apply bg-destructive text-destructive-foreground px-2 py-0.5 rounded text-xs font-bold uppercase animate-pulse;
+    @apply px-2 py-0.5 rounded text-xs font-bold uppercase animate-pulse;
+    background-color: hsl(187 100% 50%);
+    color: hsl(218 57% 12%);
+    box-shadow: 0 0 12px hsl(187 100% 50% / 0.6), 0 0 24px hsl(187 100% 50% / 0.3);
   }
 
   .status-badge {
@@ -120,7 +123,9 @@
   }
 
   .status-live {
-    @apply bg-destructive text-destructive-foreground;
+    background-color: hsl(187 100% 50%);
+    color: hsl(218 57% 12%);
+    box-shadow: 0 0 12px hsl(187 100% 50% / 0.5);
   }
 
   .status-upcoming {
@@ -129,6 +134,14 @@
 
   .status-completed {
     @apply bg-muted text-muted-foreground;
+  }
+
+  .eyl-card {
+    @apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl p-4;
+  }
+
+  .eyl-glow {
+    box-shadow: 0 0 20px hsl(187 100% 50% / 0.3);
   }
 
   .nav-link {
