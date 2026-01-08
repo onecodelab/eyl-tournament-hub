@@ -44,7 +44,9 @@ export function HeroSection() {
           <div 
             className="relative h-80 lg:h-full min-h-[320px] rounded-2xl overflow-hidden bg-cover bg-center"
             style={{ 
-              backgroundImage: `linear-gradient(to bottom, rgba(14, 27, 49, 0.3), rgba(14, 27, 49, 0.9)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
+              backgroundImage: featuredNews?.image_url
+                ? `linear-gradient(to bottom, rgba(14, 27, 49, 0.3), rgba(14, 27, 49, 0.9)), url('${featuredNews.image_url}')`
+                : `linear-gradient(to bottom, rgba(14, 27, 49, 0.3), rgba(14, 27, 49, 0.9)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
             }}
           >
             {liveMatch && (
