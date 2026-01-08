@@ -1,15 +1,7 @@
 import { Link } from "react-router-dom";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
 import eylLogo from "@/assets/eyl-logo.png";
-
-const partners = [
-  { name: "Ethio Telecom", role: "Lead Partner" },
-  { name: "Dashen Bank", role: "Official Bank" },
-  { name: "Ethiopian Airlines", role: "Official Carrier" },
-  { name: "Abyssinia Bank", role: "Official Partner" },
-  { name: "Gomeju Oil", role: "Official Sponsor" },
-  { name: "Awash Bank", role: "Official Partner" },
-];
+import { useSponsors } from "@/hooks/useSponsors";
 
 const footerLinks = {
   column1: [
@@ -38,17 +30,30 @@ const legalLinks = [
 ];
 
 export function Footer() {
+  const { data: sponsors = [] } = useSponsors("bottom");
+
   return (
     <footer className="bg-background border-t border-border">
       {/* Partners Section */}
       <div className="border-b border-border">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
-            {partners.map((partner) => (
-              <div key={partner.name} className="flex flex-col items-center gap-1">
-                <span className="text-foreground font-medium text-sm">{partner.name}</span>
-                <span className="text-muted-foreground text-xs">{partner.role}</span>
-              </div>
+            {sponsors.map((sponsor) => (
+              <a
+                key={sponsor.id}
+                href={sponsor.website_url || "#"}
+                target={sponsor.website_url ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
+              >
+                {sponsor.logo_url ? (
+                  <img src={sponsor.logo_url} alt={sponsor.name} className="h-8 w-auto object-contain mb-1" />
+                ) : (
+                  <span className="text-foreground font-medium text-sm">{sponsor.name}</span>
+                )}
+                {sponsor.logo_url && <span className="text-foreground font-medium text-sm">{sponsor.name}</span>}
+                <span className="text-muted-foreground text-xs">{sponsor.type}</span>
+              </a>
             ))}
           </div>
         </div>

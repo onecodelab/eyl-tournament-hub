@@ -170,6 +170,45 @@ export type Database = {
           },
         ]
       }
+      sponsors: {
+        Row: {
+          created_at: string
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          name: string
+          position: string | null
+          type: string | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name: string
+          position?: string | null
+          type?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          name?: string
+          position?: string | null
+          type?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       teams: {
         Row: {
           coach: string | null

@@ -9,6 +9,7 @@ import {
   Calendar, 
   Newspaper,
   Video,
+  Handshake,
   LogOut,
   Menu
 } from "lucide-react";
@@ -36,6 +37,7 @@ const adminNavItems = [
   { title: "Matches", url: "/admin/matches", icon: Calendar },
   { title: "News", url: "/admin/news", icon: Newspaper },
   { title: "Videos", url: "/admin/videos", icon: Video },
+  { title: "Sponsors", url: "/admin/sponsors", icon: Handshake },
 ];
 
 function AdminSidebarContent() {
