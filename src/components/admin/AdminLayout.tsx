@@ -76,6 +76,11 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
+
   useEffect(() => {
     if (!loading && !user) {
       navigate("/auth");
@@ -114,7 +119,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               <span className="text-sm text-muted-foreground hidden sm:inline">
                 {user.email}
               </span>
-              <Button variant="outline" size="sm" onClick={signOut} className="gap-2">
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Sign Out</span>
               </Button>
