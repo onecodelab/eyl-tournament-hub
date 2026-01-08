@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { useTeams } from "@/hooks/useSupabaseData";
-import { Trophy, Users, MapPin, Calendar, TrendingUp, Target, Shield } from "lucide-react";
+import { Trophy, Users, MapPin, Calendar, TrendingUp, Target } from "lucide-react";
+import { EYLLogo } from "@/components/EYLLogo";
 
 export default function Clubs() {
   const { data: teams, isLoading } = useTeams();
@@ -13,13 +14,15 @@ export default function Clubs() {
       <section className="relative py-12 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
         <div className="container mx-auto px-4 relative">
-          <div className="flex items-center gap-3 mb-2">
-            <Shield className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl md:text-5xl font-bold text-white">Clubs</h1>
+          <div className="flex items-center gap-4 mb-2">
+            <EYLLogo size={60} withGlow />
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-white">Clubs</h1>
+              <p className="text-muted-foreground text-lg">
+                All participating teams in the Ethiopian Youth League
+              </p>
+            </div>
           </div>
-          <p className="text-muted-foreground text-lg">
-            All participating teams in the Ethiopian Youth League
-          </p>
         </div>
       </section>
 
@@ -99,9 +102,14 @@ export default function Clubs() {
                           </span>
                         )}
                       </div>
-                      {/* Rank Badge */}
-                      <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-primary text-background text-xs font-bold flex items-center justify-center">
-                        {index + 1}
+                      {/* Rank Badge with EYL Logo */}
+                      <div className="absolute -top-2 -right-2">
+                        <div className="relative">
+                          <EYLLogo size={24} />
+                          <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold text-white mt-1">
+                            {index + 1}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -196,7 +204,7 @@ export default function Clubs() {
 
         {!isLoading && sortedTeams.length === 0 && (
           <div className="text-center py-16">
-            <Shield className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <EYLLogo size={80} className="mx-auto mb-4 opacity-50" />
             <h3 className="text-xl font-semibold text-white mb-2">No Clubs Found</h3>
             <p className="text-muted-foreground">Check back soon for team updates.</p>
           </div>
