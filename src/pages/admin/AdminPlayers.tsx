@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, UserCircle } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import type { Database } from "@/integrations/supabase/types";
 
 type Player = Database["public"]["Tables"]["players"]["Row"];
@@ -171,10 +172,12 @@ export default function AdminPlayers() {
                     <Input type="number" value={formData.appearances} onChange={(e) => setFormData({ ...formData, appearances: e.target.value })} />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Photo URL</Label>
-                  <Input value={formData.photo_url} onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })} placeholder="https://..." />
-                </div>
+                <ImageUpload
+                  label="Player Photo"
+                  value={formData.photo_url}
+                  onChange={(url) => setFormData({ ...formData, photo_url: url })}
+                  folder="players"
+                />
                 <Button onClick={handleSubmit} className="w-full" disabled={createPlayer.isPending || updatePlayer.isPending}>
                   {editingPlayer ? "Update" : "Create"} Player
                 </Button>

@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Users } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 import type { Database } from "@/integrations/supabase/types";
 
 type Team = Database["public"]["Tables"]["teams"]["Row"];
@@ -147,10 +148,12 @@ export default function AdminTeams() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="space-y-2">
-                  <Label>Logo URL</Label>
-                  <Input value={formData.logo_url} onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })} placeholder="https://..." />
-                </div>
+                <ImageUpload
+                  label="Team Logo"
+                  value={formData.logo_url}
+                  onChange={(url) => setFormData({ ...formData, logo_url: url })}
+                  folder="teams"
+                />
                 <Button onClick={handleSubmit} className="w-full" disabled={createTeam.isPending || updateTeam.isPending}>
                   {editingTeam ? "Update" : "Create"} Team
                 </Button>
