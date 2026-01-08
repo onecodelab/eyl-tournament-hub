@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Matches from "./pages/Matches";
 import Standings from "./pages/Standings";
 import News from "./pages/News";
+import Statistics from "./pages/Statistics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/matches" element={<Matches />} />
           <Route path="/standings" element={<Standings />} />
+          <Route path="/statistics" element={<Statistics />} />
           <Route path="/news" element={<News />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
