@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Trophy, Users, Calendar } from "lucide-react";
+import { ArrowRight, Users, Calendar } from "lucide-react";
 import { useTournaments } from "@/hooks/useSupabaseData";
+import { EYLLogo } from "@/components/EYLLogo";
 
 const statusConfig = {
   ongoing: { label: "LIVE", className: "status-live" },
@@ -49,7 +50,7 @@ export function FeaturedTournaments() {
               >
                 <div className="flex items-start justify-between mb-3">
                   <span className={`status-badge ${status.className}`}>{status.label}</span>
-                  <Trophy className="h-5 w-5 text-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                  <EYLLogo size={32} className="opacity-50 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
                   {tournament.name}

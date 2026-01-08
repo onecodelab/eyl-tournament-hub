@@ -3,6 +3,7 @@ import { useMatchWithTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { Calendar, Clock, MapPin, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
+import { EYLLogo } from "@/components/EYLLogo";
 
 export default function MatchesPage() {
   const { data: matches = [], isLoading } = useMatchWithTeams();
@@ -29,12 +30,15 @@ export default function MatchesPage() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">
-              Live <span className="text-primary">Matches</span>
-            </h1>
-            <p className="text-muted-foreground">Real-time scores and match schedules—where the drama unfolds</p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <EYLLogo size={50} withGlow />
+            <div>
+              <h1 className="text-4xl font-bold mb-2">
+                Live <span className="text-primary">Matches</span>
+              </h1>
+              <p className="text-muted-foreground">Real-time scores and match schedules—where the drama unfolds</p>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Filter className="h-4 w-4 text-muted-foreground" />
@@ -80,11 +84,14 @@ export default function MatchesPage() {
               return (
                 <div key={match.id} className="glass-card p-5 hover:border-primary/50 transition-all">
                   <div className="flex items-center justify-between mb-4">
-                    <span className={`status-badge ${
-                      isLive ? "status-live" : isCompleted ? "status-completed" : "status-upcoming"
-                    }`}>
-                      {isLive ? "LIVE" : isCompleted ? "FULL TIME" : "UPCOMING"}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <EYLLogo size={24} />
+                      <span className={`status-badge ${
+                        isLive ? "status-live" : isCompleted ? "status-completed" : "status-upcoming"
+                      }`}>
+                        {isLive ? "LIVE" : isCompleted ? "FULL TIME" : "UPCOMING"}
+                      </span>
+                    </div>
                     <span className="text-xs text-muted-foreground">{tournament?.name}</span>
                   </div>
 

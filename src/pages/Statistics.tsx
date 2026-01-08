@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout/Layout";
 import { usePlayers, useTeams } from "@/hooks/useSupabaseData";
 import { Trophy, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { EYLLogo } from "@/components/EYLLogo";
 
 const tabs = ["Dashboard", "Player", "Club", "All-time Stats", "Records"];
 
@@ -60,7 +61,10 @@ export default function StatisticsPage() {
       {/* Header */}
       <div className="bg-gradient-to-r from-cyan-900/30 to-background py-8">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold text-primary">Stats Centre</h1>
+          <div className="flex items-center gap-4">
+            <EYLLogo size={60} withGlow />
+            <h1 className="text-4xl font-bold text-primary">Stats Centre</h1>
+          </div>
         </div>
       </div>
 
@@ -88,8 +92,8 @@ export default function StatisticsPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Player Stats Section */}
         <div className="mb-10">
-          <div className="flex items-center gap-2 mb-6">
-            <Trophy className="h-5 w-5 text-primary" />
+          <div className="flex items-center gap-3 mb-6">
+            <EYLLogo size={32} />
             <h2 className="text-xl font-bold">
               EYL 2025/26 <span className="text-primary">Player Stats</span>
             </h2>
@@ -129,8 +133,8 @@ export default function StatisticsPage() {
 
         {/* Club Stats Section */}
         <div className="mb-10">
-          <div className="flex items-center gap-2 mb-6">
-            <Trophy className="h-5 w-5 text-primary" />
+          <div className="flex items-center gap-3 mb-6">
+            <EYLLogo size={32} />
             <h2 className="text-xl font-bold">
               EYL 2025/26 <span className="text-primary">Club Stats</span>
             </h2>

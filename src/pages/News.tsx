@@ -3,6 +3,7 @@ import { useNews } from "@/hooks/useSupabaseData";
 import { Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
+import { EYLLogo } from "@/components/EYLLogo";
 
 export default function NewsPage() {
   const { data: news = [], isLoading } = useNews();
@@ -10,10 +11,15 @@ export default function NewsPage() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-2">
-          Latest <span className="text-primary">News</span>
-        </h1>
-        <p className="text-muted-foreground mb-8">Stay updated with Ethiopian Youth League coverage</p>
+        <div className="flex items-center gap-4 mb-2">
+          <EYLLogo size={50} withGlow />
+          <div>
+            <h1 className="text-4xl font-bold mb-2">
+              Latest <span className="text-primary">News</span>
+            </h1>
+            <p className="text-muted-foreground">Stay updated with Ethiopian Youth League coverage</p>
+          </div>
+        </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -39,6 +45,7 @@ export default function NewsPage() {
                 />
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">
+                    <EYLLogo size={16} />
                     <span className="text-xs font-bold text-primary uppercase">{item.category}</span>
                     <span className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock className="h-3 w-3" />

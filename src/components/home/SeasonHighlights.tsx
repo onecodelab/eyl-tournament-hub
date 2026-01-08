@@ -1,6 +1,7 @@
 import { ArrowRight, Trophy, Target, Shield, Goal } from "lucide-react";
 import { usePlayers, useTeams, useAllMatches } from "@/hooks/useSupabaseData";
 import { Link } from "react-router-dom";
+import { EYLLogo } from "@/components/EYLLogo";
 
 export function SeasonHighlights() {
   const { data: players = [] } = usePlayers({ limit: 5 });
@@ -35,7 +36,7 @@ export function SeasonHighlights() {
         <div className="lg:col-span-4 glass-card p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Goal className="h-4 w-4 text-primary" />
+              <EYLLogo size={28} />
               <h3 className="font-semibold">Golden Boot</h3>
             </div>
             <Link to="/statistics" className="text-muted-foreground hover:text-primary text-xs flex items-center gap-1">
@@ -77,7 +78,7 @@ export function SeasonHighlights() {
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Trophy className="h-4 w-4 text-primary" />
+              <EYLLogo size={24} />
               <span className="text-xs font-bold text-primary uppercase">Match of the Day</span>
             </div>
             <h4 className="text-lg font-bold mb-1">

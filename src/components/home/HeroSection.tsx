@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Clock, Trophy } from "lucide-react";
+import { ArrowRight, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNews, useMatchWithTeams } from "@/hooks/useSupabaseData";
 import { format } from "date-fns";
+import { EYLLogo } from "@/components/EYLLogo";
 
 const newsCategories: Record<string, string> = {
   "Breakthrough": "TALENT SPOTLIGHT",
@@ -71,7 +72,7 @@ export function HeroSection() {
         <div className="lg:col-span-4">
           <div className="glass-card h-full p-4">
             <div className="flex items-center gap-2 mb-4">
-              <Trophy className="h-4 w-4 text-primary" />
+              <EYLLogo size={24} />
               <h3 className="font-semibold text-foreground">Latest News</h3>
             </div>
             <div className="space-y-3">
@@ -120,7 +121,7 @@ export function HeroSection() {
           <div className="glass-card h-full p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4 text-primary" />
+                <EYLLogo size={24} />
                 <h3 className="font-semibold text-foreground">Match Center</h3>
               </div>
               <Link to="/matches" className="text-muted-foreground hover:text-primary text-xs">

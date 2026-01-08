@@ -1,6 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { useTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { Trophy } from "lucide-react";
+import { EYLLogo } from "@/components/EYLLogo";
 
 export default function StandingsPage() {
   const { data: teams = [], isLoading } = useTeams();
@@ -11,18 +12,21 @@ export default function StandingsPage() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-start justify-between mb-8">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">
-              League <span className="text-primary">Standings</span>
-            </h1>
-            <p className="text-muted-foreground">Real-time league table updated after every match</p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <EYLLogo size={50} withGlow />
+            <div>
+              <h1 className="text-4xl font-bold mb-2">
+                League <span className="text-primary">Standings</span>
+              </h1>
+              <p className="text-muted-foreground">Real-time league table updated after every match</p>
+            </div>
           </div>
         </div>
 
         {/* Tournament Banner */}
         <div className="glass-card p-4 mb-6 flex items-center gap-3">
-          <Trophy className="h-5 w-5 text-primary" />
+          <EYLLogo size={28} />
           <span className="font-medium">
             {tournaments[0]?.name || "U-17 Addis Premier"} — The race for the top four is heating up!
           </span>
