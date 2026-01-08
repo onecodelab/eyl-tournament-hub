@@ -14,7 +14,263 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      matches: {
+        Row: {
+          away_score: number | null
+          away_team_id: string | null
+          created_at: string
+          home_score: number | null
+          home_team_id: string | null
+          id: string
+          match_date: string | null
+          status: string | null
+          tagline: string | null
+          tournament_id: string | null
+          updated_at: string
+          venue: string | null
+        }
+        Insert: {
+          away_score?: number | null
+          away_team_id?: string | null
+          created_at?: string
+          home_score?: number | null
+          home_team_id?: string | null
+          id?: string
+          match_date?: string | null
+          status?: string | null
+          tagline?: string | null
+          tournament_id?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Update: {
+          away_score?: number | null
+          away_team_id?: string | null
+          created_at?: string
+          home_score?: number | null
+          home_team_id?: string | null
+          id?: string
+          match_date?: string | null
+          status?: string | null
+          tagline?: string | null
+          tournament_id?: string | null
+          updated_at?: string
+          venue?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_away_team_id_fkey"
+            columns: ["away_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_home_team_id_fkey"
+            columns: ["home_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      news: {
+        Row: {
+          category: string | null
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          image_url: string | null
+          is_featured: boolean | null
+          published_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image_url?: string | null
+          is_featured?: boolean | null
+          published_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      players: {
+        Row: {
+          appearances: number | null
+          assists: number | null
+          created_at: string
+          goals: number | null
+          id: string
+          jersey_number: number | null
+          name: string
+          photo_url: string | null
+          position: string | null
+          team_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          appearances?: number | null
+          assists?: number | null
+          created_at?: string
+          goals?: number | null
+          id?: string
+          jersey_number?: number | null
+          name: string
+          photo_url?: string | null
+          position?: string | null
+          team_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appearances?: number | null
+          assists?: number | null
+          created_at?: string
+          goals?: number | null
+          id?: string
+          jersey_number?: number | null
+          name?: string
+          photo_url?: string | null
+          position?: string | null
+          team_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          coach: string | null
+          created_at: string
+          draws: number | null
+          founded_year: number | null
+          goals_against: number | null
+          goals_for: number | null
+          id: string
+          logo_url: string | null
+          losses: number | null
+          name: string
+          points: number | null
+          short_name: string | null
+          stadium: string | null
+          tournament_id: string | null
+          updated_at: string
+          wins: number | null
+        }
+        Insert: {
+          coach?: string | null
+          created_at?: string
+          draws?: number | null
+          founded_year?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string
+          logo_url?: string | null
+          losses?: number | null
+          name: string
+          points?: number | null
+          short_name?: string | null
+          stadium?: string | null
+          tournament_id?: string | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Update: {
+          coach?: string | null
+          created_at?: string
+          draws?: number | null
+          founded_year?: number | null
+          goals_against?: number | null
+          goals_for?: number | null
+          id?: string
+          logo_url?: string | null
+          losses?: number | null
+          name?: string
+          points?: number | null
+          short_name?: string | null
+          stadium?: string | null
+          tournament_id?: string | null
+          updated_at?: string
+          wins?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "teams_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          start_date: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
