@@ -1,13 +1,31 @@
+import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { Trophy } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function StandingsPage() {
-  const { data: teams = [], isLoading } = useTeams();
-  const { data: tournaments = [] } = useTournaments();
+  const [selectedTournament, setSelectedTournament] = useState<string>("all");
+  const { data: allTeams = [], isLoading } = useTeams();
+  const { data: tournaments = [], isLoading: tournamentsLoading } = useTournaments();
 
-  const sortedTeams = [...teams].sort((a, b) => (b.points || 0) - (a.points || 0));
+  // Filter teams by selected tournament
+  const filteredTeams = selectedTournament === "all" 
+    ? allTeams 
+    : allTeams.filter(team => team.tournament_id === selectedTournament);
+
+  const sortedTeams = [...filteredTeams].sort((a, b) => (b.points || 0) - (a.points || 0));
+
+  const selectedTournamentName = selectedTournament === "all" 
+    ? "All Leagues" 
+    : tournaments.find(t => t.id === selectedTournament)?.name || "League";
 
   return (
     <Layout>
@@ -24,12 +42,27 @@ export default function StandingsPage() {
           </div>
         </div>
 
-        {/* Tournament Banner */}
-        <div className="glass-card p-4 mb-6 flex items-center gap-3">
-          <EYLLogo size={28} />
-          <span className="font-medium">
-            {tournaments[0]?.name || "U-17 Addis Premier"} — The race for the top four is heating up!
-          </span>
+        {/* Tournament Filter */}
+        <div className="glass-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <EYLLogo size={28} />
+            <span className="font-medium">
+              {selectedTournamentName} — The race for the top four is heating up!
+            </span>
+          </div>
+          <Select value={selectedTournament} onValueChange={setSelectedTournament}>
+            <SelectTrigger className="w-[220px]">
+              <SelectValue placeholder="Select Tournament" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Leagues</SelectItem>
+              {tournaments.map((tournament) => (
+                <SelectItem key={tournament.id} value={tournament.id}>
+                  {tournament.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Standings Table */}
