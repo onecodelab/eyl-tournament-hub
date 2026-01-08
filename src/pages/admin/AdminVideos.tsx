@@ -40,6 +40,19 @@ const initialForm: VideoForm = {
   is_featured: false,
 };
 
+// Extract video ID from various YouTube URL formats
+const extractYouTubeVideoId = (url: string): string | null => {
+  const patterns = [
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/)([a-zA-Z0-9_-]{11})/,
+    /^([a-zA-Z0-9_-]{11})$/, // Just the ID itself
+  ];
+  for (const pattern of patterns) {
+    const match = url.match(pattern);
+    if (match) return match[1];
+  }
+  return null;
+};
+
 export default function AdminVideos() {
   const [open, setOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -53,6 +66,12 @@ export default function AdminVideos() {
   const resetForm = () => {
     setForm(initialForm);
     setEditingId(null);
+  };
+
+  const handleYouTubeUrlChange = (url: string) => {
+    const videoId = extractYouTubeVideoId(url);
+    const thumbnail = videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : "";
+    setForm({ ...form, youtube_url: url, thumbnail_url: thumbnail });
   };
 
   const handleEdit = (video: any) => {
@@ -130,19 +149,28 @@ export default function AdminVideos() {
                 <Input
                   id="youtube_url"
                   value={form.youtube_url}
-                  onChange={(e) => setForm({ ...form, youtube_url: e.target.value })}
+                  onChange={(e) => handleYouTubeUrlChange(e.target.value)}
                   placeholder="https://youtube.com/watch?v=..."
                 />
               </div>
 
               <div>
-                <Label htmlFor="thumbnail_url">Thumbnail URL (optional)</Label>
+                <Label htmlFor="thumbnail_url">Thumbnail URL (auto-generated)</Label>
                 <Input
                   id="thumbnail_url"
                   value={form.thumbnail_url}
                   onChange={(e) => setForm({ ...form, thumbnail_url: e.target.value })}
-                  placeholder="https://example.com/thumbnail.jpg"
+                  placeholder="Auto-filled from YouTube URL"
+                  readOnly
+                  className="bg-muted/50"
                 />
+                {form.thumbnail_url && (
+                  <img 
+                    src={form.thumbnail_url} 
+                    alt="Thumbnail preview" 
+                    className="mt-2 rounded-lg w-full h-32 object-cover"
+                  />
+                )}
               </div>
 
               <div>
