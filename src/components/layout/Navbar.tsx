@@ -26,6 +26,16 @@ const mainNavLinks = [
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleAuthClick = () => {
+    if (user) {
+      signOut();
+    } else {
+      navigate("/auth");
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -87,15 +97,27 @@ export function Navbar() {
               ))}
             </nav>
 
-            {/* Right: Search + Sign In */}
+            {/* Right: Search + Auth */}
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
-              <Button variant="outline" className="hidden sm:flex items-center gap-2">
-                <User className="h-4 w-4" />
-                Sign in
-              </Button>
+              {user ? (
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary truncate max-w-[120px]">
+                    {user.email}
+                  </Link>
+                  <Button variant="outline" size="sm" onClick={handleAuthClick} className="gap-2">
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="outline" onClick={handleAuthClick} className="hidden sm:flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Sign In
+                </Button>
+              )}
             </div>
           </div>
         </div>
