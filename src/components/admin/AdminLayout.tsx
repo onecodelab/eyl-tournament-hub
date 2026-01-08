@@ -7,7 +7,8 @@ import {
   Users, 
   UserCircle, 
   Calendar, 
-  Newspaper, 
+  Newspaper,
+  Video,
   LogOut,
   Menu
 } from "lucide-react";
@@ -34,6 +35,7 @@ const adminNavItems = [
   { title: "Players", url: "/admin/players", icon: UserCircle },
   { title: "Matches", url: "/admin/matches", icon: Calendar },
   { title: "News", url: "/admin/news", icon: Newspaper },
+  { title: "Videos", url: "/admin/videos", icon: Video },
 ];
 
 function AdminSidebarContent() {

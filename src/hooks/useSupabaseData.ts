@@ -8,6 +8,19 @@ type Player = Database["public"]["Tables"]["players"]["Row"];
 type Match = Database["public"]["Tables"]["matches"]["Row"];
 type News = Database["public"]["Tables"]["news"]["Row"];
 
+// Video type - defined locally since table was just created
+interface Video {
+  id: string;
+  title: string;
+  youtube_url: string;
+  thumbnail_url: string | null;
+  views_count: number | null;
+  is_featured: boolean | null;
+  published_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export function useTournaments() {
   return useQuery({
     queryKey: ["tournaments"],
@@ -129,6 +142,43 @@ export function useMatchWithTeams() {
         home_team: teamsMap.get(match.home_team_id || "") || null,
         away_team: teamsMap.get(match.away_team_id || "") || null,
       }));
+    },
+  });
+}
+
+export function useNewsById(id: string) {
+  return useQuery({
+    queryKey: ["news", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("news")
+        .select("*")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data as News;
+    },
+    enabled: !!id,
+  });
+}
+
+export function useVideos(options?: { featured?: boolean; limit?: number }) {
+  return useQuery({
+    queryKey: ["videos", options],
+    queryFn: async () => {
+      let query = supabase
+        .from("videos")
+        .select("*")
+        .order("published_at", { ascending: false });
+      if (options?.featured) {
+        query = query.eq("is_featured", true);
+      }
+      if (options?.limit) {
+        query = query.limit(options.limit);
+      }
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as Video[];
     },
   });
 }
