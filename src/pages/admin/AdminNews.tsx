@@ -18,19 +18,10 @@ import { Plus, Pencil, Trash2, Newspaper, Star } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { format } from "date-fns";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { ADMIN_NEWS_CATEGORIES } from "@/lib/constants";
 import type { Database } from "@/integrations/supabase/types";
 
 type News = Database["public"]["Tables"]["news"]["Row"];
-
-const NEWS_CATEGORIES = [
-  "Breakthrough",
-  "Match Report",
-  "Scouting",
-  "Talent Spotlight",
-  "League Update",
-  "Transfer News",
-  "General",
-];
 
 export default function AdminNews() {
   const { data: news, isLoading } = useNews();
@@ -148,7 +139,7 @@ export default function AdminNews() {
                     <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
-                        {NEWS_CATEGORIES.map((cat) => (
+                        {ADMIN_NEWS_CATEGORIES.map((cat) => (
                           <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                         ))}
                       </SelectContent>

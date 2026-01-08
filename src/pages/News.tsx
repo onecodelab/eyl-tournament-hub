@@ -1,17 +1,21 @@
+import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useNews } from "@/hooks/useSupabaseData";
 import { Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Link } from "react-router-dom";
 import { EYLLogo } from "@/components/EYLLogo";
+import { Button } from "@/components/ui/button";
+import { NEWS_CATEGORIES } from "@/lib/constants";
 
 export default function NewsPage() {
-  const { data: news = [], isLoading } = useNews();
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const { data: news = [], isLoading } = useNews({ category: selectedCategory });
 
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 mb-2">
+        <div className="flex items-center gap-4 mb-6">
           <EYLLogo size={50} withGlow />
           <div>
             <h1 className="text-4xl font-bold mb-2">
@@ -19,6 +23,21 @@ export default function NewsPage() {
             </h1>
             <p className="text-muted-foreground">Stay updated with Ethiopian Youth League coverage</p>
           </div>
+        </div>
+
+        {/* Category Filters */}
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {NEWS_CATEGORIES.map((category) => (
+            <Button
+              key={category}
+              variant={selectedCategory === category ? "default" : "outline"}
+              size="sm"
+              onClick={() => setSelectedCategory(category)}
+              className="whitespace-nowrap"
+            >
+              {category}
+            </Button>
+          ))}
         </div>
 
         {isLoading ? (
