@@ -20,6 +20,7 @@ const mainNavLinks = [
   { name: "Table", href: "/standings" },
   { name: "Statistics", href: "/statistics" },
   { name: "News", href: "/news" },
+  { name: "Players", href: "/players" },
   { name: "Clubs", href: "/clubs" },
   { name: "Watch Live", href: "/live", highlight: true },
 ];
