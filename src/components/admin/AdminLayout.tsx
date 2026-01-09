@@ -1,6 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -12,7 +13,8 @@ import {
   Handshake,
   LogOut,
   Menu,
-  Shield
+  Shield,
+  ShieldX
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -80,6 +82,7 @@ function AdminSidebarContent() {
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth();
+  const { isAdmin, isLoading: isRoleLoading } = useUserRole();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -93,7 +96,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     }
   }, [user, loading, navigate]);
 
-  if (loading) {
+  if (loading || isRoleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse flex flex-col items-center gap-4">
@@ -105,6 +108,29 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   if (!user) return null;
+
+  // Show access denied for non-admin users
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4 text-center p-8">
+          <ShieldX className="h-16 w-16 text-destructive" />
+          <h1 className="text-2xl font-bold">Access Denied</h1>
+          <p className="text-muted-foreground max-w-md">
+            You don't have permission to access the admin panel. This area is restricted to administrators only.
+          </p>
+          <div className="flex gap-3 mt-4">
+            <Button variant="outline" onClick={() => navigate("/")}>
+              Go Home
+            </Button>
+            <Button variant="outline" onClick={handleSignOut}>
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <SidebarProvider>
