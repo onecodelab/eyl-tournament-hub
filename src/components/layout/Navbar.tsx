@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, User, X, LogOut } from "lucide-react";
+import { Menu, Search, User, X, LogOut, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRole } from "@/hooks/useUserRole";
 import eylLogo from "@/assets/eyl-logo.png";
 
 const topNavLinks = [
@@ -28,6 +29,7 @@ export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { isReferee } = useUserRole();
 
   const handleAuthClick = async () => {
     if (user) {
@@ -103,6 +105,19 @@ export function Navbar() {
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
+              {isReferee && (
+                <Link
+                  to="/referee"
+                  className={`hidden sm:flex items-center gap-1.5 text-sm font-medium transition-colors ${
+                    location.pathname.startsWith("/referee")
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <ClipboardList className="h-4 w-4" />
+                  Referee
+                </Link>
+              )}
               {user ? (
                 <div className="hidden sm:flex items-center gap-2">
                   <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary truncate max-w-[120px]">
@@ -144,6 +159,20 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
+            {isReferee && (
+              <Link
+                to="/referee"
+                className={`py-2 px-3 rounded-lg text-sm font-medium flex items-center gap-2 ${
+                  location.pathname.startsWith("/referee")
+                    ? "bg-secondary text-foreground"
+                    : "text-muted-foreground"
+                }`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <ClipboardList className="h-4 w-4" />
+                Referee Dashboard
+              </Link>
+            )}
           </nav>
         </div>
       )}
