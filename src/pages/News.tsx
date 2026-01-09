@@ -14,7 +14,7 @@ export default function NewsPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 animate-fade-in">
         <div className="flex items-center gap-4 mb-6">
           <EYLLogo size={50} withGlow />
           <div>
@@ -48,14 +48,15 @@ export default function NewsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {news.map((item) => (
+            {news.map((item, index) => (
               <Link 
                 key={item.id}
                 to={`/news/${item.id}`}
-                className="glass-card overflow-hidden group hover:border-primary/50 transition-all"
+                className="glass-card overflow-hidden group hover:border-primary/50 hover:-translate-y-1 transition-all duration-300 animate-fade-in"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div 
-                  className="h-40 bg-cover bg-center"
+                  className="h-40 bg-cover bg-center transition-transform duration-300 group-hover:scale-105"
                   style={{
                     backgroundImage: item.image_url 
                       ? `url('${item.image_url}')`
