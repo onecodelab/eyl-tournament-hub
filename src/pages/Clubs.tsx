@@ -1,6 +1,7 @@
+import { Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useTeams } from "@/hooks/useSupabaseData";
-import { Trophy, Users, MapPin, Calendar, TrendingUp, Target } from "lucide-react";
+import { Trophy, Users, MapPin, Calendar, TrendingUp, Target, ChevronRight } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 
 export default function Clubs() {
@@ -82,9 +83,10 @@ export default function Clubs() {
               const goalDiff = (team.goals_for || 0) - (team.goals_against || 0);
               
               return (
-                <div 
+                <Link 
+                  to={`/clubs/${team.id}`}
                   key={team.id} 
-                  className="eyl-card p-6 hover:border-primary/50 transition-all duration-300 group"
+                  className="eyl-card p-6 hover:border-primary/50 transition-all duration-300 group block"
                 >
                   {/* Team Header */}
                   <div className="flex items-center gap-4 mb-6">
@@ -113,9 +115,12 @@ export default function Clubs() {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-bold text-white truncate group-hover:text-primary transition-colors">
-                        {team.name}
-                      </h3>
+                      <div className="flex items-center gap-1">
+                        <h3 className="text-lg font-bold text-white truncate group-hover:text-primary transition-colors">
+                          {team.name}
+                        </h3>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                      </div>
                       {team.coach && (
                         <p className="text-sm text-muted-foreground flex items-center gap-1">
                           <Users className="h-3 w-3" />
@@ -196,7 +201,7 @@ export default function Clubs() {
                       )}
                     </div>
                   )}
-                </div>
+                </Link>
               );
             })}
           </div>

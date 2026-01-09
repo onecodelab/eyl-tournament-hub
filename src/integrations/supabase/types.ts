@@ -278,39 +278,63 @@ export type Database = {
         Row: {
           appearances: number | null
           assists: number | null
+          bio: string | null
           created_at: string
+          date_of_birth: string | null
           goals: number | null
+          height: number | null
           id: string
           jersey_number: number | null
+          joined_date: string | null
           name: string
+          nationality: string | null
           photo_url: string | null
           position: string | null
+          preferred_foot: string | null
+          social_instagram: string | null
+          social_twitter: string | null
           team_id: string | null
           updated_at: string
         }
         Insert: {
           appearances?: number | null
           assists?: number | null
+          bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           goals?: number | null
+          height?: number | null
           id?: string
           jersey_number?: number | null
+          joined_date?: string | null
           name: string
+          nationality?: string | null
           photo_url?: string | null
           position?: string | null
+          preferred_foot?: string | null
+          social_instagram?: string | null
+          social_twitter?: string | null
           team_id?: string | null
           updated_at?: string
         }
         Update: {
           appearances?: number | null
           assists?: number | null
+          bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           goals?: number | null
+          height?: number | null
           id?: string
           jersey_number?: number | null
+          joined_date?: string | null
           name?: string
+          nationality?: string | null
           photo_url?: string | null
           position?: string | null
+          preferred_foot?: string | null
+          social_instagram?: string | null
+          social_twitter?: string | null
           team_id?: string | null
           updated_at?: string
         }
@@ -377,9 +401,14 @@ export type Database = {
           name: string
           points: number | null
           short_name: string | null
+          social_facebook: string | null
+          social_instagram: string | null
+          social_tiktok: string | null
+          social_twitter: string | null
           stadium: string | null
           tournament_id: string | null
           updated_at: string
+          website_url: string | null
           wins: number | null
         }
         Insert: {
@@ -395,9 +424,14 @@ export type Database = {
           name: string
           points?: number | null
           short_name?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_tiktok?: string | null
+          social_twitter?: string | null
           stadium?: string | null
           tournament_id?: string | null
           updated_at?: string
+          website_url?: string | null
           wins?: number | null
         }
         Update: {
@@ -413,9 +447,14 @@ export type Database = {
           name?: string
           points?: number | null
           short_name?: string | null
+          social_facebook?: string | null
+          social_instagram?: string | null
+          social_tiktok?: string | null
+          social_twitter?: string | null
           stadium?: string | null
           tournament_id?: string | null
           updated_at?: string
+          website_url?: string | null
           wins?: number | null
         }
         Relationships: [

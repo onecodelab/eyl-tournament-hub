@@ -204,7 +204,8 @@ export default function Players() {
               const team = teamsMap.get(player.team_id || "");
               
               return (
-                <div
+                <Link
+                  to={`/players/${player.id}`}
                   key={player.id}
                   className="group grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr_1fr_80px] gap-2 md:gap-4 items-center px-4 py-4 hover:bg-muted/30 transition-colors cursor-pointer animate-fade-in"
                   style={{ animationDelay: `${index * 30}ms` }}
@@ -281,15 +282,11 @@ export default function Players() {
 
                   {/* Action */}
                   <div className="flex justify-end md:pl-0 pl-15">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-xs border-border/50 hover:border-primary hover:text-primary transition-colors"
-                    >
+                    <span className="text-xs border border-border/50 hover:border-primary hover:text-primary transition-colors px-3 py-1.5 rounded-md">
                       View
-                    </Button>
+                    </span>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
