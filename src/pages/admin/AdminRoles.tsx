@@ -26,29 +26,30 @@ export default function AdminRoles() {
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState<AppRole>("referee");
 
-  // Create user and assign role
+  // Create user and assign role via edge function
   const createUserWithRole = useMutation({
     mutationFn: async ({ email, password, role }: { email: string; password: string; role: AppRole }) => {
-      // First, sign up the user
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-        },
-      });
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await fetch(
+        `https://shhhvkdbifmwwrnatxzb.supabase.co/functions/v1/create-user-with-role`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({ email, password, role }),
+        }
+      );
 
-      if (authError) throw authError;
-      if (!authData.user) throw new Error("Failed to create user");
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to create user");
+      }
 
-      // Then assign the role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: authData.user.id, role });
-
-      if (roleError) throw roleError;
-
-      return { user: authData.user, role };
+      return data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["user-roles"] });
