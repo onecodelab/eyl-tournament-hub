@@ -46,23 +46,30 @@ interface GeneratePDFOptions {
 }
 
 const addWatermark = (doc: jsPDF) => {
-  doc.saveGraphicsState();
-  // @ts-ignore - GState exists on jsPDF instance
-  doc.setGState(doc.GState({ opacity: 0.06 }));
-  doc.setTextColor(...COLORS.navy);
-  doc.setFontSize(50);
-  doc.setFont("helvetica", "bold");
-  
-  // Rotate and add watermark text
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  
-  doc.text("ETHIOPIAN YOUTH LEAGUE", pageWidth / 2, pageHeight / 2, {
-    angle: 45,
-    align: "center",
-  });
-  
-  doc.restoreGraphicsState();
+  try {
+    doc.saveGraphicsState();
+    // @ts-ignore - GState exists on jsPDF instance
+    if (doc.GState) {
+      doc.setGState(doc.GState({ opacity: 0.06 }));
+    }
+    doc.setTextColor(...COLORS.navy);
+    doc.setFontSize(50);
+    doc.setFont("helvetica", "bold");
+    
+    // Rotate and add watermark text
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    
+    doc.text("ETHIOPIAN YOUTH LEAGUE", pageWidth / 2, pageHeight / 2, {
+      angle: 45,
+      align: "center",
+    });
+    
+    doc.restoreGraphicsState();
+  } catch (e) {
+    // Silently fail if watermark can't be added
+    console.warn("Could not add watermark:", e);
+  }
 };
 
 const drawSection = (

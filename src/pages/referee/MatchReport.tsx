@@ -42,7 +42,6 @@ import {
   useMatchReport,
   useSubmitMatchReport,
 } from "@/hooks/useRefereeMatches";
-import { downloadMatchReportPDF, generateMatchReportPDF } from "@/utils/generateMatchPDF";
 import { useAuth } from "@/contexts/AuthContext";
 
 const WEATHER_OPTIONS = [
@@ -112,6 +111,7 @@ export default function MatchReport() {
 
     setIsGeneratingPDF(true);
     try {
+      const { downloadMatchReportPDF } = await import("@/utils/generateMatchPDF");
       await downloadMatchReportPDF({
         match: {
           id: match.id,
@@ -145,6 +145,7 @@ export default function MatchReport() {
 
     setIsGeneratingPDF(true);
     try {
+      const { generateMatchReportPDF } = await import("@/utils/generateMatchPDF");
       const blob = await generateMatchReportPDF({
         match: {
           id: match.id,
