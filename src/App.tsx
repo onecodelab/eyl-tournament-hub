@@ -19,6 +19,7 @@ import AdminMatches from "./pages/admin/AdminMatches";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminVideos from "./pages/admin/AdminVideos";
 import AdminSponsors from "./pages/admin/AdminSponsors";
+import AdminRoles from "./pages/admin/AdminRoles";
 import RefereeDashboard from "./pages/referee/RefereeDashboard";
 import LiveMatch from "./pages/referee/LiveMatch";
 import MatchReport from "./pages/referee/MatchReport";
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/admin/videos" element={<AdminVideos />} />
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
+            <Route path="/admin/roles" element={<AdminRoles />} />
             <Route path="/referee" element={<RefereeDashboard />} />
             <Route path="/referee/match/:id" element={<LiveMatch />} />
             <Route path="/referee/match/:id/report" element={<MatchReport />} />
