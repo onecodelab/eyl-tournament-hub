@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +23,23 @@ export default function Auth() {
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const redirectBasedOnRole = async (userId: string) => {
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId);
+
+    const userRoles = roles?.map((r) => r.role) || [];
+
+    if (userRoles.includes("admin")) {
+      navigate("/admin");
+    } else if (userRoles.includes("referee")) {
+      navigate("/referee");
+    } else {
+      navigate("/");
+    }
+  };
 
   const handleAuth = async (type: "signin" | "signup") => {
     const validation = authSchema.safeParse({ email, password });
@@ -59,7 +77,13 @@ export default function Auth() {
             description: "Please check your email to verify your account.",
           });
         } else {
-          navigate("/admin");
+          // Get the current user and redirect based on role
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await redirectBasedOnRole(user.id);
+          } else {
+            navigate("/");
+          }
         }
       }
     } finally {
