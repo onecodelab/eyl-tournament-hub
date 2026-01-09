@@ -12,6 +12,8 @@ import {
   Sun,
   CloudRain,
   Wind,
+  Eye,
+  Loader2,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   useMatchById,
@@ -34,6 +42,8 @@ import {
   useMatchReport,
   useSubmitMatchReport,
 } from "@/hooks/useRefereeMatches";
+import { downloadMatchReportPDF, generateMatchReportPDF } from "@/utils/generateMatchPDF";
+import { useAuth } from "@/contexts/AuthContext";
 
 const WEATHER_OPTIONS = [
   { value: "sunny", label: "Sunny", icon: Sun },
@@ -45,6 +55,7 @@ const WEATHER_OPTIONS = [
 export default function MatchReport() {
   const { id: matchId } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const { data: match, isLoading: matchLoading } = useMatchById(matchId || "");
   const { data: events = [] } = useMatchEvents(matchId || "");
@@ -55,6 +66,9 @@ export default function MatchReport() {
   const [weather, setWeather] = useState<string>("");
   const [notes, setNotes] = useState<string>("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Load existing report data
   useEffect(() => {
@@ -93,48 +107,80 @@ export default function MatchReport() {
     }
   };
 
-  const handleDownloadPDF = () => {
-    // Create a simple text-based report for now
-    const reportContent = `
-MATCH REPORT
-============
+  const handleDownloadPDF = async () => {
+    if (!match) return;
 
-${match?.home_team?.name || "Home"} ${match?.home_score ?? 0} - ${match?.away_score ?? 0} ${match?.away_team?.name || "Away"}
+    setIsGeneratingPDF(true);
+    try {
+      await downloadMatchReportPDF({
+        match: {
+          id: match.id,
+          home_team: match.home_team,
+          away_team: match.away_team,
+          home_score: match.home_score,
+          away_score: match.away_score,
+          match_date: match.match_date,
+          venue: match.venue,
+          tournament: match.tournament,
+        },
+        events: events,
+        report: {
+          attendance: attendance ? parseInt(attendance) : null,
+          weather: weather || null,
+          notes: notes || null,
+        },
+        refereeEmail: user?.email || undefined,
+      });
+      toast.success("PDF report downloaded!");
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast.error("Failed to generate PDF report");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
-Date: ${match?.match_date ? format(new Date(match.match_date), "MMMM d, yyyy") : "N/A"}
-Venue: ${match?.venue || "N/A"}
-Attendance: ${attendance || "N/A"}
-Weather: ${weather || "N/A"}
+  const handlePreviewPDF = async () => {
+    if (!match) return;
 
-GOALS
------
-${eventSummary.goals.map((g: any) => `${g.minute}' - ${g.player?.name || "Unknown"} (${g.team?.name || "Unknown"})`).join("\n") || "No goals"}
+    setIsGeneratingPDF(true);
+    try {
+      const blob = await generateMatchReportPDF({
+        match: {
+          id: match.id,
+          home_team: match.home_team,
+          away_team: match.away_team,
+          home_score: match.home_score,
+          away_score: match.away_score,
+          match_date: match.match_date,
+          venue: match.venue,
+          tournament: match.tournament,
+        },
+        events: events,
+        report: {
+          attendance: attendance ? parseInt(attendance) : null,
+          weather: weather || null,
+          notes: notes || null,
+        },
+        refereeEmail: user?.email || undefined,
+      });
+      const url = URL.createObjectURL(blob);
+      setPreviewUrl(url);
+      setShowPreview(true);
+    } catch (error) {
+      console.error("PDF preview error:", error);
+      toast.error("Failed to generate PDF preview");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  };
 
-YELLOW CARDS
-------------
-${eventSummary.yellowCards.map((c: any) => `${c.minute}' - ${c.player?.name || "Unknown"} (${c.team?.name || "Unknown"})`).join("\n") || "No yellow cards"}
-
-RED CARDS
----------
-${eventSummary.redCards.map((c: any) => `${c.minute}' - ${c.player?.name || "Unknown"} (${c.team?.name || "Unknown"})`).join("\n") || "No red cards"}
-
-SUBSTITUTIONS
--------------
-${eventSummary.substitutions.map((s: any) => `${s.minute}' - ${s.player?.name || "Unknown"} (${s.team?.name || "Unknown"})`).join("\n") || "No substitutions"}
-
-REFEREE NOTES
--------------
-${notes || "No additional notes"}
-    `.trim();
-
-    const blob = new Blob([reportContent], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `match-report-${matchId}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success("Report downloaded!");
+  const closePreview = () => {
+    setShowPreview(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
   };
 
   if (matchLoading) {
@@ -349,22 +395,66 @@ ${notes || "No additional notes"}
         </Card>
 
         {/* Actions */}
-        <div className="flex gap-3 justify-end">
+        <div className="flex gap-3 justify-end flex-wrap">
           <Button variant="outline" onClick={() => navigate("/referee")}>
             Cancel
           </Button>
-          {isSubmitted ? (
-            <Button onClick={handleDownloadPDF}>
-              <Download className="h-4 w-4 mr-2" />
-              Download Report
-            </Button>
-          ) : (
+          {isSubmitted && (
+            <>
+              <Button 
+                variant="outline" 
+                onClick={handlePreviewPDF}
+                disabled={isGeneratingPDF}
+              >
+                {isGeneratingPDF ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Eye className="h-4 w-4 mr-2" />
+                )}
+                Preview PDF
+              </Button>
+              <Button 
+                onClick={handleDownloadPDF}
+                disabled={isGeneratingPDF}
+                className="bg-[#0E1B31] hover:bg-[#0E1B31]/90"
+              >
+                {isGeneratingPDF ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4 mr-2" />
+                )}
+                Download PDF
+              </Button>
+            </>
+          )}
+          {!isSubmitted && (
             <Button onClick={handleSubmit} disabled={submitReport.isPending}>
               <CheckCircle className="h-4 w-4 mr-2" />
               Save & Submit Report
             </Button>
           )}
         </div>
+
+        {/* PDF Preview Modal */}
+        <Dialog open={showPreview} onOpenChange={closePreview}>
+          <DialogContent className="max-w-4xl h-[90vh]">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="h-5 w-5" />
+                Match Report Preview
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex-1 min-h-0">
+              {previewUrl && (
+                <iframe
+                  src={previewUrl}
+                  className="w-full h-[calc(90vh-100px)] border rounded-lg"
+                  title="PDF Preview"
+                />
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </Layout>
   );
