@@ -14,6 +14,157 @@ export type Database = {
   }
   public: {
     Tables: {
+      match_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          details: Json | null
+          event_type: string
+          id: string
+          match_id: string
+          minute: number
+          player_id: string | null
+          team_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          details?: Json | null
+          event_type: string
+          id?: string
+          match_id: string
+          minute: number
+          player_id?: string | null
+          team_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          details?: Json | null
+          event_type?: string
+          id?: string
+          match_id?: string
+          minute?: number
+          player_id?: string | null
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_events_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_events_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_events_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_lineups: {
+        Row: {
+          created_at: string
+          goalkeeper_id: string | null
+          id: string
+          match_id: string
+          player_ids: string[] | null
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          goalkeeper_id?: string | null
+          id?: string
+          match_id: string
+          player_ids?: string[] | null
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          goalkeeper_id?: string | null
+          id?: string
+          match_id?: string
+          player_ids?: string[] | null
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_lineups_goalkeeper_id_fkey"
+            columns: ["goalkeeper_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_lineups_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_lineups_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      match_reports: {
+        Row: {
+          attendance: number | null
+          created_at: string
+          id: string
+          match_id: string
+          notes: string | null
+          referee_id: string
+          submitted_at: string
+          weather: string | null
+        }
+        Insert: {
+          attendance?: number | null
+          created_at?: string
+          id?: string
+          match_id: string
+          notes?: string | null
+          referee_id: string
+          submitted_at?: string
+          weather?: string | null
+        }
+        Update: {
+          attendance?: number | null
+          created_at?: string
+          id?: string
+          match_id?: string
+          notes?: string | null
+          referee_id?: string
+          submitted_at?: string
+          weather?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_reports_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: true
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
           away_score: number | null

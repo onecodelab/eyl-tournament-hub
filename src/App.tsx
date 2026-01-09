@@ -19,6 +19,9 @@ import AdminMatches from "./pages/admin/AdminMatches";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminVideos from "./pages/admin/AdminVideos";
 import AdminSponsors from "./pages/admin/AdminSponsors";
+import RefereeDashboard from "./pages/referee/RefereeDashboard";
+import LiveMatch from "./pages/referee/LiveMatch";
+import MatchReport from "./pages/referee/MatchReport";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
 
@@ -48,6 +51,9 @@ const App = () => (
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/admin/videos" element={<AdminVideos />} />
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
+            <Route path="/referee" element={<RefereeDashboard />} />
+            <Route path="/referee/match/:id" element={<LiveMatch />} />
+            <Route path="/referee/match/:id/report" element={<MatchReport />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
