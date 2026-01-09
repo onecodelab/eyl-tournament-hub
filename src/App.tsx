@@ -11,7 +11,9 @@ import Standings from "./pages/Standings";
 import News from "./pages/News";
 import Statistics from "./pages/Statistics";
 import Clubs from "./pages/Clubs";
+import ClubDetail from "./pages/ClubDetail";
 import Players from "./pages/Players";
+import PlayerDetail from "./pages/PlayerDetail";
 import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTournaments from "./pages/admin/AdminTournaments";
@@ -46,7 +48,9 @@ const App = () => (
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsDetail />} />
             <Route path="/clubs" element={<Clubs />} />
+            <Route path="/clubs/:id" element={<ClubDetail />} />
             <Route path="/players" element={<Players />} />
+            <Route path="/players/:id" element={<PlayerDetail />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/tournaments" element={<AdminTournaments />} />
