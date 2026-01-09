@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import Index from "./pages/Index";
+import About from "./pages/About";
+import Community from "./pages/Community";
 import Matches from "./pages/Matches";
 import Standings from "./pages/Standings";
 import News from "./pages/News";
@@ -42,6 +44,8 @@ const App = () => (
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/community" element={<Community />} />
             <Route path="/matches" element={<Matches />} />
             <Route path="/standings" element={<Standings />} />
             <Route path="/statistics" element={<Statistics />} />
