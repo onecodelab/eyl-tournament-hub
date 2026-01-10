@@ -246,6 +246,7 @@ export type Database = {
           is_featured: boolean | null
           published_at: string | null
           title: string
+          tournament_id: string | null
           updated_at: string
         }
         Insert: {
@@ -258,6 +259,7 @@ export type Database = {
           is_featured?: boolean | null
           published_at?: string | null
           title: string
+          tournament_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -270,9 +272,18 @@ export type Database = {
           is_featured?: boolean | null
           published_at?: string | null
           title?: string
+          tournament_id?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "news_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       players: {
         Row: {
@@ -467,6 +478,35 @@ export type Database = {
           },
         ]
       }
+      tournament_admins: {
+        Row: {
+          created_at: string
+          id: string
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_admins_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           created_at: string
@@ -532,6 +572,7 @@ export type Database = {
           published_at: string | null
           thumbnail_url: string | null
           title: string
+          tournament_id: string | null
           updated_at: string
           views_count: number | null
           youtube_url: string
@@ -543,6 +584,7 @@ export type Database = {
           published_at?: string | null
           thumbnail_url?: string | null
           title: string
+          tournament_id?: string | null
           updated_at?: string
           views_count?: number | null
           youtube_url: string
@@ -554,11 +596,20 @@ export type Database = {
           published_at?: string | null
           thumbnail_url?: string | null
           title?: string
+          tournament_id?: string | null
           updated_at?: string
           views_count?: number | null
           youtube_url?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "videos_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -574,7 +625,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "referee" | "user"
+      app_role: "admin" | "referee" | "user" | "tho_admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -702,7 +753,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "referee", "user"],
+      app_role: ["admin", "referee", "user", "tho_admin"],
     },
   },
 } as const
