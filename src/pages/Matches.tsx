@@ -1,11 +1,18 @@
 import { Layout } from "@/components/layout/Layout";
 import { useMatchWithTeams, useTournaments } from "@/hooks/useSupabaseData";
-import { Calendar, Clock, MapPin, Filter, Users, Trophy, Info, FileText, MapPinned, ClipboardList } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, Trophy, Info, MapPinned, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const eventFormats = [
   {
@@ -58,23 +65,47 @@ export default function MatchesPage() {
   const { data: matches = [], isLoading } = useMatchWithTeams();
   const { data: tournaments = [] } = useTournaments();
   const [filter, setFilter] = useState("all");
+  const [selectedTournament, setSelectedTournament] = useState<string>("all");
 
   const tournamentsMap = new Map(tournaments.map((t) => [t.id, t]));
 
-  const filteredMatches = matches.filter((m) => {
-    if (filter === "all") return true;
-    if (filter === "live") return m.status === "live";
-    if (filter === "upcoming") return m.status === "scheduled";
-    if (filter === "completed") return m.status === "completed";
-    return true;
-  });
+  // Filter by tournament first, then by status
+  const filteredMatches = useMemo(() => {
+    let result = matches;
+    
+    // Filter by tournament
+    if (selectedTournament !== "all") {
+      result = result.filter(m => m.tournament_id === selectedTournament);
+    }
+    
+    // Filter by status
+    if (filter === "live") {
+      result = result.filter(m => m.status === "live");
+    } else if (filter === "upcoming") {
+      result = result.filter(m => m.status === "scheduled");
+    } else if (filter === "completed") {
+      result = result.filter(m => m.status === "completed");
+    }
+    
+    return result;
+  }, [matches, selectedTournament, filter]);
 
-  const counts = {
-    all: matches.length,
-    live: matches.filter((m) => m.status === "live").length,
-    upcoming: matches.filter((m) => m.status === "scheduled").length,
-    completed: matches.filter((m) => m.status === "completed").length,
-  };
+  const counts = useMemo(() => {
+    const tournamentMatches = selectedTournament === "all" 
+      ? matches 
+      : matches.filter(m => m.tournament_id === selectedTournament);
+    
+    return {
+      all: tournamentMatches.length,
+      live: tournamentMatches.filter((m) => m.status === "live").length,
+      upcoming: tournamentMatches.filter((m) => m.status === "scheduled").length,
+      completed: tournamentMatches.filter((m) => m.status === "completed").length,
+    };
+  }, [matches, selectedTournament]);
+
+  const selectedTournamentName = selectedTournament === "all" 
+    ? "All Tournaments" 
+    : tournaments.find(t => t.id === selectedTournament)?.name || "Tournament";
 
   return (
     <Layout>
@@ -86,7 +117,7 @@ export default function MatchesPage() {
             <EYLLogo size={50} withGlow />
             <div>
               <h1 className="text-4xl font-bold mb-2">
-                Events & <span className="text-primary">Matches</span>
+                Fixtures & <span className="text-primary">Results</span>
               </h1>
               <p className="text-muted-foreground">Tournament schedules, live scores, and event information</p>
             </div>
@@ -117,7 +148,28 @@ export default function MatchesPage() {
 
           {/* Match Calendar Tab */}
           <TabsContent value="calendar">
-            {/* Filter Tabs */}
+            {/* Tournament Filter */}
+            <div className="glass-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <EYLLogo size={28} />
+                <span className="font-medium">{selectedTournamentName}</span>
+              </div>
+              <Select value={selectedTournament} onValueChange={setSelectedTournament}>
+                <SelectTrigger className="w-[220px]">
+                  <SelectValue placeholder="Select Tournament" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Tournaments</SelectItem>
+                  {tournaments.map((tournament) => (
+                    <SelectItem key={tournament.id} value={tournament.id}>
+                      {tournament.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Status Filter Tabs */}
             <div className="glass-card inline-flex p-1 mb-8">
               {[
                 { key: "all", label: `All (${counts.all})` },
@@ -173,7 +225,14 @@ export default function MatchesPage() {
                             {isLive ? "LIVE" : isCompleted ? "FULL TIME" : "UPCOMING"}
                           </span>
                         </div>
-                        <span className="text-xs text-muted-foreground">{tournament?.name}</span>
+                        {tournament && (
+                          <Link 
+                            to={`/tournaments/${tournament.id}`}
+                            className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                          >
+                            {tournament.name}
+                          </Link>
+                        )}
                       </div>
 
                       {match.tagline && (
@@ -186,11 +245,9 @@ export default function MatchesPage() {
 
                       <div className="flex items-center justify-between mb-6">
                         <div className="text-center">
-                          <Link to={`/clubs/${match.home_team_id}`}>
-                            <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary mx-auto mb-2 hover:bg-primary/30 transition-colors">
-                              {match.home_team?.short_name || "HT"}
-                            </div>
-                          </Link>
+                          <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary mx-auto mb-2">
+                            {match.home_team?.short_name || "HT"}
+                          </div>
                           <p className="text-sm font-medium">{match.home_team?.name || "Home"}</p>
                           <p className="text-xs text-muted-foreground">Home</p>
                         </div>
@@ -206,11 +263,9 @@ export default function MatchesPage() {
                         </div>
 
                         <div className="text-center">
-                          <Link to={`/clubs/${match.away_team_id}`}>
-                            <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-muted-foreground mx-auto mb-2 hover:bg-secondary/80 transition-colors">
-                              {match.away_team?.short_name || "AT"}
-                            </div>
-                          </Link>
+                          <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center text-sm font-bold text-muted-foreground mx-auto mb-2">
+                            {match.away_team?.short_name || "AT"}
+                          </div>
                           <p className="text-sm font-medium">{match.away_team?.name || "Away"}</p>
                           <p className="text-xs text-muted-foreground">Away</p>
                         </div>
@@ -246,30 +301,14 @@ export default function MatchesPage() {
               <div className="glass-card p-12 text-center">
                 <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">No matches found</h3>
-                <p className="text-muted-foreground">Check back later for upcoming fixtures.</p>
+                <p className="text-muted-foreground">
+                  {selectedTournament !== "all" 
+                    ? "No matches in this tournament yet. Try selecting a different tournament."
+                    : "Check back later for upcoming fixtures."
+                  }
+                </p>
               </div>
             )}
-
-            {/* Event Registration CTA */}
-            <div className="glass-card p-6 mt-8 border-primary/30">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 rounded-xl bg-primary/10">
-                    <FileText className="h-6 w-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold">Want to register your team?</h3>
-                    <p className="text-sm text-muted-foreground">Join upcoming tournaments and showcase your talent</p>
-                  </div>
-                </div>
-                <Link 
-                  to="/community"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
-                >
-                  Register Now
-                </Link>
-              </div>
-            </div>
           </TabsContent>
 
           {/* Event Formats Tab */}
