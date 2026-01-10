@@ -1,6 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { 
+  tournamentSchema, 
+  teamSchema, 
+  playerSchema, 
+  matchSchema, 
+  newsSchema, 
+  videoSchema,
+  validateSchema 
+} from "@/lib/schemas";
 
 type TournamentInsert = Database["public"]["Tables"]["tournaments"]["Insert"];
 type TeamInsert = Database["public"]["Tables"]["teams"]["Insert"];
@@ -13,6 +22,10 @@ export function useCreateTournament() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (tournament: TournamentInsert) => {
+      const validation = validateSchema(tournamentSchema, tournament);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("tournaments").insert(tournament).select().single();
       if (error) throw error;
       return data;
@@ -25,6 +38,10 @@ export function useUpdateTournament() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...tournament }: TournamentInsert & { id: string }) => {
+      const validation = validateSchema(tournamentSchema, tournament);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("tournaments").update(tournament).eq("id", id).select().single();
       if (error) throw error;
       return data;
@@ -49,6 +66,10 @@ export function useCreateTeam() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (team: TeamInsert) => {
+      const validation = validateSchema(teamSchema, team);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("teams").insert(team).select().single();
       if (error) throw error;
       return data;
@@ -61,6 +82,10 @@ export function useUpdateTeam() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...team }: TeamInsert & { id: string }) => {
+      const validation = validateSchema(teamSchema, team);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("teams").update(team).eq("id", id).select().single();
       if (error) throw error;
       return data;
@@ -85,6 +110,10 @@ export function useCreatePlayer() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (player: PlayerInsert) => {
+      const validation = validateSchema(playerSchema, player);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("players").insert(player).select().single();
       if (error) throw error;
       return data;
@@ -97,6 +126,10 @@ export function useUpdatePlayer() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...player }: PlayerInsert & { id: string }) => {
+      const validation = validateSchema(playerSchema, player);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("players").update(player).eq("id", id).select().single();
       if (error) throw error;
       return data;
@@ -121,6 +154,10 @@ export function useCreateMatch() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (match: MatchInsert) => {
+      const validation = validateSchema(matchSchema, match);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("matches").insert(match).select().single();
       if (error) throw error;
       return data;
@@ -137,6 +174,10 @@ export function useUpdateMatch() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...match }: MatchInsert & { id: string }) => {
+      const validation = validateSchema(matchSchema, match);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("matches").update(match).eq("id", id).select().single();
       if (error) throw error;
       return data;
@@ -169,6 +210,10 @@ export function useCreateNews() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (news: NewsInsert) => {
+      const validation = validateSchema(newsSchema, news);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("news").insert(news).select().single();
       if (error) throw error;
       return data;
@@ -181,6 +226,10 @@ export function useUpdateNews() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...news }: NewsInsert & { id: string }) => {
+      const validation = validateSchema(newsSchema, news);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("news").update(news).eq("id", id).select().single();
       if (error) throw error;
       return data;
@@ -213,6 +262,10 @@ export function useCreateVideo() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (video: VideoInsert) => {
+      const validation = validateSchema(videoSchema, video);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("videos").insert(video).select().single();
       if (error) throw error;
       return data;
@@ -225,6 +278,10 @@ export function useUpdateVideo() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...video }: VideoInsert & { id: string }) => {
+      const validation = validateSchema(videoSchema, video);
+      if (!validation.success) {
+        throw new Error(Object.values(validation.errors || {}).join(', '));
+      }
       const { data, error } = await supabase.from("videos").update(video).eq("id", id).select().single();
       if (error) throw error;
       return data;
