@@ -31,6 +31,12 @@ import LiveMatch from "./pages/referee/LiveMatch";
 import MatchReport from "./pages/referee/MatchReport";
 import NewsDetail from "./pages/NewsDetail";
 import NotFound from "./pages/NotFound";
+import THODashboard from "./pages/tho-admin/THODashboard";
+import THOTeams from "./pages/tho-admin/THOTeams";
+import THOPlayers from "./pages/tho-admin/THOPlayers";
+import THOMatches from "./pages/tho-admin/THOMatches";
+import THONews from "./pages/tho-admin/THONews";
+import THOVideos from "./pages/tho-admin/THOVideos";
 
 const queryClient = new QueryClient();
 
@@ -65,9 +71,16 @@ const App = () => (
             <Route path="/admin/videos" element={<AdminVideos />} />
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
             <Route path="/admin/roles" element={<AdminRoles />} />
+            <Route path="/tho-admin" element={<THODashboard />} />
+            <Route path="/tho-admin/teams" element={<THOTeams />} />
+            <Route path="/tho-admin/players" element={<THOPlayers />} />
+            <Route path="/tho-admin/matches" element={<THOMatches />} />
+            <Route path="/tho-admin/news" element={<THONews />} />
+            <Route path="/tho-admin/videos" element={<THOVideos />} />
             <Route path="/referee" element={<RefereeDashboard />} />
             <Route path="/referee/match/:id" element={<LiveMatch />} />
             <Route path="/referee/match/:id/report" element={<MatchReport />} />
+            <Route path="*" element={<NotFound />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
