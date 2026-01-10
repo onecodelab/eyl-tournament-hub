@@ -34,6 +34,8 @@ export default function Auth() {
 
     if (userRoles.includes("admin")) {
       navigate("/admin");
+    } else if (userRoles.includes("tho_admin")) {
+      navigate("/tho-admin");
     } else if (userRoles.includes("referee")) {
       navigate("/referee");
     } else {
