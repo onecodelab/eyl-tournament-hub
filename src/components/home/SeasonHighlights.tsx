@@ -77,9 +77,7 @@ export function SeasonHighlights() {
             <h4 className="text-lg font-bold mb-1">
               {featuredMatch?.tagline || "JAN MEDA DERBY: ARADA VS ADDIS"}
             </h4>
-            <p className="text-sm text-muted-foreground">
-              Abenezer's hat-trick seals the victory
-            </p>
+            
           </div>
 
           {/* Stats Row */}
