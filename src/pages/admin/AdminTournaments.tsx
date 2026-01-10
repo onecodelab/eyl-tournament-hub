@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useTournaments } from "@/hooks/useSupabaseData";
 import { useCreateTournament, useUpdateTournament, useDeleteTournament } from "@/hooks/useAdminMutations";
+import { useTHOAdminUsers, useTournamentAdmins } from "@/hooks/useTHOAdminUsers";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,22 +15,26 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Trophy } from "lucide-react";
+import { Plus, Pencil, Trash2, Trophy, UserCog } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Database } from "@/integrations/supabase/types";
 
 type Tournament = Database["public"]["Tables"]["tournaments"]["Row"];
 
 export default function AdminTournaments() {
   const { data: tournaments, isLoading } = useTournaments();
+  const { data: thoAdminUsers } = useTHOAdminUsers();
   const createTournament = useCreateTournament();
   const updateTournament = useUpdateTournament();
   const deleteTournament = useDeleteTournament();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
+  const [selectedAdminId, setSelectedAdminId] = useState<string>("");
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -38,9 +44,19 @@ export default function AdminTournaments() {
     logo_url: "",
   });
 
+  // Fetch current assigned admin when editing
+  const { data: currentAdmins } = useTournamentAdmins(editingTournament?.id);
+  
+  useEffect(() => {
+    if (currentAdmins?.length) {
+      setSelectedAdminId(currentAdmins[0]);
+    }
+  }, [currentAdmins]);
+
   const resetForm = () => {
     setFormData({ name: "", description: "", start_date: "", end_date: "", status: "upcoming", logo_url: "" });
     setEditingTournament(null);
+    setSelectedAdminId("");
   };
 
   const handleEdit = (tournament: Tournament) => {
@@ -64,11 +80,35 @@ export default function AdminTournaments() {
     try {
       if (editingTournament) {
         await updateTournament.mutateAsync({ id: editingTournament.id, ...formData });
+        
+        // Update tournament admin assignment
+        if (selectedAdminId) {
+          // Remove existing admins for this tournament
+          await supabase
+            .from("tournament_admins")
+            .delete()
+            .eq("tournament_id", editingTournament.id);
+          
+          // Add new admin
+          await supabase
+            .from("tournament_admins")
+            .insert({ tournament_id: editingTournament.id, user_id: selectedAdminId });
+        }
+        
         toast({ title: "Success", description: "Tournament updated successfully" });
       } else {
-        await createTournament.mutateAsync(formData);
+        const result = await createTournament.mutateAsync(formData);
+        
+        // Assign THO admin to the new tournament
+        if (selectedAdminId && result?.id) {
+          await supabase
+            .from("tournament_admins")
+            .insert({ tournament_id: result.id, user_id: selectedAdminId });
+        }
+        
         toast({ title: "Success", description: "Tournament created successfully" });
       }
+      queryClient.invalidateQueries({ queryKey: ["tournament-admins"] });
       setDialogOpen(false);
       resetForm();
     } catch (error: any) {
@@ -144,6 +184,30 @@ export default function AdminTournaments() {
                       <SelectItem value="completed">Completed</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <UserCog className="h-4 w-4" />
+                    Assign THO Admin
+                  </Label>
+                  <Select value={selectedAdminId} onValueChange={setSelectedAdminId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a THO Admin" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No Admin Assigned</SelectItem>
+                      {thoAdminUsers?.map((admin) => (
+                        <SelectItem key={admin.user_id} value={admin.user_id}>
+                          {admin.display_name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {thoAdminUsers?.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      No THO Admin users found. Create one in User Roles first.
+                    </p>
+                  )}
                 </div>
                 <ImageUpload
                   label="Tournament Logo"
