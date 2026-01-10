@@ -32,7 +32,7 @@ export default function AdminRoles() {
       const { data: { session } } = await supabase.auth.getSession();
       
       const response = await fetch(
-        `https://shhhvkdbifmwwrnatxzb.supabase.co/functions/v1/create-user-with-role`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-user-with-role`,
         {
           method: "POST",
           headers: {
