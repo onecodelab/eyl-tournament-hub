@@ -616,11 +616,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_team: {
+        Args: { _team_id: string; _user_id: string }
+        Returns: boolean
+      }
+      get_user_tournaments: { Args: { _user_id: string }; Returns: string[] }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_tournament_admin: {
+        Args: { _tournament_id: string; _user_id: string }
         Returns: boolean
       }
     }

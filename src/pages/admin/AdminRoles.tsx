@@ -191,7 +191,8 @@ export default function AdminRoles() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="referee">Referee</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="admin">Super Admin</SelectItem>
+                        <SelectItem value="tho_admin">THO Admin</SelectItem>
                         <SelectItem value="user">User</SelectItem>
                       </SelectContent>
                     </Select>

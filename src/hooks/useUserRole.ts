@@ -25,6 +25,10 @@ export function useUserRole() {
     roles,
     isLoading,
     isReferee: roles.includes("referee"),
+    isSuperAdmin: roles.includes("admin"),
+    isTHOAdmin: roles.includes("tho_admin"),
+    isAnyAdmin: roles.includes("admin") || roles.includes("tho_admin"),
+    // Keep isAdmin for backward compatibility (maps to super admin)
     isAdmin: roles.includes("admin"),
   };
 }
