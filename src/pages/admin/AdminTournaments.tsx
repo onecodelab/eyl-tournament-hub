@@ -190,12 +190,12 @@ export default function AdminTournaments() {
                     <UserCog className="h-4 w-4" />
                     Assign THO Admin
                   </Label>
-                  <Select value={selectedAdminId} onValueChange={setSelectedAdminId}>
+                  <Select value={selectedAdminId || "none"} onValueChange={(val) => setSelectedAdminId(val === "none" ? "" : val)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a THO Admin" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">No Admin Assigned</SelectItem>
+                      <SelectItem value="none">No Admin Assigned</SelectItem>
                       {thoAdminUsers?.map((admin) => (
                         <SelectItem key={admin.user_id} value={admin.user_id}>
                           {admin.display_name}
