@@ -2,31 +2,31 @@ import { ArrowRight, Trophy, Target, Shield, Goal } from "lucide-react";
 import { usePlayers, useTeams, useAllMatches } from "@/hooks/useSupabaseData";
 import { Link } from "react-router-dom";
 import { EYLLogo } from "@/components/EYLLogo";
-
 export function SeasonHighlights() {
-  const { data: players = [] } = usePlayers({ limit: 5 });
-  const { data: teams = [] } = useTeams();
-  const { data: matches = [] } = useAllMatches();
-
+  const {
+    data: players = []
+  } = usePlayers({
+    limit: 5
+  });
+  const {
+    data: teams = []
+  } = useTeams();
+  const {
+    data: matches = []
+  } = useAllMatches();
   const topScorers = players.slice(0, 5);
   const totalGoals = players.reduce((sum, p) => sum + (p.goals || 0), 0);
   const completedMatches = matches.filter(m => m.status === "completed").length;
-  
+
   // Best defense - least goals against
-  const bestDefense = teams.length > 0 
-    ? [...teams].sort((a, b) => (a.goals_against || 0) - (b.goals_against || 0))[0]
-    : null;
+  const bestDefense = teams.length > 0 ? [...teams].sort((a, b) => (a.goals_against || 0) - (b.goals_against || 0))[0] : null;
 
   // Champion - most points
-  const champion = teams.length > 0
-    ? [...teams].sort((a, b) => (b.points || 0) - (a.points || 0))[0]
-    : null;
+  const champion = teams.length > 0 ? [...teams].sort((a, b) => (b.points || 0) - (a.points || 0))[0] : null;
 
   // Featured match (most recent completed)
   const featuredMatch = matches.find(m => m.status === "completed");
-
-  return (
-    <section className="container mx-auto px-4 py-8">
+  return <section className="container mx-auto px-4 py-8">
       <h2 className="section-title mb-6">
         Season <span className="section-title-accent">Highlights</span>
       </h2>
@@ -46,12 +46,9 @@ export function SeasonHighlights() {
           </div>
           <div className="space-y-3">
             {topScorers.map((player, index) => {
-              const team = teams.find(t => t.id === player.team_id);
-              return (
-                <div key={player.id} className="flex items-center gap-3">
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                    index === 0 ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-                  }`}>
+            const team = teams.find(t => t.id === player.team_id);
+            return <div key={player.id} className="flex items-center gap-3">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${index === 0 ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
                     {index + 1}
                   </span>
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
@@ -62,21 +59,17 @@ export function SeasonHighlights() {
                     <p className="text-xs text-muted-foreground truncate">{team?.name || "Team"}</p>
                   </div>
                   <span className="text-lg font-bold text-primary">{player.goals || 0}</span>
-                </div>
-              );
-            })}
+                </div>;
+          })}
           </div>
         </div>
 
         {/* Match of the Day + Stats */}
         <div className="lg:col-span-5 grid grid-rows-2 gap-4">
           {/* Match of the Day */}
-          <div 
-            className="glass-card p-4 bg-cover bg-center relative overflow-hidden"
-            style={{
-              backgroundImage: `linear-gradient(to right, rgba(14, 27, 49, 0.95), rgba(14, 27, 49, 0.7)), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400')`
-            }}
-          >
+          <div className="glass-card p-4 bg-cover bg-center relative overflow-hidden" style={{
+          backgroundImage: `linear-gradient(to right, rgba(14, 27, 49, 0.95), rgba(14, 27, 49, 0.7)), url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400')`
+        }}>
             <div className="flex items-center gap-2 mb-2">
               <EYLLogo size={24} />
               <span className="text-xs font-bold text-primary uppercase">Match of the Day</span>
@@ -111,46 +104,7 @@ export function SeasonHighlights() {
         </div>
 
         {/* Right Column Stats */}
-        <div className="lg:col-span-3 grid grid-rows-3 gap-4">
-          {/* Best Defense */}
-          <div className="glass-card p-4 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-                <Shield className="h-3 w-3 text-destructive" />
-                BEST DEFENSE
-              </div>
-              <p className="font-semibold">{bestDefense?.name || "Arada FC"}</p>
-              <p className="text-xs text-muted-foreground">Only {bestDefense?.goals_against || 8} goals conceded</p>
-            </div>
-            <span className="text-2xl font-bold text-primary">{bestDefense?.goals_against || 8}</span>
-          </div>
-
-          {/* Avg/Match */}
-          <div className="glass-card p-4 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-                <Target className="h-3 w-3" />
-                AVG/MATCH
-              </div>
-            </div>
-            <span className="text-2xl font-bold text-primary">
-              {completedMatches > 0 ? (totalGoals / completedMatches).toFixed(1) : "3.2"}
-            </span>
-          </div>
-
-          {/* Champion */}
-          <div className="glass-card p-4 flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1 text-xs text-muted-foreground mb-1">
-                <Trophy className="h-3 w-3 text-primary" />
-                CHAMPION
-              </div>
-              <p className="font-semibold">{champion?.name || "Arada FC"}</p>
-              <p className="text-xs text-muted-foreground">2x titles</p>
-            </div>
-          </div>
-        </div>
+        
       </div>
-    </section>
-  );
+    </section>;
 }
