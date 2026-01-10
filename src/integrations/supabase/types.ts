@@ -509,34 +509,58 @@ export type Database = {
       }
       tournaments: {
         Row: {
+          age_category: string | null
           created_at: string
           description: string | null
           end_date: string | null
+          extra_time_duration_minutes: number | null
+          format: string | null
+          half_time_duration_minutes: number | null
           id: string
           logo_url: string | null
+          match_duration_minutes: number | null
+          max_substitutions: number | null
+          max_teams: number | null
           name: string
+          penalty_shootout: boolean | null
           start_date: string | null
           status: string | null
           updated_at: string
         }
         Insert: {
+          age_category?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
+          extra_time_duration_minutes?: number | null
+          format?: string | null
+          half_time_duration_minutes?: number | null
           id?: string
           logo_url?: string | null
+          match_duration_minutes?: number | null
+          max_substitutions?: number | null
+          max_teams?: number | null
           name: string
+          penalty_shootout?: boolean | null
           start_date?: string | null
           status?: string | null
           updated_at?: string
         }
         Update: {
+          age_category?: string | null
           created_at?: string
           description?: string | null
           end_date?: string | null
+          extra_time_duration_minutes?: number | null
+          format?: string | null
+          half_time_duration_minutes?: number | null
           id?: string
           logo_url?: string | null
+          match_duration_minutes?: number | null
+          max_substitutions?: number | null
+          max_teams?: number | null
           name?: string
+          penalty_shootout?: boolean | null
           start_date?: string | null
           status?: string | null
           updated_at?: string
