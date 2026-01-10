@@ -1,17 +1,12 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
-import { useTeams, useTournaments } from "@/hooks/useSupabaseData";
-import { Trophy, Info, ArrowUpDown, Calendar, FileText, ChevronDown, ChevronUp } from "lucide-react";
+import { useTournaments } from "@/hooks/useSupabaseData";
+import { Trophy, Calendar, Users, ArrowRight, Info, FileText, ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import { format } from "date-fns";
 
 const standingsRules = [
   { title: "Points System", description: "Win = 3 points, Draw = 1 point, Loss = 0 points" },
@@ -51,21 +46,34 @@ const tournamentFormats = [
 ];
 
 export default function StandingsPage() {
-  const [selectedTournament, setSelectedTournament] = useState<string>("all");
   const [expandedRule, setExpandedRule] = useState<number | null>(null);
-  const { data: allTeams = [], isLoading } = useTeams();
-  const { data: tournaments = [], isLoading: tournamentsLoading } = useTournaments();
+  const { data: tournaments = [], isLoading } = useTournaments();
 
-  // Filter teams by selected tournament
-  const filteredTeams = selectedTournament === "all" 
-    ? allTeams 
-    : allTeams.filter(team => team.tournament_id === selectedTournament);
+  const getStatusBadge = (status: string | null) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-500/20 text-green-500 border-green-500/30">LIVE</Badge>;
+      case 'upcoming':
+        return <Badge className="bg-blue-500/20 text-blue-500 border-blue-500/30">UPCOMING</Badge>;
+      case 'completed':
+        return <Badge className="bg-muted text-muted-foreground">COMPLETED</Badge>;
+      default:
+        return null;
+    }
+  };
 
-  const sortedTeams = [...filteredTeams].sort((a, b) => (b.points || 0) - (a.points || 0));
-
-  const selectedTournamentName = selectedTournament === "all" 
-    ? "All Leagues" 
-    : tournaments.find(t => t.id === selectedTournament)?.name || "League";
+  const getFormatBadge = (format: string | null) => {
+    switch (format) {
+      case 'league':
+        return <Badge variant="outline" className="text-xs">League</Badge>;
+      case 'knockout':
+        return <Badge variant="outline" className="text-xs">Knockout</Badge>;
+      case 'group_knockout':
+        return <Badge variant="outline" className="text-xs">Group + Knockout</Badge>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Layout>
@@ -79,18 +87,18 @@ export default function StandingsPage() {
               <h1 className="text-4xl font-bold mb-2">
                 Youth <span className="text-primary">Competitions</span>
               </h1>
-              <p className="text-muted-foreground">League standings, tournament formats, and competition rules</p>
+              <p className="text-muted-foreground">Browse tournaments, view standings, and explore competition details</p>
             </div>
           </div>
         </div>
       </section>
 
       <div className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="standings" className="w-full">
+        <Tabs defaultValue="tournaments" className="w-full">
           <TabsList className="glass-card p-1 mb-8 inline-flex">
-            <TabsTrigger value="standings" className="gap-2">
+            <TabsTrigger value="tournaments" className="gap-2">
               <Trophy className="h-4 w-4" />
-              League Standings
+              Tournaments
             </TabsTrigger>
             <TabsTrigger value="formats" className="gap-2">
               <Calendar className="h-4 w-4" />
@@ -102,137 +110,89 @@ export default function StandingsPage() {
             </TabsTrigger>
           </TabsList>
 
-          {/* Standings Tab */}
-          <TabsContent value="standings">
-            {/* Tournament Filter */}
-            <div className="glass-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <EYLLogo size={28} />
-                <span className="font-medium">
-                  {selectedTournamentName} — The race for the top four is heating up!
-                </span>
+          {/* Tournaments Tab */}
+          <TabsContent value="tournaments">
+            <div className="mb-6">
+              <p className="text-muted-foreground">
+                Select a tournament to view standings, fixtures, and statistics
+              </p>
+            </div>
+
+            {isLoading ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="glass-card h-48 animate-pulse" />
+                ))}
               </div>
-              <Select value={selectedTournament} onValueChange={setSelectedTournament}>
-                <SelectTrigger className="w-[220px]">
-                  <SelectValue placeholder="Select Tournament" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Leagues</SelectItem>
-                  {tournaments.map((tournament) => (
-                    <SelectItem key={tournament.id} value={tournament.id}>
+            ) : tournaments.length === 0 ? (
+              <div className="glass-card p-12 text-center">
+                <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="font-semibold mb-2">No Tournaments</h3>
+                <p className="text-muted-foreground">Check back soon for upcoming competitions.</p>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {tournaments.map((tournament) => (
+                  <Link 
+                    key={tournament.id} 
+                    to={`/tournaments/${tournament.id}`}
+                    className="glass-card p-6 hover:border-primary/50 transition-all group"
+                  >
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        {tournament.logo_url ? (
+                          <img 
+                            src={tournament.logo_url} 
+                            alt={tournament.name}
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <Trophy className="h-6 w-6 text-primary" />
+                          </div>
+                        )}
+                        {getStatusBadge(tournament.status)}
+                      </div>
+                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    </div>
+
+                    <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
                       {tournament.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                    </h3>
 
-            {/* Standings Table */}
-            <div className="glass-card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border text-xs text-muted-foreground uppercase">
-                      <th className="p-4 text-left">#</th>
-                      <th className="p-4 text-left">Team</th>
-                      <th className="p-4 text-center">P</th>
-                      <th className="p-4 text-center text-green-500">W</th>
-                      <th className="p-4 text-center">D</th>
-                      <th className="p-4 text-center text-red-500">L</th>
-                      <th className="p-4 text-center">GF</th>
-                      <th className="p-4 text-center">GA</th>
-                      <th className="p-4 text-center">GD</th>
-                      <th className="p-4 text-center text-primary font-bold">PTS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {isLoading ? (
-                      [...Array(5)].map((_, i) => (
-                        <tr key={i} className="border-b border-border">
-                          <td colSpan={10} className="p-4">
-                            <div className="h-8 bg-secondary rounded animate-pulse" />
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      sortedTeams.map((team, index) => {
-                        const gd = (team.goals_for || 0) - (team.goals_against || 0);
-                        const played = (team.wins || 0) + (team.draws || 0) + (team.losses || 0);
-                        const isChampion = index === 0;
-                        const isPromotion = index >= 1 && index <= 3;
-                        const isRelegation = index >= sortedTeams.length - 3 && sortedTeams.length > 6;
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {tournament.age_category && (
+                        <Badge variant="outline" className="text-xs">
+                          {tournament.age_category.toUpperCase()}
+                        </Badge>
+                      )}
+                      {getFormatBadge(tournament.format)}
+                    </div>
 
-                        return (
-                          <tr 
-                            key={team.id} 
-                            className={`border-b border-border hover:bg-secondary/50 transition-colors ${
-                              isChampion 
-                                ? "border-l-2 border-l-yellow-500" 
-                                : isPromotion 
-                                ? "border-l-2 border-l-green-500" 
-                                : isRelegation 
-                                ? "border-l-2 border-l-red-500" 
-                                : ""
-                            }`}
-                          >
-                            <td className="p-4">
-                              <div className="flex items-center gap-2">
-                                <span className="font-bold">{index + 1}</span>
-                                {index === 0 && <Trophy className="h-4 w-4 text-yellow-500" />}
-                              </div>
-                            </td>
-                            <td className="p-4">
-                              <Link to={`/clubs/${team.id}`} className="flex items-center gap-3 hover:text-primary transition-colors">
-                                <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                                  {team.short_name || team.name.slice(0, 2).toUpperCase()}
-                                </div>
-                                <span className="font-medium">{team.name}</span>
-                              </Link>
-                            </td>
-                            <td className="p-4 text-center">{played}</td>
-                            <td className="p-4 text-center text-green-500 font-medium">{team.wins || 0}</td>
-                            <td className="p-4 text-center">{team.draws || 0}</td>
-                            <td className="p-4 text-center text-red-500 font-medium">{team.losses || 0}</td>
-                            <td className="p-4 text-center">{team.goals_for || 0}</td>
-                            <td className="p-4 text-center">{team.goals_against || 0}</td>
-                            <td className="p-4 text-center">
-                              <span className={gd > 0 ? "text-green-500" : gd < 0 ? "text-red-500" : ""}>
-                                {gd > 0 ? `+${gd}` : gd}
-                              </span>
-                            </td>
-                            <td className="p-4 text-center">
-                              <span className="text-lg font-bold text-primary">{team.points || 0}</span>
-                            </td>
-                          </tr>
-                        );
-                      })
+                    {tournament.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                        {tournament.description}
+                      </p>
                     )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
 
-            {/* Legend */}
-            <div className="glass-card p-4 mt-4">
-              <div className="flex flex-wrap gap-6 text-xs text-muted-foreground mb-4">
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-yellow-500" /> Champions
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-green-500" /> Promotion Zone
-                </span>
-                <span className="flex items-center gap-2">
-                  <span className="w-3 h-3 rounded-full bg-red-500" /> Relegation Zone
-                </span>
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground pt-4 border-t border-border">
+                      {tournament.start_date && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {format(new Date(tournament.start_date), "MMM d, yyyy")}
+                        </span>
+                      )}
+                      {tournament.max_teams && (
+                        <span className="flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          {tournament.max_teams} teams
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                ))}
               </div>
-              <div className="flex flex-wrap gap-6 text-xs text-muted-foreground">
-                <span><strong>P</strong> Matches played</span>
-                <span><strong className="text-green-500">W</strong> Wins (3 pts each)</span>
-                <span><strong>D</strong> Draws (1 pt each)</span>
-                <span><strong className="text-red-500">L</strong> Losses (0 pts)</span>
-                <span><strong>GD</strong> Goal difference</span>
-              </div>
-            </div>
+            )}
           </TabsContent>
 
           {/* Tournament Formats Tab */}
@@ -356,8 +316,7 @@ export default function StandingsPage() {
               <div className="mt-6 p-4 rounded-lg border border-primary/30 bg-primary/5">
                 <p className="text-sm text-muted-foreground">
                   <strong className="text-foreground">Note:</strong> Promotion and relegation only apply to 
-                  multi-division tournaments. Single-division youth leagues focus on development without 
-                  relegation pressure. Contact the EYL Competition Committee for specific tournament rules.
+                  multi-division tournaments. Single-division tournaments crown a champion without relegation.
                 </p>
               </div>
             </div>
