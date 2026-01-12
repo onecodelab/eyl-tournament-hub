@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useTeams, useTournaments } from "@/hooks/useSupabaseData";
@@ -240,15 +241,16 @@ export default function THOTeams() {
                 Add Team
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>{editingTeam ? "Edit Team" : "Add New Team"}</DialogTitle>
                 <DialogDescription>
                   {editingTeam ? "Update team details" : "Add a new team to your tournament"}
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-4 py-4">
+              <ScrollArea className="flex-1 max-h-[60vh]">
+                <form onSubmit={handleSubmit} id="team-form">
+                  <div className="space-y-4 py-4 pr-4">
                   <div className="space-y-2">
                     <Label>Team Name *</Label>
                     <Input
@@ -323,16 +325,17 @@ export default function THOTeams() {
                       bucket="hero-images"
                     />
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={createTeam.isPending || updateTeam.isPending}>
-                    {editingTeam ? "Update" : "Create"}
-                  </Button>
-                </DialogFooter>
-              </form>
+                  </div>
+                </form>
+              </ScrollArea>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" form="team-form" disabled={createTeam.isPending || updateTeam.isPending}>
+                  {editingTeam ? "Update" : "Create"}
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
