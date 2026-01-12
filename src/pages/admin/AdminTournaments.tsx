@@ -51,7 +51,7 @@ export default function AdminTournaments() {
     end_date: "",
     status: "upcoming",
     logo_url: "",
-    // New fields
+    // Tournament configuration fields
     age_category: "",
     format: "league",
     max_teams: 16,
@@ -60,6 +60,10 @@ export default function AdminTournaments() {
     max_substitutions: 5,
     extra_time_duration_minutes: 30,
     penalty_shootout: true,
+    // Group+Knockout specific fields
+    num_groups: 2,
+    teams_per_group: 4,
+    teams_qualifying_per_group: 2,
   });
 
   // Fetch current assigned admin when editing
@@ -87,6 +91,9 @@ export default function AdminTournaments() {
       max_substitutions: 5,
       extra_time_duration_minutes: 30,
       penalty_shootout: true,
+      num_groups: 2,
+      teams_per_group: 4,
+      teams_qualifying_per_group: 2,
     });
     setEditingTournament(null);
     setSelectedAdminId("");
@@ -110,6 +117,9 @@ export default function AdminTournaments() {
       max_substitutions: tournamentData.max_substitutions || 5,
       extra_time_duration_minutes: tournamentData.extra_time_duration_minutes || 30,
       penalty_shootout: tournamentData.penalty_shootout ?? true,
+      num_groups: tournamentData.num_groups || 2,
+      teams_per_group: tournamentData.teams_per_group || 4,
+      teams_qualifying_per_group: tournamentData.teams_qualifying_per_group || 2,
     });
     setDialogOpen(true);
   };
@@ -136,6 +146,10 @@ export default function AdminTournaments() {
       max_substitutions: formData.max_substitutions,
       extra_time_duration_minutes: formData.format !== "league" ? formData.extra_time_duration_minutes : null,
       penalty_shootout: formData.format !== "league" ? formData.penalty_shootout : null,
+      // Group+Knockout specific fields
+      num_groups: formData.format === "group_knockout" ? formData.num_groups : null,
+      teams_per_group: formData.format === "group_knockout" ? formData.teams_per_group : null,
+      teams_qualifying_per_group: formData.format === "group_knockout" ? formData.teams_qualifying_per_group : null,
     };
 
     try {
@@ -340,6 +354,52 @@ export default function AdminTournaments() {
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Group+Knockout Configuration */}
+                  {formData.format === "group_knockout" && (
+                    <div className="space-y-4 p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                      <h4 className="text-sm font-medium flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Group Stage Configuration
+                      </h4>
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>Number of Groups</Label>
+                          <Input 
+                            type="number" 
+                            min={2} 
+                            max={8}
+                            value={formData.num_groups} 
+                            onChange={(e) => setFormData({ ...formData, num_groups: parseInt(e.target.value) || 2 })} 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Teams per Group</Label>
+                          <Input 
+                            type="number" 
+                            min={2} 
+                            max={8}
+                            value={formData.teams_per_group} 
+                            onChange={(e) => setFormData({ ...formData, teams_per_group: parseInt(e.target.value) || 4 })} 
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Teams Qualifying</Label>
+                          <Input 
+                            type="number" 
+                            min={1} 
+                            max={formData.teams_per_group - 1}
+                            value={formData.teams_qualifying_per_group} 
+                            onChange={(e) => setFormData({ ...formData, teams_qualifying_per_group: parseInt(e.target.value) || 2 })} 
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Total teams needed: {formData.num_groups * formData.teams_per_group} | 
+                        Teams advancing: {formData.num_groups * formData.teams_qualifying_per_group}
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <Separator />

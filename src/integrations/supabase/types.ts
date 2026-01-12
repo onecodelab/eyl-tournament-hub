@@ -170,11 +170,13 @@ export type Database = {
           away_score: number | null
           away_team_id: string | null
           created_at: string
+          extra_time_option: string | null
           home_score: number | null
           home_team_id: string | null
           id: string
           match_date: string | null
           referee_id: string | null
+          stage: string | null
           status: string | null
           tagline: string | null
           tournament_id: string | null
@@ -185,11 +187,13 @@ export type Database = {
           away_score?: number | null
           away_team_id?: string | null
           created_at?: string
+          extra_time_option?: string | null
           home_score?: number | null
           home_team_id?: string | null
           id?: string
           match_date?: string | null
           referee_id?: string | null
+          stage?: string | null
           status?: string | null
           tagline?: string | null
           tournament_id?: string | null
@@ -200,11 +204,13 @@ export type Database = {
           away_score?: number | null
           away_team_id?: string | null
           created_at?: string
+          extra_time_option?: string | null
           home_score?: number | null
           home_team_id?: string | null
           id?: string
           match_date?: string | null
           referee_id?: string | null
+          stage?: string | null
           status?: string | null
           tagline?: string | null
           tournament_id?: string | null
@@ -292,6 +298,7 @@ export type Database = {
           bio: string | null
           created_at: string
           date_of_birth: string | null
+          fayda_number: string | null
           goals: number | null
           height: number | null
           id: string
@@ -313,6 +320,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           date_of_birth?: string | null
+          fayda_number?: string | null
           goals?: number | null
           height?: number | null
           id?: string
@@ -334,6 +342,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           date_of_birth?: string | null
+          fayda_number?: string | null
           goals?: number | null
           height?: number | null
           id?: string
@@ -406,6 +415,7 @@ export type Database = {
           founded_year: number | null
           goals_against: number | null
           goals_for: number | null
+          group_name: string | null
           id: string
           logo_url: string | null
           losses: number | null
@@ -429,6 +439,7 @@ export type Database = {
           founded_year?: number | null
           goals_against?: number | null
           goals_for?: number | null
+          group_name?: string | null
           id?: string
           logo_url?: string | null
           losses?: number | null
@@ -452,6 +463,7 @@ export type Database = {
           founded_year?: number | null
           goals_against?: number | null
           goals_for?: number | null
+          group_name?: string | null
           id?: string
           logo_url?: string | null
           losses?: number | null
@@ -522,9 +534,12 @@ export type Database = {
           max_substitutions: number | null
           max_teams: number | null
           name: string
+          num_groups: number | null
           penalty_shootout: boolean | null
           start_date: string | null
           status: string | null
+          teams_per_group: number | null
+          teams_qualifying_per_group: number | null
           updated_at: string
         }
         Insert: {
@@ -541,9 +556,12 @@ export type Database = {
           max_substitutions?: number | null
           max_teams?: number | null
           name: string
+          num_groups?: number | null
           penalty_shootout?: boolean | null
           start_date?: string | null
           status?: string | null
+          teams_per_group?: number | null
+          teams_qualifying_per_group?: number | null
           updated_at?: string
         }
         Update: {
@@ -560,9 +578,12 @@ export type Database = {
           max_substitutions?: number | null
           max_teams?: number | null
           name?: string
+          num_groups?: number | null
           penalty_shootout?: boolean | null
           start_date?: string | null
           status?: string | null
+          teams_per_group?: number | null
+          teams_qualifying_per_group?: number | null
           updated_at?: string
         }
         Relationships: []

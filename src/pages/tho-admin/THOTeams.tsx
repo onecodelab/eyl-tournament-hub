@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { THOAdminLayout } from "@/components/admin/THOAdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useTeams } from "@/hooks/useSupabaseData";
+import { Badge } from "@/components/ui/badge";
+import { useTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { useCreateTeam, useUpdateTeam, useDeleteTeam } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { Users, Plus, Edit, Trash2 } from "lucide-react";
 
+// Generate group names A-H
+const GROUP_NAMES = ["Group A", "Group B", "Group C", "Group D", "Group E", "Group F", "Group G", "Group H"];
+
 export default function THOTeams() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | undefined>();
   const { data: allTeams = [], isLoading } = useTeams();
+  const { data: tournaments = [] } = useTournaments();
   const { assignedTournaments } = useTournamentAdmin();
   const createTeam = useCreateTeam();
   const updateTeam = useUpdateTeam();
@@ -31,6 +37,7 @@ export default function THOTeams() {
     stadium: "",
     logo_url: "",
     founded_year: "",
+    group_name: "",
   });
 
   // Filter teams by selected tournament
@@ -40,6 +47,34 @@ export default function THOTeams() {
     (t: any) => t.id === selectedTournamentId
   );
 
+  const tournamentDetails = useMemo(() => {
+    return tournaments.find((t: any) => t.id === selectedTournamentId) as any;
+  }, [tournaments, selectedTournamentId]);
+
+  const isGroupKnockoutFormat = tournamentDetails?.format === "group_knockout";
+  const numGroups = tournamentDetails?.num_groups || 2;
+
+  // Get available groups based on tournament configuration
+  const availableGroups = useMemo(() => {
+    return GROUP_NAMES.slice(0, numGroups);
+  }, [numGroups]);
+
+  // Group teams by group_name for display
+  const teamsByGroup = useMemo(() => {
+    const grouped: Record<string, any[]> = { "Unassigned": [] };
+    availableGroups.forEach(group => {
+      grouped[group] = [];
+    });
+    teams.forEach((team: any) => {
+      if (team.group_name && grouped[team.group_name]) {
+        grouped[team.group_name].push(team);
+      } else {
+        grouped["Unassigned"].push(team);
+      }
+    });
+    return grouped;
+  }, [teams, availableGroups]);
+
   const resetForm = () => {
     setFormData({
       name: "",
@@ -48,6 +83,7 @@ export default function THOTeams() {
       stadium: "",
       logo_url: "",
       founded_year: "",
+      group_name: "",
     });
     setEditingTeam(null);
   };
@@ -61,6 +97,7 @@ export default function THOTeams() {
       stadium: team.stadium || "",
       logo_url: team.logo_url || "",
       founded_year: team.founded_year?.toString() || "",
+      group_name: team.group_name || "",
     });
     setDialogOpen(true);
   };
@@ -80,6 +117,7 @@ export default function THOTeams() {
       ...formData,
       tournament_id: selectedTournamentId,
       founded_year: formData.founded_year ? parseInt(formData.founded_year) : null,
+      group_name: formData.group_name || null,
     };
 
     try {
@@ -114,6 +152,65 @@ export default function THOTeams() {
     }
   };
 
+  const renderTeamTable = (teamList: any[], showGroup = false) => (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Logo</TableHead>
+          <TableHead>Name</TableHead>
+          <TableHead>Short</TableHead>
+          {showGroup && <TableHead>Group</TableHead>}
+          <TableHead>Coach</TableHead>
+          <TableHead>Stadium</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {teamList.map((team: any) => (
+          <TableRow key={team.id}>
+            <TableCell>
+              {team.logo_url ? (
+                <img src={team.logo_url} alt={team.name} className="h-8 w-8 object-contain" />
+              ) : (
+                <div className="h-8 w-8 bg-muted rounded flex items-center justify-center">
+                  <Users className="h-4 w-4 text-muted-foreground" />
+                </div>
+              )}
+            </TableCell>
+            <TableCell className="font-medium">{team.name}</TableCell>
+            <TableCell>{team.short_name || "-"}</TableCell>
+            {showGroup && (
+              <TableCell>
+                {team.group_name ? (
+                  <Badge variant="outline">{team.group_name}</Badge>
+                ) : (
+                  <span className="text-muted-foreground">-</span>
+                )}
+              </TableCell>
+            )}
+            <TableCell>{team.coach || "-"}</TableCell>
+            <TableCell>{team.stadium || "-"}</TableCell>
+            <TableCell className="text-right">
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="icon" onClick={() => handleEdit(team)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleDelete(team.id)}
+                  disabled={deleteTeam.isPending}
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
   return (
     <THOAdminLayout
       selectedTournamentId={selectedTournamentId}
@@ -128,6 +225,11 @@ export default function THOTeams() {
               <h1 className="text-2xl font-bold">Teams Management</h1>
               <p className="text-muted-foreground">
                 {selectedTournament ? `Managing teams for ${(selectedTournament as any).name}` : "Select a tournament"}
+                {tournamentDetails && (
+                  <span className="ml-2">
+                    <Badge variant="secondary">{tournamentDetails.format?.replace("_", " + ").toUpperCase()}</Badge>
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -163,6 +265,30 @@ export default function THOTeams() {
                       placeholder="e.g. FCB"
                     />
                   </div>
+
+                  {/* Group Assignment - only for Group+Knockout format */}
+                  {isGroupKnockoutFormat && (
+                    <div className="space-y-2">
+                      <Label>Group Assignment</Label>
+                      <Select 
+                        value={formData.group_name || "none"} 
+                        onValueChange={(val) => setFormData({ ...formData, group_name: val === "none" ? "" : val })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Assign to group" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No Group (Unassigned)</SelectItem>
+                          {availableGroups.map((group) => (
+                            <SelectItem key={group} value={group}>
+                              {group}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label>Coach</Label>
                     <Input
@@ -211,12 +337,17 @@ export default function THOTeams() {
           </Dialog>
         </div>
 
-        {/* Teams Table */}
+        {/* Teams Display */}
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle>Teams</CardTitle>
             <CardDescription>
               {teams.length} teams in this tournament
+              {isGroupKnockoutFormat && tournamentDetails && (
+                <span className="ml-2">
+                  ({numGroups} groups, {tournamentDetails.teams_per_group} teams per group)
+                </span>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -234,53 +365,37 @@ export default function THOTeams() {
                 <Users className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <p className="text-muted-foreground">No teams found. Add your first team!</p>
               </div>
+            ) : isGroupKnockoutFormat ? (
+              <div className="space-y-6">
+                {/* Unassigned Teams */}
+                {teamsByGroup["Unassigned"].length > 0 && (
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-orange-500">Unassigned Teams ({teamsByGroup["Unassigned"].length})</h3>
+                    {renderTeamTable(teamsByGroup["Unassigned"])}
+                  </div>
+                )}
+
+                {/* Groups */}
+                {availableGroups.map((group) => (
+                  <div key={group} className="space-y-2">
+                    <h3 className="text-sm font-semibold flex items-center gap-2">
+                      <Badge variant="outline">{group}</Badge>
+                      <span className="text-muted-foreground">
+                        ({teamsByGroup[group]?.length || 0}/{tournamentDetails?.teams_per_group || 4} teams)
+                      </span>
+                    </h3>
+                    {teamsByGroup[group]?.length > 0 ? (
+                      renderTeamTable(teamsByGroup[group])
+                    ) : (
+                      <p className="text-sm text-muted-foreground py-4 text-center bg-muted/30 rounded">
+                        No teams assigned to this group yet
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Logo</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Short</TableHead>
-                    <TableHead>Coach</TableHead>
-                    <TableHead>Stadium</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {teams.map((team: any) => (
-                    <TableRow key={team.id}>
-                      <TableCell>
-                        {team.logo_url ? (
-                          <img src={team.logo_url} alt={team.name} className="h-8 w-8 object-contain" />
-                        ) : (
-                          <div className="h-8 w-8 bg-muted rounded flex items-center justify-center">
-                            <Users className="h-4 w-4 text-muted-foreground" />
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">{team.name}</TableCell>
-                      <TableCell>{team.short_name || "-"}</TableCell>
-                      <TableCell>{team.coach || "-"}</TableCell>
-                      <TableCell>{team.stadium || "-"}</TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(team)}>
-                            <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            onClick={() => handleDelete(team.id)}
-                            disabled={deleteTeam.isPending}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              renderTeamTable(teams, false)
             )}
           </CardContent>
         </Card>
