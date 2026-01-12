@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -270,15 +271,16 @@ export default function THOMatches() {
                 Add Match
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>{editingMatch ? "Edit Match" : "Add New Match"}</DialogTitle>
                 <DialogDescription>
                   {editingMatch ? "Update match details" : "Schedule a new match"}
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-4 py-4">
+              <ScrollArea className="flex-1 max-h-[60vh]">
+                <form onSubmit={handleSubmit} id="match-form">
+                  <div className="space-y-4 py-4 pr-4">
                   {/* Match Stage Selection */}
                   <div className="space-y-2">
                     <Label>Match Stage *</Label>
@@ -389,16 +391,17 @@ export default function THOMatches() {
                       </SelectContent>
                     </Select>
                   </div>
-                </div>
-                <DialogFooter>
-                  <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={createMatch.isPending || updateMatch.isPending}>
-                    {editingMatch ? "Update" : "Create"}
-                  </Button>
-                </DialogFooter>
-              </form>
+                  </div>
+                </form>
+              </ScrollArea>
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" form="match-form" disabled={createMatch.isPending || updateMatch.isPending}>
+                  {editingMatch ? "Update" : "Create"}
+                </Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
