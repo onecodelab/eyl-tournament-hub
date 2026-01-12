@@ -105,6 +105,21 @@ export function useDeleteTeam() {
   });
 }
 
+// Bulk Team Import
+export function useBulkCreateTeams() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (teams: TeamInsert[]) => {
+      if (teams.length === 0) throw new Error("No teams to import");
+      
+      const { data, error } = await supabase.from("teams").insert(teams).select();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["teams"] }),
+  });
+}
+
 // Player mutations
 export function useCreatePlayer() {
   const queryClient = useQueryClient();
@@ -144,6 +159,21 @@ export function useDeletePlayer() {
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("players").delete().eq("id", id);
       if (error) throw error;
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["players"] }),
+  });
+}
+
+// Bulk Player Import
+export function useBulkCreatePlayers() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (players: PlayerInsert[]) => {
+      if (players.length === 0) throw new Error("No players to import");
+      
+      const { data, error } = await supabase.from("players").insert(players).select();
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["players"] }),
   });

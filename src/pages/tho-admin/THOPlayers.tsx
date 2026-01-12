@@ -9,10 +9,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useTeams, usePlayers } from "@/hooks/useSupabaseData";
-import { useCreatePlayer, useUpdatePlayer, useDeletePlayer } from "@/hooks/useAdminMutations";
+import { useCreatePlayer, useUpdatePlayer, useDeletePlayer, useBulkCreatePlayers } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { CSVImportDialog } from "@/components/admin/CSVImportDialog";
+import { parseCSV, generatePlayersCSVTemplate } from "@/utils/csvParser";
 import { UserCircle, Plus, Edit, Trash2, Filter } from "lucide-react";
 
 export default function THOPlayers() {
@@ -24,6 +26,7 @@ export default function THOPlayers() {
   const createPlayer = useCreatePlayer();
   const updatePlayer = useUpdatePlayer();
   const deletePlayer = useDeletePlayer();
+  const bulkCreatePlayers = useBulkCreatePlayers();
   const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -155,13 +158,84 @@ export default function THOPlayers() {
               </p>
             </div>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="gap-2" disabled={!selectedTournamentId || teams.length === 0}>
-                <Plus className="h-4 w-4" />
-                Add Player
-              </Button>
-            </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <CSVImportDialog
+              title="Import Players from CSV"
+              description="Upload a CSV file to bulk import players. Use team names (must match existing teams)."
+              templateGenerator={generatePlayersCSVTemplate}
+              templateFilename="players_template.csv"
+              disabled={!selectedTournamentId || teams.length === 0}
+              onImport={async (file) => {
+                const text = await file.text();
+                const result = parseCSV<{
+                  name: string;
+                  team_name: string;
+                  jersey_number: string;
+                  position: string;
+                  nationality: string;
+                  fayda_number: string;
+                }>(
+                  text,
+                  {
+                    name: "name",
+                    team_name: "team_name",
+                    jersey_number: "jersey_number",
+                    position: "position",
+                    nationality: "nationality",
+                    fayda_number: "fayda_number",
+                  },
+                  ["name", "team_name"]
+                );
+
+                if (result.data.length === 0) {
+                  return { success: 0, errors: result.errors.length > 0 ? result.errors : ["No valid players found in CSV"] };
+                }
+
+                // Map team names to team IDs
+                const errors: string[] = [...result.errors];
+                const playersToInsert: any[] = [];
+
+                for (let i = 0; i < result.data.length; i++) {
+                  const row = result.data[i];
+                  const team = teams.find((t: any) => 
+                    t.name.toLowerCase() === row.team_name?.toLowerCase()
+                  );
+
+                  if (!team) {
+                    errors.push(`Row ${i + 2}: Team "${row.team_name}" not found`);
+                    continue;
+                  }
+
+                  playersToInsert.push({
+                    name: row.name,
+                    team_id: team.id,
+                    jersey_number: row.jersey_number ? parseInt(row.jersey_number) : null,
+                    position: row.position || null,
+                    nationality: row.nationality || null,
+                    fayda_number: row.fayda_number || null,
+                  });
+                }
+
+                if (playersToInsert.length === 0) {
+                  return { success: 0, errors: errors.length > 0 ? errors : ["No valid players to import"] };
+                }
+
+                try {
+                  await bulkCreatePlayers.mutateAsync(playersToInsert);
+                  toast({ title: `Successfully imported ${playersToInsert.length} players` });
+                  return { success: playersToInsert.length, errors };
+                } catch (error: any) {
+                  return { success: 0, errors: [error.message || "Failed to import players"] };
+                }
+              }}
+            />
+            <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button className="gap-2" disabled={!selectedTournamentId || teams.length === 0}>
+                  <Plus className="h-4 w-4" />
+                  Add Player
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>{editingPlayer ? "Edit Player" : "Add New Player"}</DialogTitle>
@@ -260,7 +334,8 @@ export default function THOPlayers() {
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
 
         {/* Players Table */}
