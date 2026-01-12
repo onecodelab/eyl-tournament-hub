@@ -10,10 +10,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useTeams, useTournaments } from "@/hooks/useSupabaseData";
-import { useCreateTeam, useUpdateTeam, useDeleteTeam } from "@/hooks/useAdminMutations";
+import { useCreateTeam, useUpdateTeam, useDeleteTeam, useBulkCreateTeams } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { CSVImportDialog } from "@/components/admin/CSVImportDialog";
+import { parseCSV, generateTeamsCSVTemplate } from "@/utils/csvParser";
 import { Users, Plus, Edit, Trash2 } from "lucide-react";
 
 // Generate group names A-H
@@ -27,6 +29,7 @@ export default function THOTeams() {
   const createTeam = useCreateTeam();
   const updateTeam = useUpdateTeam();
   const deleteTeam = useDeleteTeam();
+  const bulkCreateTeams = useBulkCreateTeams();
   const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -234,13 +237,65 @@ export default function THOTeams() {
               </p>
             </div>
           </div>
-          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="gap-2" disabled={!selectedTournamentId}>
-                <Plus className="h-4 w-4" />
-                Add Team
-              </Button>
-            </DialogTrigger>
+          <div className="flex items-center gap-2">
+            <CSVImportDialog
+              title="Import Teams from CSV"
+              description="Upload a CSV file to bulk import teams into this tournament."
+              templateGenerator={generateTeamsCSVTemplate}
+              templateFilename="teams_template.csv"
+              disabled={!selectedTournamentId}
+              onImport={async (file) => {
+                const text = await file.text();
+                const result = parseCSV<{
+                  name: string;
+                  short_name: string;
+                  coach: string;
+                  stadium: string;
+                  founded_year: string;
+                  group_name: string;
+                }>(
+                  text,
+                  {
+                    name: "name",
+                    short_name: "short_name",
+                    coach: "coach",
+                    stadium: "stadium",
+                    founded_year: "founded_year",
+                    group_name: "group_name",
+                  },
+                  ["name"]
+                );
+
+                if (result.data.length === 0) {
+                  return { success: 0, errors: result.errors.length > 0 ? result.errors : ["No valid teams found in CSV"] };
+                }
+
+                const teamsToInsert = result.data.map((row) => ({
+                  name: row.name,
+                  short_name: row.short_name || null,
+                  coach: row.coach || null,
+                  stadium: row.stadium || null,
+                  founded_year: row.founded_year ? parseInt(row.founded_year) : null,
+                  group_name: row.group_name || null,
+                  tournament_id: selectedTournamentId!,
+                }));
+
+                try {
+                  await bulkCreateTeams.mutateAsync(teamsToInsert);
+                  toast({ title: `Successfully imported ${teamsToInsert.length} teams` });
+                  return { success: teamsToInsert.length, errors: result.errors };
+                } catch (error: any) {
+                  return { success: 0, errors: [error.message || "Failed to import teams"] };
+                }
+              }}
+            />
+            <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button className="gap-2" disabled={!selectedTournamentId}>
+                  <Plus className="h-4 w-4" />
+                  Add Team
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
               <DialogHeader>
                 <DialogTitle>{editingTeam ? "Edit Team" : "Add New Team"}</DialogTitle>
@@ -337,7 +392,8 @@ export default function THOTeams() {
                 </Button>
               </DialogFooter>
             </DialogContent>
-          </Dialog>
+            </Dialog>
+          </div>
         </div>
 
         {/* Teams Display */}
