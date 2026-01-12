@@ -159,7 +159,7 @@ export default function LiveMatch() {
     let away = match?.away_score ?? 0;
     
     // If match has stored scores, use them; otherwise calculate from events
-    if (match?.status === "in_progress" || !match?.home_score) {
+    if (match?.status === "live" || !match?.home_score) {
       home = events.filter(
         (e) => e.event_type === "goal" && e.team_id === match?.home_team?.id
       ).length;
@@ -171,8 +171,8 @@ export default function LiveMatch() {
     return { home, away };
   }, [events, match]);
 
-  const isSetupPhase = match?.status === "scheduled" || match?.status === "ready";
-  const isLive = match?.status === "in_progress";
+  const isSetupPhase = match?.status === "scheduled";
+  const isLive = match?.status === "live";
   const isCompleted = match?.status === "completed";
 
   const handleSaveLineups = async () => {
@@ -194,7 +194,6 @@ export default function LiveMatch() {
         }),
       ]);
 
-      await updateStatus.mutateAsync({ matchId, status: "ready" });
       toast.success("Lineups saved successfully!");
     } catch (error) {
       toast.error("Failed to save lineups");
@@ -205,7 +204,7 @@ export default function LiveMatch() {
     if (!matchId) return;
 
     try {
-      await updateStatus.mutateAsync({ matchId, status: "in_progress" });
+      await updateStatus.mutateAsync({ matchId, status: "live" });
       setIsTimerRunning(true);
       toast.success("Match started!");
     } catch (error) {
@@ -239,7 +238,7 @@ export default function LiveMatch() {
         const newAway = eventTeam === "away" ? scores.away + 1 : scores.away;
         await updateStatus.mutateAsync({
           matchId,
-          status: "in_progress",
+          status: "live",
           homeScore: newHome,
           awayScore: newAway,
         });
@@ -394,7 +393,7 @@ export default function LiveMatch() {
                   </div>
 
                   <div>
-                    <Label>Outfield Players (4-7)</Label>
+                    <Label>Outfield Players (4-10)</Label>
                     <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
                       {homePlayers
                         .filter((p) => p.position?.toLowerCase() !== "goalkeeper")
@@ -448,7 +447,7 @@ export default function LiveMatch() {
                   </div>
 
                   <div>
-                    <Label>Outfield Players (4-7)</Label>
+                    <Label>Outfield Players (4-10)</Label>
                     <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
                       {awayPlayers
                         .filter((p) => p.position?.toLowerCase() !== "goalkeeper")
@@ -484,12 +483,14 @@ export default function LiveMatch() {
                 <Button onClick={handleSaveLineups} disabled={saveLineup.isPending}>
                   Save Lineups
                 </Button>
-                {match.status === "ready" && (
-                  <Button onClick={handleStartMatch} className="bg-green-600 hover:bg-green-700">
-                    <Play className="h-4 w-4 mr-2" />
-                    Start Match
-                  </Button>
-                )}
+                <Button 
+                  onClick={handleStartMatch} 
+                  className="bg-green-600 hover:bg-green-700"
+                  disabled={!homeGoalkeeper || !awayGoalkeeper || homeSelectedPlayers.length < 4 || awaySelectedPlayers.length < 4}
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  Start Match
+                </Button>
               </div>
             </CardContent>
           </Card>
