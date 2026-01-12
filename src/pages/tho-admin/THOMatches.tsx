@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { THOAdminLayout } from "@/components/admin/THOAdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,17 +8,36 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useTeams, useMatches } from "@/hooks/useSupabaseData";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTeams, useMatches, useTournaments } from "@/hooks/useSupabaseData";
 import { useUserRoles } from "@/hooks/useReferees";
 import { useCreateMatch, useUpdateMatch, useDeleteMatch } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar, Plus, Edit, Trash2 } from "lucide-react";
 
+const MATCH_STAGES = [
+  { value: "group", label: "Group Stage" },
+  { value: "round_of_16", label: "Round of 16" },
+  { value: "quarter_final", label: "Quarter Final" },
+  { value: "semi_final", label: "Semi Final" },
+  { value: "third_place", label: "Third Place" },
+  { value: "final", label: "Final" },
+] as const;
+
+const KNOCKOUT_STAGES = MATCH_STAGES.filter(s => s.value !== "group");
+
+const EXTRA_TIME_OPTIONS = [
+  { value: "extra_time", label: "Extra Time + Penalties" },
+  { value: "direct_penalty", label: "Direct Penalty Shootout" },
+  { value: "golden_goal", label: "Golden Goal" },
+] as const;
+
 export default function THOMatches() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | undefined>();
   const { data: allTeams = [] } = useTeams();
   const { data: allMatches = [], isLoading } = useMatches();
+  const { data: tournaments = [] } = useTournaments();
   const { data: userRoles = [] } = useUserRoles();
   const referees = userRoles.filter((r: any) => r.role === "referee");
   const { assignedTournaments } = useTournamentAdmin();
@@ -36,6 +55,8 @@ export default function THOMatches() {
     venue: "",
     status: "scheduled",
     referee_id: "",
+    stage: "group",
+    extra_time_option: "extra_time",
   });
 
   // Filter teams and matches by selected tournament
@@ -46,6 +67,31 @@ export default function THOMatches() {
     (t: any) => t.id === selectedTournamentId
   );
 
+  const tournamentDetails = useMemo(() => {
+    return tournaments.find((t: any) => t.id === selectedTournamentId) as any;
+  }, [tournaments, selectedTournamentId]);
+
+  const isKnockoutFormat = tournamentDetails?.format === "knockout";
+  const isGroupKnockoutFormat = tournamentDetails?.format === "group_knockout";
+  const isKnockoutStage = formData.stage !== "group";
+
+  // Get available stages based on tournament format
+  const availableStages = useMemo(() => {
+    if (isKnockoutFormat) {
+      return KNOCKOUT_STAGES;
+    }
+    return MATCH_STAGES;
+  }, [isKnockoutFormat]);
+
+  // Group matches by stage for display
+  const matchesByStage = useMemo(() => {
+    const grouped: Record<string, any[]> = {};
+    MATCH_STAGES.forEach(stage => {
+      grouped[stage.value] = matches.filter((m: any) => m.stage === stage.value);
+    });
+    return grouped;
+  }, [matches]);
+
   const resetForm = () => {
     setFormData({
       home_team_id: "",
@@ -54,6 +100,8 @@ export default function THOMatches() {
       venue: "",
       status: "scheduled",
       referee_id: "",
+      stage: isKnockoutFormat ? "round_of_16" : "group",
+      extra_time_option: "extra_time",
     });
     setEditingMatch(null);
   };
@@ -67,6 +115,8 @@ export default function THOMatches() {
       venue: match.venue || "",
       status: match.status || "scheduled",
       referee_id: match.referee_id || "",
+      stage: match.stage || "group",
+      extra_time_option: match.extra_time_option || "extra_time",
     });
     setDialogOpen(true);
   };
@@ -137,6 +187,60 @@ export default function THOMatches() {
     }
   };
 
+  const getStageBadge = (stage: string) => {
+    const stageInfo = MATCH_STAGES.find(s => s.value === stage);
+    return <Badge variant="outline">{stageInfo?.label || stage}</Badge>;
+  };
+
+  const renderMatchTable = (stageMatches: any[]) => (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Match</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Venue</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Score</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {stageMatches.map((match: any) => (
+          <TableRow key={match.id}>
+            <TableCell className="font-medium">
+              {getTeamName(match.home_team_id)} vs {getTeamName(match.away_team_id)}
+            </TableCell>
+            <TableCell>
+              {match.match_date ? new Date(match.match_date).toLocaleString() : "TBD"}
+            </TableCell>
+            <TableCell>{match.venue || "-"}</TableCell>
+            <TableCell>{getStatusBadge(match.status)}</TableCell>
+            <TableCell>
+              {match.status === "completed" || match.status === "live"
+                ? `${match.home_score ?? 0} - ${match.away_score ?? 0}`
+                : "-"}
+            </TableCell>
+            <TableCell className="text-right">
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="icon" onClick={() => handleEdit(match)}>
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleDelete(match.id)}
+                  disabled={deleteMatch.isPending}
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+
   return (
     <THOAdminLayout
       selectedTournamentId={selectedTournamentId}
@@ -151,6 +255,11 @@ export default function THOMatches() {
               <h1 className="text-2xl font-bold">Matches Management</h1>
               <p className="text-muted-foreground">
                 {selectedTournament ? `Managing matches for ${(selectedTournament as any).name}` : "Select a tournament"}
+                {tournamentDetails && (
+                  <span className="ml-2">
+                    <Badge variant="secondary">{tournamentDetails.format?.replace("_", " + ").toUpperCase()}</Badge>
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -170,6 +279,42 @@ export default function THOMatches() {
               </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <div className="space-y-4 py-4">
+                  {/* Match Stage Selection */}
+                  <div className="space-y-2">
+                    <Label>Match Stage *</Label>
+                    <Select value={formData.stage} onValueChange={(val) => setFormData({ ...formData, stage: val })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select stage" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableStages.map((stage) => (
+                          <SelectItem key={stage.value} value={stage.value}>
+                            {stage.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Extra Time Option - only for knockout stages */}
+                  {isKnockoutStage && (
+                    <div className="space-y-2">
+                      <Label>Tie-breaker Option</Label>
+                      <Select value={formData.extra_time_option} onValueChange={(val) => setFormData({ ...formData, extra_time_option: val })}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {EXTRA_TIME_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <Label>Home Team *</Label>
                     <Select value={formData.home_team_id} onValueChange={(val) => setFormData({ ...formData, home_team_id: val })}>
@@ -179,7 +324,7 @@ export default function THOMatches() {
                       <SelectContent>
                         {teams.map((team: any) => (
                           <SelectItem key={team.id} value={team.id}>
-                            {team.name}
+                            {team.name} {team.group_name && `(${team.group_name})`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -194,7 +339,7 @@ export default function THOMatches() {
                       <SelectContent>
                         {teams.filter((t: any) => t.id !== formData.home_team_id).map((team: any) => (
                           <SelectItem key={team.id} value={team.id}>
-                            {team.name}
+                            {team.name} {team.group_name && `(${team.group_name})`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -258,7 +403,7 @@ export default function THOMatches() {
           </Dialog>
         </div>
 
-        {/* Matches Table */}
+        {/* Matches Display */}
         <Card className="border-border/50">
           <CardHeader>
             <CardTitle>Matches</CardTitle>
@@ -286,11 +431,36 @@ export default function THOMatches() {
                 <Calendar className="h-12 w-12 text-muted-foreground/50 mb-4" />
                 <p className="text-muted-foreground">No matches found. Schedule your first match!</p>
               </div>
+            ) : isGroupKnockoutFormat ? (
+              <Tabs defaultValue="group" className="w-full">
+                <TabsList className="grid w-full grid-cols-6">
+                  {MATCH_STAGES.map((stage) => (
+                    <TabsTrigger key={stage.value} value={stage.value} className="text-xs">
+                      {stage.label.replace("Quarter ", "QF ").replace("Semi ", "SF ")}
+                      {matchesByStage[stage.value].length > 0 && (
+                        <span className="ml-1 text-muted-foreground">({matchesByStage[stage.value].length})</span>
+                      )}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {MATCH_STAGES.map((stage) => (
+                  <TabsContent key={stage.value} value={stage.value}>
+                    {matchesByStage[stage.value].length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-8 text-center">
+                        <p className="text-muted-foreground">No {stage.label.toLowerCase()} matches yet</p>
+                      </div>
+                    ) : (
+                      renderMatchTable(matchesByStage[stage.value])
+                    )}
+                  </TabsContent>
+                ))}
+              </Tabs>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Match</TableHead>
+                    <TableHead>Stage</TableHead>
                     <TableHead>Date</TableHead>
                     <TableHead>Venue</TableHead>
                     <TableHead>Status</TableHead>
@@ -304,6 +474,7 @@ export default function THOMatches() {
                       <TableCell className="font-medium">
                         {getTeamName(match.home_team_id)} vs {getTeamName(match.away_team_id)}
                       </TableCell>
+                      <TableCell>{getStageBadge(match.stage)}</TableCell>
                       <TableCell>
                         {match.match_date ? new Date(match.match_date).toLocaleString() : "TBD"}
                       </TableCell>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { THOAdminLayout } from "@/components/admin/THOAdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,11 @@ import { useCreatePlayer, useUpdatePlayer, useDeletePlayer } from "@/hooks/useAd
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/admin/ImageUpload";
-import { UserCircle, Plus, Edit, Trash2 } from "lucide-react";
+import { UserCircle, Plus, Edit, Trash2, Filter } from "lucide-react";
 
 export default function THOPlayers() {
   const [selectedTournamentId, setSelectedTournamentId] = useState<string | undefined>();
+  const [selectedTeamFilter, setSelectedTeamFilter] = useState<string>("all");
   const { data: allTeams = [] } = useTeams();
   const { data: allPlayers = [], isLoading } = usePlayers();
   const { assignedTournaments } = useTournamentAdmin();
@@ -33,6 +34,7 @@ export default function THOPlayers() {
     position: "",
     nationality: "",
     photo_url: "",
+    fayda_number: "",
   });
 
   // Filter teams by selected tournament
@@ -40,7 +42,15 @@ export default function THOPlayers() {
   const teamIds = teams.map((t: any) => t.id);
   
   // Filter players by teams in the tournament
-  const players = allPlayers.filter((p: any) => teamIds.includes(p.team_id));
+  const tournamentPlayers = allPlayers.filter((p: any) => teamIds.includes(p.team_id));
+  
+  // Apply team filter
+  const players = useMemo(() => {
+    if (selectedTeamFilter === "all") {
+      return tournamentPlayers;
+    }
+    return tournamentPlayers.filter((p: any) => p.team_id === selectedTeamFilter);
+  }, [tournamentPlayers, selectedTeamFilter]);
 
   const selectedTournament = assignedTournaments.find(
     (t: any) => t.id === selectedTournamentId
@@ -54,6 +64,7 @@ export default function THOPlayers() {
       position: "",
       nationality: "",
       photo_url: "",
+      fayda_number: "",
     });
     setEditingPlayer(null);
   };
@@ -67,6 +78,7 @@ export default function THOPlayers() {
       position: player.position || "",
       nationality: player.nationality || "",
       photo_url: player.photo_url || "",
+      fayda_number: player.fayda_number || "",
     });
     setDialogOpen(true);
   };
@@ -85,6 +97,7 @@ export default function THOPlayers() {
     const playerData = {
       ...formData,
       jersey_number: formData.jersey_number ? parseInt(formData.jersey_number) : null,
+      fayda_number: formData.fayda_number || null,
     };
 
     try {
@@ -205,6 +218,17 @@ export default function THOPlayers() {
                       </Select>
                     </div>
                   </div>
+                  
+                  {/* Fayda Number Field */}
+                  <div className="space-y-2">
+                    <Label>Fayda Number</Label>
+                    <Input
+                      value={formData.fayda_number}
+                      onChange={(e) => setFormData({ ...formData, fayda_number: e.target.value })}
+                      placeholder="Enter Fayda number"
+                    />
+                  </div>
+
                   <div className="space-y-2">
                     <Label>Nationality</Label>
                     <Input
@@ -239,10 +263,34 @@ export default function THOPlayers() {
         {/* Players Table */}
         <Card className="border-border/50">
           <CardHeader>
-            <CardTitle>Players</CardTitle>
-            <CardDescription>
-              {players.length} players across {teams.length} teams
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Players</CardTitle>
+                <CardDescription>
+                  {players.length} players {selectedTeamFilter !== "all" ? `in selected team` : `across ${teams.length} teams`}
+                </CardDescription>
+              </div>
+              
+              {/* Team Filter */}
+              {selectedTournamentId && teams.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4 text-muted-foreground" />
+                  <Select value={selectedTeamFilter} onValueChange={setSelectedTeamFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Filter by team" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Teams</SelectItem>
+                      {teams.map((team: any) => (
+                        <SelectItem key={team.id} value={team.id}>
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -262,7 +310,11 @@ export default function THOPlayers() {
             ) : players.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <UserCircle className="h-12 w-12 text-muted-foreground/50 mb-4" />
-                <p className="text-muted-foreground">No players found. Add your first player!</p>
+                <p className="text-muted-foreground">
+                  {selectedTeamFilter !== "all" 
+                    ? "No players in the selected team" 
+                    : "No players found. Add your first player!"}
+                </p>
               </div>
             ) : (
               <Table>
@@ -273,6 +325,7 @@ export default function THOPlayers() {
                     <TableHead>Team</TableHead>
                     <TableHead>Number</TableHead>
                     <TableHead>Position</TableHead>
+                    <TableHead>Fayda No.</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -292,6 +345,7 @@ export default function THOPlayers() {
                       <TableCell>{getTeamName(player.team_id)}</TableCell>
                       <TableCell>{player.jersey_number || "-"}</TableCell>
                       <TableCell>{player.position || "-"}</TableCell>
+                      <TableCell>{player.fayda_number || "-"}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(player)}>
