@@ -49,7 +49,6 @@ function TeamSlot({
   showScore, 
   isWinner,
   isNewlyQualified = false,
-  compact = false
 }: { 
   teamId: string | null; 
   teams: Map<string, Team>; 
@@ -57,7 +56,6 @@ function TeamSlot({
   showScore: boolean;
   isWinner: boolean;
   isNewlyQualified?: boolean;
-  compact?: boolean;
 }) {
   const [showGlow, setShowGlow] = useState(isNewlyQualified);
   
@@ -74,14 +72,13 @@ function TeamSlot({
 
   return (
     <div className={cn(
-      "flex items-center gap-2 transition-all duration-300",
-      compact ? "py-1.5 px-2" : "py-2 px-3",
+      "flex items-center gap-1.5 lg:gap-2 transition-all duration-300 py-1 lg:py-1.5 px-1.5 lg:px-2",
       isWinner && "bg-primary/10"
     )}>
       {/* Team Logo */}
       <div className={cn(
         "relative rounded-full flex items-center justify-center overflow-hidden transition-all duration-500 flex-shrink-0",
-        compact ? "w-6 h-6" : "w-8 h-8",
+        "w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7",
         hasTrueTeam && isNewlyQualified && "animate-team-appear",
         showGlow && hasTrueTeam && "team-glow"
       )}>
@@ -93,33 +90,30 @@ function TeamSlot({
           />
         ) : hasTrueTeam ? (
           <div className={cn(
-            "w-full h-full rounded-full flex items-center justify-center font-bold",
-            compact ? "text-[10px]" : "text-xs",
-            isWinner ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
+            "w-full h-full rounded-full flex items-center justify-center font-bold text-[8px] lg:text-[10px]",
+            isWinner ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"
           )}>
             {team.short_name || team.name.slice(0, 3).toUpperCase()}
           </div>
         ) : (
-          <div className="w-full h-full rounded-full bg-primary/30 flex items-center justify-center border-2 border-dashed border-primary/50">
-            <HelpCircle className={cn(compact ? "w-3 h-3" : "w-4 h-4", "text-primary")} />
+          <div className="w-full h-full rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/50">
+            <HelpCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-amber-500" />
           </div>
         )}
       </div>
 
       {/* Team Name */}
       <span className={cn(
-        "flex-1 font-medium truncate transition-colors min-w-0",
-        compact ? "text-xs" : "text-sm",
-        hasTrueTeam ? (isWinner ? "text-primary font-bold" : "text-foreground") : "text-muted-foreground italic"
+        "flex-1 font-medium truncate transition-colors min-w-0 text-[10px] lg:text-xs",
+        hasTrueTeam ? (isWinner ? "text-primary font-semibold" : "text-foreground/90") : "text-muted-foreground/60 italic"
       )}>
         {hasTrueTeam ? (team.short_name || team.name) : "TBD"}
       </span>
 
       {/* Score */}
       <span className={cn(
-        "font-mono text-right flex-shrink-0",
-        compact ? "text-xs min-w-[16px]" : "text-sm min-w-[20px]",
-        isWinner ? "text-primary font-bold" : "text-muted-foreground"
+        "font-mono text-right flex-shrink-0 text-[10px] lg:text-xs min-w-[14px] lg:min-w-[18px]",
+        isWinner ? "text-primary font-bold" : "text-muted-foreground/70"
       )}>
         {showScore ? (score ?? "-") : "-"}
       </span>
@@ -132,12 +126,10 @@ function MatchCard({
   slot,
   teams,
   onClick,
-  compact = false
 }: {
   slot: BracketSlot;
   teams: Map<string, Team>;
   onClick?: () => void;
-  compact?: boolean;
 }) {
   const match = slot.match;
   const isCompleted = match?.status === "completed";
@@ -158,16 +150,16 @@ function MatchCard({
     <div
       onClick={hasMatch ? onClick : undefined}
       className={cn(
-        "bracket-match-card rounded-lg overflow-hidden transition-all duration-200 w-full",
-        "bg-secondary/80 border border-border/50",
-        "shadow-md shadow-black/20",
-        hasMatch && "cursor-pointer hover:border-primary/50 hover:shadow-primary/10"
+        "bracket-match-card rounded-md lg:rounded-lg overflow-hidden transition-all duration-200 w-full",
+        "bg-[hsl(218,50%,14%)] border border-[hsl(218,40%,20%)]",
+        "shadow-sm hover:shadow-md hover:shadow-primary/5",
+        hasMatch && "cursor-pointer hover:border-primary/40"
       )}
     >
       {/* Live indicator */}
       {isLive && (
-        <div className="bg-green-500/20 px-2 py-0.5 text-center">
-          <span className="text-[10px] font-bold text-green-400 animate-pulse">● LIVE</span>
+        <div className="bg-green-500/20 px-1 py-0.5 text-center">
+          <span className="text-[8px] lg:text-[9px] font-bold text-green-400 animate-pulse">● LIVE</span>
         </div>
       )}
 
@@ -179,14 +171,13 @@ function MatchCard({
         showScore={showScore}
         isWinner={winner === slot.homeTeamId}
         isNewlyQualified={slot.isNewlyQualified}
-        compact={compact}
       />
 
       {/* VS Divider */}
-      <div className="flex items-center px-2">
-        <div className="flex-1 border-t border-border/30" />
-        <span className="px-1.5 text-[9px] text-muted-foreground font-medium">VS</span>
-        <div className="flex-1 border-t border-border/30" />
+      <div className="flex items-center px-1.5">
+        <div className="flex-1 border-t border-[hsl(218,40%,25%)]" />
+        <span className="px-1 text-[7px] lg:text-[8px] text-muted-foreground/50 font-medium">VS</span>
+        <div className="flex-1 border-t border-[hsl(218,40%,25%)]" />
       </div>
 
       {/* Away Team */}
@@ -197,13 +188,12 @@ function MatchCard({
         showScore={showScore}
         isWinner={winner === slot.awayTeamId}
         isNewlyQualified={slot.isNewlyQualified}
-        compact={compact}
       />
 
       {/* Match Date */}
       {match?.match_date && !isCompleted && (
-        <div className="px-2 py-0.5 text-center border-t border-border/30">
-          <p className="text-[9px] text-muted-foreground">
+        <div className="px-1.5 py-0.5 text-center border-t border-[hsl(218,40%,20%)]">
+          <p className="text-[7px] lg:text-[8px] text-muted-foreground/60">
             {format(new Date(match.match_date), "MMM d, HH:mm")}
           </p>
         </div>
@@ -299,40 +289,54 @@ export function KnockoutBracket({
     };
   };
 
-  // Render column with matches
+  // Render column with matches and connectors
   const renderColumn = (
     slots: BracketSlot[], 
     label: string, 
     roundIndex: number,
-    totalRounds: number = 3
+    side: 'left' | 'right' | 'center' = 'left'
   ) => {
-    // Calculate vertical spacing multiplier based on round
-    const spacingMultiplier = Math.pow(2, roundIndex);
-    
     return (
       <div className="flex flex-col h-full">
         {/* Round Label */}
-        <h4 className="text-[9px] lg:text-[10px] xl:text-xs font-bold text-primary/80 text-center mb-2 lg:mb-3 tracking-wider uppercase whitespace-nowrap">
+        <h4 className={cn(
+          "text-[7px] md:text-[8px] lg:text-[9px] xl:text-[10px] font-bold text-center mb-1.5 lg:mb-2 tracking-widest uppercase",
+          side === 'center' ? "text-primary" : "text-primary/70"
+        )}>
           {label}
         </h4>
 
         {/* Match Slots Container */}
-        <div 
-          className="flex-1 flex flex-col justify-around"
-          style={{
-            paddingTop: roundIndex > 0 ? `${spacingMultiplier * 1.5}rem` : 0,
-            paddingBottom: roundIndex > 0 ? `${spacingMultiplier * 1.5}rem` : 0,
-            gap: `${spacingMultiplier * 0.5}rem`,
-          }}
-        >
-          {slots.map((slot) => (
-            <MatchCard
-              key={slot.id}
-              slot={slot}
-              teams={teams}
-              onClick={() => slot.match && setSelectedMatch(slot.match)}
-              compact={true}
-            />
+        <div className="flex-1 flex flex-col justify-around py-1">
+          {slots.map((slot, idx) => (
+            <div key={slot.id} className="relative flex items-center">
+              {/* Left connector line */}
+              {side === 'left' && roundIndex > 0 && (
+                <div className="absolute -left-1 md:-left-2 lg:-left-3 top-1/2 w-1 md:w-2 lg:w-3 h-px bg-[hsl(218,40%,30%)]" />
+              )}
+              
+              {/* Match Card */}
+              <div className="flex-1">
+                <MatchCard
+                  slot={slot}
+                  teams={teams}
+                  onClick={() => slot.match && setSelectedMatch(slot.match)}
+                />
+              </div>
+              
+              {/* Right connector line */}
+              {side === 'left' && roundIndex < 2 && (
+                <div className="absolute -right-1 md:-right-2 lg:-right-3 top-1/2 w-1 md:w-2 lg:w-3 h-px bg-[hsl(218,40%,30%)]" />
+              )}
+              
+              {/* Right side connectors (mirrored) */}
+              {side === 'right' && roundIndex > 0 && (
+                <div className="absolute -right-1 md:-right-2 lg:-right-3 top-1/2 w-1 md:w-2 lg:w-3 h-px bg-[hsl(218,40%,30%)]" />
+              )}
+              {side === 'right' && roundIndex < 2 && (
+                <div className="absolute -left-1 md:-left-2 lg:-left-3 top-1/2 w-1 md:w-2 lg:w-3 h-px bg-[hsl(218,40%,30%)]" />
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -341,57 +345,56 @@ export function KnockoutBracket({
 
   return (
     <>
-      <div className="bracket-container rounded-xl p-3 md:p-4 lg:p-6 bg-[hsl(218,57%,10%)] w-full overflow-hidden">
-        {/* 7-Column Butterfly Grid */}
-        <div className="grid grid-cols-7 gap-1 md:gap-2 lg:gap-3 xl:gap-4 w-full min-h-[500px] lg:min-h-[600px]">
+      <div className="bracket-container rounded-xl p-2 md:p-3 lg:p-4 xl:p-5 bg-gradient-to-b from-[hsl(218,57%,8%)] to-[hsl(218,57%,12%)] w-full overflow-hidden">
+        {/* 7-Column Butterfly Grid - Full Width */}
+        <div className="grid grid-cols-7 w-full min-h-[450px] md:min-h-[500px] lg:min-h-[550px] xl:min-h-[600px]">
           {/* Column 1: Left Round of 16 */}
-          <div className="col-span-1">
-            {renderColumn(bracketData.left.roundOf16, "ROUND OF 16", 0)}
+          <div className="px-0.5 md:px-1">
+            {renderColumn(bracketData.left.roundOf16, "R16", 0, 'left')}
           </div>
 
           {/* Column 2: Left Quarterfinals */}
-          <div className="col-span-1">
-            {renderColumn(bracketData.left.quarterFinals, "QUARTERFINALS", 1)}
+          <div className="px-0.5 md:px-1">
+            {renderColumn(bracketData.left.quarterFinals, "QF", 1, 'left')}
           </div>
 
           {/* Column 3: Left Semifinals */}
-          <div className="col-span-1">
-            {renderColumn(bracketData.left.semiFinals, "SEMIFINALS", 2)}
+          <div className="px-0.5 md:px-1">
+            {renderColumn(bracketData.left.semiFinals, "SF", 2, 'left')}
           </div>
 
           {/* Column 4: Center - Final & Trophy */}
-          <div className="col-span-1 flex flex-col items-center justify-center">
+          <div className="px-0.5 md:px-1 flex flex-col items-center justify-center">
             {/* Final Label */}
-            <h4 className="text-[9px] lg:text-[10px] xl:text-xs font-bold text-primary text-center mb-2 lg:mb-3 tracking-wider uppercase">
+            <h4 className="text-[8px] md:text-[9px] lg:text-[10px] xl:text-xs font-bold text-primary text-center mb-1.5 lg:mb-2 tracking-widest uppercase">
               FINAL
             </h4>
 
             {/* Final Match Card */}
-            <div className="w-full mb-4 lg:mb-6">
+            <div className="w-full mb-3 lg:mb-4">
               <MatchCard
                 slot={bracketData.final}
                 teams={teams}
                 onClick={() => bracketData.final.match && setSelectedMatch(bracketData.final.match)}
-                compact={true}
               />
             </div>
 
             {/* Trophy & Champion */}
             <div className="flex flex-col items-center">
               <div className={cn(
-                "w-12 h-12 lg:w-16 lg:h-16 xl:w-20 xl:h-20 rounded-full flex items-center justify-center transition-all duration-500",
+                "w-10 h-10 md:w-12 md:h-12 lg:w-14 lg:h-14 xl:w-16 xl:h-16 rounded-full flex items-center justify-center transition-all duration-500",
                 champion 
-                  ? "bg-gradient-to-br from-yellow-400 to-amber-600 shadow-[0_0_30px_rgba(255,215,0,0.5)]"
-                  : "bg-primary/20 border-2 border-dashed border-primary/40"
+                  ? "bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 shadow-[0_0_25px_rgba(255,193,7,0.6)]"
+                  : "bg-[hsl(218,50%,18%)] border border-dashed border-amber-500/30"
               )}>
                 <Trophy className={cn(
-                  "h-6 w-6 lg:h-8 lg:w-8 xl:h-10 xl:w-10",
-                  champion ? "text-primary-foreground" : "text-primary/60"
+                  "h-5 w-5 md:h-6 md:w-6 lg:h-7 lg:w-7 xl:h-8 xl:w-8",
+                  champion ? "text-[hsl(218,57%,10%)]" : "text-amber-500/40"
                 )} />
               </div>
               <p className={cn(
-                "text-[10px] lg:text-xs xl:text-sm font-bold mt-2 lg:mt-3 text-center",
-                champion ? "text-primary" : "text-muted-foreground"
+                "text-[8px] md:text-[9px] lg:text-[10px] xl:text-xs font-bold mt-1.5 lg:mt-2 text-center tracking-wide",
+                champion ? "text-amber-400" : "text-muted-foreground/50"
               )}>
                 {champion ? champion.name : "CHAMPION"}
               </p>
@@ -399,18 +402,18 @@ export function KnockoutBracket({
           </div>
 
           {/* Column 5: Right Semifinals */}
-          <div className="col-span-1">
-            {renderColumn(bracketData.right.semiFinals, "SEMIFINALS", 2)}
+          <div className="px-0.5 md:px-1">
+            {renderColumn(bracketData.right.semiFinals, "SF", 2, 'right')}
           </div>
 
           {/* Column 6: Right Quarterfinals */}
-          <div className="col-span-1">
-            {renderColumn(bracketData.right.quarterFinals, "QUARTERFINALS", 1)}
+          <div className="px-0.5 md:px-1">
+            {renderColumn(bracketData.right.quarterFinals, "QF", 1, 'right')}
           </div>
 
           {/* Column 7: Right Round of 16 */}
-          <div className="col-span-1">
-            {renderColumn(bracketData.right.roundOf16, "ROUND OF 16", 0)}
+          <div className="px-0.5 md:px-1">
+            {renderColumn(bracketData.right.roundOf16, "R16", 0, 'right')}
           </div>
         </div>
       </div>
