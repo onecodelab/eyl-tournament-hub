@@ -10,12 +10,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { useTeams, useMatches, useTournaments } from "@/hooks/useSupabaseData";
 import { useUserRoles } from "@/hooks/useReferees";
 import { useCreateMatch, useUpdateMatch, useDeleteMatch } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Plus, Edit, Trash2 } from "lucide-react";
+import { Calendar, Plus, Edit, Trash2, Clock } from "lucide-react";
 
 const MATCH_STAGES = [
   { value: "group", label: "Group Stage" },
@@ -57,6 +58,8 @@ export default function THOMatches() {
     status: "scheduled",
     referee_id: "",
     stage: "group",
+    extra_time_enabled: true,
+    extra_time_duration: 30,
     extra_time_option: "extra_time",
   });
 
@@ -102,6 +105,8 @@ export default function THOMatches() {
       status: "scheduled",
       referee_id: "",
       stage: isKnockoutFormat ? "round_of_16" : "group",
+      extra_time_enabled: true,
+      extra_time_duration: 30,
       extra_time_option: "extra_time",
     });
     setEditingMatch(null);
@@ -117,6 +122,8 @@ export default function THOMatches() {
       status: match.status || "scheduled",
       referee_id: match.referee_id || "",
       stage: match.stage || "group",
+      extra_time_enabled: match.extra_time_option !== "no_extra_time",
+      extra_time_duration: match.extra_time_duration_minutes || 30,
       extra_time_option: match.extra_time_option || "extra_time",
     });
     setDialogOpen(true);
@@ -298,22 +305,69 @@ export default function THOMatches() {
                     </Select>
                   </div>
 
-                  {/* Extra Time Option - only for knockout stages */}
+                  {/* Extra Time Toggle - only for knockout stages */}
                   {isKnockoutStage && (
-                    <div className="space-y-2">
-                      <Label>Tie-breaker Option</Label>
-                      <Select value={formData.extra_time_option} onValueChange={(val) => setFormData({ ...formData, extra_time_option: val })}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {EXTRA_TIME_OPTIONS.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <div className="space-y-4 border rounded-lg p-4 bg-muted/30">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <Label className="flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            Extra Time
+                          </Label>
+                          <p className="text-xs text-muted-foreground">
+                            Enable extra time for tied knockout matches
+                          </p>
+                        </div>
+                        <Switch
+                          checked={formData.extra_time_enabled}
+                          onCheckedChange={(checked) => setFormData({ 
+                            ...formData, 
+                            extra_time_enabled: checked,
+                            extra_time_option: checked ? "extra_time" : "direct_penalty"
+                          })}
+                        />
+                      </div>
+                      
+                      {formData.extra_time_enabled && (
+                        <>
+                          <div className="space-y-2">
+                            <Label>Extra Time Duration (minutes)</Label>
+                            <Input
+                              type="number"
+                              min={10}
+                              max={60}
+                              value={formData.extra_time_duration}
+                              onChange={(e) => setFormData({ ...formData, extra_time_duration: parseInt(e.target.value) || 30 })}
+                              placeholder="30"
+                            />
+                            <p className="text-xs text-muted-foreground">
+                              Total extra time (typically 2x15 = 30 minutes)
+                            </p>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <Label>Tie-breaker Option</Label>
+                            <Select value={formData.extra_time_option} onValueChange={(val) => setFormData({ ...formData, extra_time_option: val })}>
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {EXTRA_TIME_OPTIONS.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </>
+                      )}
+                      
+                      {!formData.extra_time_enabled && (
+                        <p className="text-xs text-amber-600">
+                          Match will go directly to penalty shootout if tied
+                        </p>
+                      )}
                     </div>
                   )}
 
