@@ -2,15 +2,6 @@ import { useMemo, useState } from "react";
 import { Trophy } from "lucide-react";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { 
-  organizeKnockoutMatches, 
-  getKnockoutSlotLabel,
-  calculateStandingsFromMatches,
-  generateKnockoutPairings,
-  type TeamStanding,
-  type Match as UtilMatch,
-  type Team as UtilTeam
-} from "@/utils/tournamentUtils";
 
 interface Match {
   id: string;
@@ -41,133 +32,111 @@ interface KnockoutBracketProps {
   teamsQualifyingPerGroup?: number;
 }
 
+// Define the bracket structure with empty slots
+interface BracketSlot {
+  id: string;
+  match?: Match;
+  homeTeamId?: string | null;
+  awayTeamId?: string | null;
+}
+
+interface BracketRound {
+  name: string;
+  stage: string;
+  slots: BracketSlot[];
+}
+
 export function KnockoutBracket({ 
   matches, 
   teams,
-  groupTeams = [],
-  groupMatches = [],
-  teamsQualifyingPerGroup = 2
 }: KnockoutBracketProps) {
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
-  // Calculate group standings if group data is provided
-  const groupStandings = useMemo(() => {
-    if (groupTeams.length === 0) return null;
+  // Organize matches by stage
+  const matchesByStage = useMemo(() => {
+    const byStage: Record<string, Match[]> = {};
+    matches.forEach(m => {
+      const stage = m.stage || 'unknown';
+      if (stage !== 'group') {
+        if (!byStage[stage]) byStage[stage] = [];
+        byStage[stage].push(m);
+      }
+    });
+    return byStage;
+  }, [matches]);
+
+  // Build the bracket structure based on actual knockout matches
+  const bracketStructure = useMemo(() => {
+    const stages = [
+      { name: 'Round of 16', stage: 'round_of_16', expectedSlots: 8 },
+      { name: 'Quarter-Finals', stage: 'quarter_final', expectedSlots: 4 },
+      { name: 'Semi-Finals', stage: 'semi_final', expectedSlots: 2 },
+      { name: 'Final', stage: 'final', expectedSlots: 1 },
+    ];
+
+    // Determine which stages we need based on what matches exist
+    const existingStages = Object.keys(matchesByStage);
     
-    const utilTeams: UtilTeam[] = groupTeams.map(t => ({
-      id: t.id,
-      name: t.name,
-      short_name: t.short_name,
-      logo_url: t.logo_url,
-      group_name: t.group_name || null,
-    }));
+    // If no knockout matches exist, show empty bracket structure
+    if (existingStages.length === 0) {
+      return stages.map(s => ({
+        name: s.name,
+        stage: s.stage,
+        slots: Array.from({ length: s.expectedSlots }, (_, i) => ({
+          id: `${s.stage}-${i}`,
+          match: undefined,
+          homeTeamId: null,
+          awayTeamId: null,
+        }))
+      }));
+    }
 
-    const utilMatches: UtilMatch[] = groupMatches.map(m => ({
-      id: m.id,
-      home_team_id: m.home_team_id,
-      away_team_id: m.away_team_id,
-      home_score: m.home_score,
-      away_score: m.away_score,
-      status: m.status,
-      stage: m.stage || 'group',
-      match_date: m.match_date,
-      venue: m.venue
-    }));
-
-    return calculateStandingsFromMatches(utilTeams, utilMatches, teamsQualifyingPerGroup);
-  }, [groupTeams, groupMatches, teamsQualifyingPerGroup]);
-
-  // Generate expected knockout pairings based on group standings
-  const expectedPairings = useMemo(() => {
-    if (!groupStandings) return [];
-    return generateKnockoutPairings(groupStandings, teamsQualifyingPerGroup);
-  }, [groupStandings, teamsQualifyingPerGroup]);
-
-  // Organize matches by stage with proper round names
-  const rounds = useMemo(() => {
-    const stageOrder = ['round_of_16', 'quarter_final', 'semi_final', 'third_place', 'final'];
-    const stageNames: Record<string, string> = {
-      'round_of_16': 'Round of 16',
-      'quarter_final': 'Quarter-Finals',
-      'semi_final': 'Semi-Finals',
-      'third_place': 'Third Place',
-      'final': 'Final'
-    };
-
-    // Filter to only knockout matches
-    const knockoutMatches = matches.filter(m => 
-      m.stage && m.stage !== 'group'
-    );
-
-    const organizedRounds: { name: string; matches: Match[] }[] = [];
-
-    // First, try to organize by stage field
-    stageOrder.forEach(stage => {
-      const stageMatches = knockoutMatches.filter(m => m.stage === stage);
+    // Build structure based on existing matches
+    const result: BracketRound[] = [];
+    
+    stages.forEach(stageInfo => {
+      const stageMatches = matchesByStage[stageInfo.stage] || [];
+      
       if (stageMatches.length > 0) {
-        organizedRounds.push({
-          name: stageNames[stage] || stage,
-          matches: stageMatches
+        result.push({
+          name: stageInfo.name,
+          stage: stageInfo.stage,
+          slots: stageMatches.map((m, i) => ({
+            id: m.id,
+            match: m,
+            homeTeamId: m.home_team_id,
+            awayTeamId: m.away_team_id,
+          }))
+        });
+      } else if (result.length > 0) {
+        // Add empty slots for subsequent stages
+        const prevRound = result[result.length - 1];
+        const expectedSlots = Math.ceil(prevRound.slots.length / 2);
+        result.push({
+          name: stageInfo.name,
+          stage: stageInfo.stage,
+          slots: Array.from({ length: expectedSlots }, (_, i) => ({
+            id: `${stageInfo.stage}-${i}`,
+            match: undefined,
+            homeTeamId: null,
+            awayTeamId: null,
+          }))
         });
       }
     });
 
-    // If no stage-based matches, try tagline-based organization
-    if (organizedRounds.length === 0 && matches.length > 0) {
-      const roundNames = ['Final', 'Semi-Final', 'Quarter-Final', 'Round of 16', 'Round of 32'];
-      
-      roundNames.forEach(roundName => {
-        const roundMatches = matches.filter(m => 
-          m.tagline?.toLowerCase().includes(roundName.toLowerCase())
-        );
-        if (roundMatches.length > 0) {
-          organizedRounds.push({ name: roundName, matches: roundMatches });
-        }
-      });
+    return result;
+  }, [matchesByStage]);
 
-      // Fallback: organize by number of matches
-      if (organizedRounds.length === 0) {
-        if (matches.length === 1) {
-          organizedRounds.push({ name: 'Final', matches });
-        } else if (matches.length <= 3) {
-          const final = matches.slice(0, 1);
-          const semis = matches.slice(1);
-          organizedRounds.push({ name: 'Final', matches: final });
-          if (semis.length) organizedRounds.push({ name: 'Semi-Finals', matches: semis });
-        } else {
-          organizedRounds.push({ name: 'Knockout Matches', matches });
-        }
-      }
-    }
-
-    // Reverse to show Final first (right side of bracket)
-    return organizedRounds.reverse();
-  }, [matches]);
-
-  const getTeamDisplay = (teamId: string | null, matchStage?: string) => {
+  const getTeamDisplay = (teamId: string | null) => {
     if (!teamId) {
-      // Check if we have expected pairings from group stage
-      return { name: 'TBD', shortName: '?', logo: null, qualified: false };
+      return { name: 'TBD', shortName: '?', logo: null };
     }
     const team = teams.get(teamId);
-    
-    // Check if this team is qualified from group stage
-    let isQualified = false;
-    if (groupStandings) {
-      groupStandings.forEach(standings => {
-        const teamStanding = standings.find(s => s.id === teamId);
-        if (teamStanding?.qualified) {
-          isQualified = true;
-        }
-      });
-    }
-    
     return {
       name: team?.name || 'Unknown',
       shortName: team?.short_name || team?.name?.slice(0, 3).toUpperCase() || '???',
       logo: team?.logo_url,
-      qualified: isQualified,
-      groupName: team?.group_name
     };
   };
 
@@ -180,86 +149,26 @@ export function KnockoutBracket({
     return null;
   };
 
-  // Get the seeding label for TBD teams
-  const getSeedingLabel = (position: 'home' | 'away', matchIndex: number, stage: string) => {
-    if (expectedPairings.length === 0) return 'TBD';
-    
-    const pairing = expectedPairings[matchIndex];
-    if (!pairing) return 'TBD';
-    
-    const team = position === 'home' ? pairing.home : pairing.away;
-    if (team) {
-      return getKnockoutSlotLabel(team.group_name, team.position);
+  // Get champion if final is complete
+  const champion = useMemo(() => {
+    const finalRound = bracketStructure.find(r => r.stage === 'final');
+    if (finalRound?.slots[0]?.match) {
+      const finalMatch = finalRound.slots[0].match;
+      const winnerId = getWinner(finalMatch);
+      if (winnerId) {
+        return getTeamDisplay(winnerId);
+      }
     }
-    return 'TBD';
-  };
+    return null;
+  }, [bracketStructure, teams]);
 
-  if (matches.length === 0) {
-    // Show expected bracket from group standings if available
-    if (expectedPairings.length > 0) {
-      return (
-        <div className="glass-card p-6 overflow-x-auto">
-          <div className="text-center mb-4">
-            <p className="text-sm text-muted-foreground">
-              Knockout matches will be determined after group stage completes
-            </p>
-          </div>
-          <div className="flex gap-8 min-w-max justify-center">
-            <div className="flex flex-col gap-4" style={{ minWidth: 220 }}>
-              <h4 className="text-sm font-bold text-primary text-center mb-2">
-                Expected Matchups
-              </h4>
-              {expectedPairings.map((pairing, idx) => (
-                <div 
-                  key={idx}
-                  className="bg-secondary/50 rounded-lg p-3 border border-border border-dashed"
-                >
-                  <div className="flex items-center justify-between gap-2 py-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
-                        {pairing.home?.short_name?.slice(0, 3) || '?'}
-                      </div>
-                      <span className="text-sm truncate max-w-[100px]">
-                        {pairing.home ? pairing.home.name : getKnockoutSlotLabel(null, 1)}
-                      </span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {pairing.home?.group_name ? `1st ${pairing.home.group_name}` : ''}
-                    </span>
-                  </div>
-                  <div className="border-t border-border/50 my-1" />
-                  <div className="flex items-center justify-between gap-2 py-1">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-                        {pairing.away?.short_name?.slice(0, 3) || '?'}
-                      </div>
-                      <span className="text-sm truncate max-w-[100px]">
-                        {pairing.away ? pairing.away.name : getKnockoutSlotLabel(null, 2)}
-                      </span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {pairing.away?.group_name ? `2nd ${pairing.away.group_name}` : ''}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col items-center justify-center min-w-[100px]">
-              <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                <Trophy className="h-8 w-8 text-yellow-500" />
-              </div>
-              <p className="text-sm font-bold mt-2 text-center">Champion</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
+  // If no structure at all, show placeholder
+  if (bracketStructure.length === 0) {
     return (
       <div className="glass-card p-8 text-center">
         <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <p className="text-muted-foreground">Bracket not yet available</p>
-        <p className="text-sm text-muted-foreground mt-1">Matches will appear once the knockout stage begins</p>
+        <p className="text-sm text-muted-foreground mt-1">Knockout matches will appear here</p>
       </div>
     );
   }
@@ -267,9 +176,9 @@ export function KnockoutBracket({
   return (
     <>
       <div className="glass-card p-6 overflow-x-auto">
-        <div className="flex gap-8 min-w-max">
-          {rounds.map((round, roundIndex) => (
-            <div key={round.name} className="flex flex-col gap-4" style={{ minWidth: 220 }}>
+        <div className="flex gap-8 min-w-max items-start">
+          {bracketStructure.map((round, roundIndex) => (
+            <div key={round.stage} className="flex flex-col gap-4" style={{ minWidth: 220 }}>
               <h4 className="text-sm font-bold text-primary text-center mb-2">{round.name}</h4>
               <div 
                 className="flex flex-col gap-4 justify-around h-full"
@@ -278,18 +187,22 @@ export function KnockoutBracket({
                   paddingBottom: roundIndex * 40 
                 }}
               >
-                {round.matches.map((match, matchIndex) => {
-                  const homeTeam = getTeamDisplay(match.home_team_id, match.stage || undefined);
-                  const awayTeam = getTeamDisplay(match.away_team_id, match.stage || undefined);
-                  const winner = getWinner(match);
-                  const isCompleted = match.status === 'completed';
-                  const isLive = match.status === 'live';
+                {round.slots.map((slot) => {
+                  const match = slot.match;
+                  const homeTeam = getTeamDisplay(slot.homeTeamId || null);
+                  const awayTeam = getTeamDisplay(slot.awayTeamId || null);
+                  const winner = match ? getWinner(match) : null;
+                  const isCompleted = match?.status === 'completed';
+                  const isLive = match?.status === 'live';
+                  const hasMatch = !!match;
 
                   return (
                     <div 
-                      key={match.id}
-                      onClick={() => setSelectedMatch(match)}
-                      className="bg-secondary/50 rounded-lg p-3 cursor-pointer hover:bg-secondary transition-colors border border-border hover:border-primary/50"
+                      key={slot.id}
+                      onClick={() => match && setSelectedMatch(match)}
+                      className={`bg-secondary/50 rounded-lg p-3 border border-border transition-colors ${
+                        hasMatch ? 'cursor-pointer hover:bg-secondary hover:border-primary/50' : 'border-dashed opacity-70'
+                      }`}
                     >
                       {isLive && (
                         <div className="flex justify-center mb-2">
@@ -301,7 +214,7 @@ export function KnockoutBracket({
                       
                       {/* Home Team */}
                       <div className={`flex items-center justify-between gap-2 py-1 ${
-                        isCompleted && winner === match.home_team_id ? 'text-primary font-bold' : ''
+                        isCompleted && winner === slot.homeTeamId ? 'text-primary font-bold' : ''
                       }`}>
                         <div className="flex items-center gap-2">
                           {homeTeam.logo ? (
@@ -309,12 +222,12 @@ export function KnockoutBracket({
                               src={homeTeam.logo} 
                               alt={homeTeam.name}
                               className={`w-6 h-6 rounded-full object-cover ${
-                                winner === match.home_team_id ? 'ring-2 ring-primary' : ''
+                                winner === slot.homeTeamId ? 'ring-2 ring-primary' : ''
                               }`}
                             />
                           ) : (
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              winner === match.home_team_id ? 'bg-primary text-primary-foreground' : 'bg-primary/20 text-primary'
+                              winner === slot.homeTeamId ? 'bg-primary text-primary-foreground' : 'bg-primary/20 text-primary'
                             }`}>
                               {homeTeam.shortName}
                             </div>
@@ -322,16 +235,20 @@ export function KnockoutBracket({
                           <span className="text-sm truncate max-w-[100px]">{homeTeam.name}</span>
                         </div>
                         <span className="text-sm font-mono">
-                          {isCompleted || isLive ? match.home_score ?? '-' : '-'}
+                          {isCompleted || isLive ? match?.home_score ?? '-' : '-'}
                         </span>
                       </div>
 
-                      {/* Divider */}
-                      <div className="border-t border-border/50 my-1" />
+                      {/* VS Divider */}
+                      <div className="flex items-center gap-2 my-1">
+                        <div className="flex-1 border-t border-border/50" />
+                        <span className="text-xs text-muted-foreground">VS</span>
+                        <div className="flex-1 border-t border-border/50" />
+                      </div>
 
                       {/* Away Team */}
                       <div className={`flex items-center justify-between gap-2 py-1 ${
-                        isCompleted && winner === match.away_team_id ? 'text-primary font-bold' : ''
+                        isCompleted && winner === slot.awayTeamId ? 'text-primary font-bold' : ''
                       }`}>
                         <div className="flex items-center gap-2">
                           {awayTeam.logo ? (
@@ -339,12 +256,12 @@ export function KnockoutBracket({
                               src={awayTeam.logo} 
                               alt={awayTeam.name}
                               className={`w-6 h-6 rounded-full object-cover ${
-                                winner === match.away_team_id ? 'ring-2 ring-primary' : ''
+                                winner === slot.awayTeamId ? 'ring-2 ring-primary' : ''
                               }`}
                             />
                           ) : (
                             <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              winner === match.away_team_id ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
+                              winner === slot.awayTeamId ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
                             }`}>
                               {awayTeam.shortName}
                             </div>
@@ -352,12 +269,12 @@ export function KnockoutBracket({
                           <span className="text-sm truncate max-w-[100px]">{awayTeam.name}</span>
                         </div>
                         <span className="text-sm font-mono">
-                          {isCompleted || isLive ? match.away_score ?? '-' : '-'}
+                          {isCompleted || isLive ? match?.away_score ?? '-' : '-'}
                         </span>
                       </div>
 
                       {/* Date */}
-                      {match.match_date && !isCompleted && (
+                      {match?.match_date && !isCompleted && (
                         <p className="text-[10px] text-muted-foreground text-center mt-2">
                           {format(new Date(match.match_date), "MMM d, HH:mm")}
                         </p>
@@ -369,20 +286,15 @@ export function KnockoutBracket({
             </div>
           ))}
 
-          {/* Trophy/Winner */}
-          {rounds.length > 0 && rounds[0].name === 'Final' && (
-            <div className="flex flex-col items-center justify-center min-w-[100px]">
-              <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                <Trophy className="h-8 w-8 text-yellow-500" />
-              </div>
-              <p className="text-sm font-bold mt-2 text-center">
-                {rounds[0].matches[0]?.status === 'completed' 
-                  ? getTeamDisplay(getWinner(rounds[0].matches[0])).name
-                  : 'Champion'
-                }
-              </p>
+          {/* Trophy/Champion */}
+          <div className="flex flex-col items-center justify-center min-w-[100px]" style={{ paddingTop: bracketStructure.length * 40 }}>
+            <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
+              <Trophy className="h-8 w-8 text-yellow-500" />
             </div>
-          )}
+            <p className="text-sm font-bold mt-2 text-center">
+              {champion ? champion.name : 'Champion'}
+            </p>
+          </div>
         </div>
       </div>
 
