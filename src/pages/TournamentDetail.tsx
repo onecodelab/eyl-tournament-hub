@@ -99,17 +99,28 @@ export default function TournamentDetail() {
     }
     
     if (format === 'group_knockout') {
+      const groupMatches = matches.filter(m => m.stage === 'group' || !m.stage);
+      const knockoutMatches = matches.filter(m => m.stage && m.stage !== 'group');
+      
       return (
         <div className="space-y-8">
-          <GroupStageView teams={teams} matches={matches} teamsMap={teamsMap} />
+          <GroupStageView 
+            teams={teams} 
+            matches={groupMatches} 
+            teamsMap={teamsMap}
+            teamsQualifyingPerGroup={tournament.teams_qualifying_per_group || 2}
+          />
           <div className="border-t border-border pt-8">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
               <Trophy className="h-5 w-5 text-primary" />
               Knockout Stage
             </h3>
             <KnockoutBracket 
-              matches={matches.filter(m => m.status !== 'group_stage')} 
-              teams={teamsMap} 
+              matches={knockoutMatches}
+              teams={teamsMap}
+              groupTeams={teams}
+              groupMatches={groupMatches}
+              teamsQualifyingPerGroup={tournament.teams_qualifying_per_group || 2}
             />
           </div>
         </div>
