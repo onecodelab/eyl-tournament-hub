@@ -89,6 +89,13 @@ export default function LiveMatch() {
   const [eventPlayer, setEventPlayer] = useState("");
   const [eventMinute, setEventMinute] = useState(1);
   const [subOutPlayer, setSubOutPlayer] = useState("");
+  const [subInPlayer, setSubInPlayer] = useState("");
+  const [cardReason, setCardReason] = useState("");
+
+  // Referee info state
+  const [refereeName, setRefereeName] = useState("");
+  const [assistantRef1, setAssistantRef1] = useState("");
+  const [assistantRef2, setAssistantRef2] = useState("");
 
   // Timer state
   const [matchTime, setMatchTime] = useState(0);
@@ -218,8 +225,13 @@ export default function LiveMatch() {
     const teamId = eventTeam === "home" ? match.home_team?.id : match.away_team?.id;
     const details: Record<string, unknown> = {};
 
-    if (eventType === "substitution" && subOutPlayer) {
-      details.player_out = subOutPlayer;
+    if (eventType === "substitution") {
+      if (subOutPlayer) details.player_out = subOutPlayer;
+      if (subInPlayer) details.player_in = subInPlayer;
+    }
+
+    if ((eventType === "yellow_card" || eventType === "red_card") && cardReason) {
+      details.reason = cardReason;
     }
 
     try {
@@ -227,7 +239,7 @@ export default function LiveMatch() {
         match_id: matchId,
         event_type: eventType,
         team_id: teamId,
-        player_id: eventPlayer || undefined,
+        player_id: eventType === "substitution" ? subOutPlayer || undefined : eventPlayer || undefined,
         minute: eventMinute,
         details,
       });
@@ -247,6 +259,8 @@ export default function LiveMatch() {
       toast.success("Event added!");
       setEventPlayer("");
       setSubOutPlayer("");
+      setSubInPlayer("");
+      setCardReason("");
     } catch (error) {
       toast.error("Failed to add event");
     }
@@ -362,138 +376,182 @@ export default function LiveMatch() {
           </CardContent>
         </Card>
 
-        {/* Setup Phase: Lineup Selection */}
+        {/* Setup Phase: Referee Info + Lineup Selection */}
         {isSetupPhase && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Pre-Match Setup - Select Lineups</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Home Team Lineup */}
-                <div>
-                  <h3 className="font-semibold mb-3">{match.home_team?.name} Lineup</h3>
-                  
-                  <div className="mb-4">
-                    <Label>Goalkeeper (Required)</Label>
-                    <Select value={homeGoalkeeper} onValueChange={setHomeGoalkeeper}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select goalkeeper" />
-                      </SelectTrigger>
-                      <SelectContent>
+          <>
+            {/* Referee Information */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Flag className="h-5 w-5" />
+                  Match Officials
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <Label>Centre Referee *</Label>
+                    <Input
+                      placeholder="Enter referee name"
+                      value={refereeName}
+                      onChange={(e) => setRefereeName(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Assistant Referee 1</Label>
+                    <Input
+                      placeholder="Enter assistant referee 1 name"
+                      value={assistantRef1}
+                      onChange={(e) => setAssistantRef1(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label>Assistant Referee 2</Label>
+                    <Input
+                      placeholder="Enter assistant referee 2 name"
+                      value={assistantRef2}
+                      onChange={(e) => setAssistantRef2(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Lineup Selection */}
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>Pre-Match Setup - Select Lineups</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Home Team Lineup */}
+                  <div>
+                    <h3 className="font-semibold mb-3">{match.home_team?.name} Lineup</h3>
+                    
+                    <div className="mb-4">
+                      <Label>Goalkeeper (Required)</Label>
+                      <Select value={homeGoalkeeper} onValueChange={setHomeGoalkeeper}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select goalkeeper" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {homePlayers
+                            .filter((p) => p.position?.toLowerCase() === "goalkeeper")
+                            .map((player) => (
+                              <SelectItem key={player.id} value={player.id}>
+                                #{player.jersey_number} {player.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>Outfield Players (4-10)</Label>
+                      <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
                         {homePlayers
-                          .filter((p) => p.position?.toLowerCase() === "goalkeeper")
+                          .filter((p) => p.position?.toLowerCase() !== "goalkeeper")
                           .map((player) => (
-                            <SelectItem key={player.id} value={player.id}>
-                              #{player.jersey_number} {player.name}
-                            </SelectItem>
+                            <div key={player.id} className="flex items-center gap-2">
+                              <Checkbox
+                                id={`home-${player.id}`}
+                                checked={homeSelectedPlayers.includes(player.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setHomeSelectedPlayers([...homeSelectedPlayers, player.id]);
+                                  } else {
+                                    setHomeSelectedPlayers(
+                                      homeSelectedPlayers.filter((id) => id !== player.id)
+                                    );
+                                  }
+                                }}
+                              />
+                              <label htmlFor={`home-${player.id}`} className="text-sm">
+                                #{player.jersey_number} {player.name} ({player.position})
+                              </label>
+                            </div>
                           ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Outfield Players (4-10)</Label>
-                    <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
-                      {homePlayers
-                        .filter((p) => p.position?.toLowerCase() !== "goalkeeper")
-                        .map((player) => (
-                          <div key={player.id} className="flex items-center gap-2">
-                            <Checkbox
-                              id={`home-${player.id}`}
-                              checked={homeSelectedPlayers.includes(player.id)}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setHomeSelectedPlayers([...homeSelectedPlayers, player.id]);
-                                } else {
-                                  setHomeSelectedPlayers(
-                                    homeSelectedPlayers.filter((id) => id !== player.id)
-                                  );
-                                }
-                              }}
-                            />
-                            <label htmlFor={`home-${player.id}`} className="text-sm">
-                              #{player.jersey_number} {player.name} ({player.position})
-                            </label>
-                          </div>
-                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Selected: {homeSelectedPlayers.length} players
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Selected: {homeSelectedPlayers.length} players
-                    </p>
                   </div>
-                </div>
 
-                {/* Away Team Lineup */}
-                <div>
-                  <h3 className="font-semibold mb-3">{match.away_team?.name} Lineup</h3>
-                  
-                  <div className="mb-4">
-                    <Label>Goalkeeper (Required)</Label>
-                    <Select value={awayGoalkeeper} onValueChange={setAwayGoalkeeper}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select goalkeeper" />
-                      </SelectTrigger>
-                      <SelectContent>
+                  {/* Away Team Lineup */}
+                  <div>
+                    <h3 className="font-semibold mb-3">{match.away_team?.name} Lineup</h3>
+                    
+                    <div className="mb-4">
+                      <Label>Goalkeeper (Required)</Label>
+                      <Select value={awayGoalkeeper} onValueChange={setAwayGoalkeeper}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select goalkeeper" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {awayPlayers
+                            .filter((p) => p.position?.toLowerCase() === "goalkeeper")
+                            .map((player) => (
+                              <SelectItem key={player.id} value={player.id}>
+                                #{player.jersey_number} {player.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label>Outfield Players (4-10)</Label>
+                      <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
                         {awayPlayers
-                          .filter((p) => p.position?.toLowerCase() === "goalkeeper")
+                          .filter((p) => p.position?.toLowerCase() !== "goalkeeper")
                           .map((player) => (
-                            <SelectItem key={player.id} value={player.id}>
-                              #{player.jersey_number} {player.name}
-                            </SelectItem>
+                            <div key={player.id} className="flex items-center gap-2">
+                              <Checkbox
+                                id={`away-${player.id}`}
+                                checked={awaySelectedPlayers.includes(player.id)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    setAwaySelectedPlayers([...awaySelectedPlayers, player.id]);
+                                  } else {
+                                    setAwaySelectedPlayers(
+                                      awaySelectedPlayers.filter((id) => id !== player.id)
+                                    );
+                                  }
+                                }}
+                              />
+                              <label htmlFor={`away-${player.id}`} className="text-sm">
+                                #{player.jersey_number} {player.name} ({player.position})
+                              </label>
+                            </div>
                           ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label>Outfield Players (4-10)</Label>
-                    <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
-                      {awayPlayers
-                        .filter((p) => p.position?.toLowerCase() !== "goalkeeper")
-                        .map((player) => (
-                          <div key={player.id} className="flex items-center gap-2">
-                            <Checkbox
-                              id={`away-${player.id}`}
-                              checked={awaySelectedPlayers.includes(player.id)}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  setAwaySelectedPlayers([...awaySelectedPlayers, player.id]);
-                                } else {
-                                  setAwaySelectedPlayers(
-                                    awaySelectedPlayers.filter((id) => id !== player.id)
-                                  );
-                                }
-                              }}
-                            />
-                            <label htmlFor={`away-${player.id}`} className="text-sm">
-                              #{player.jersey_number} {player.name} ({player.position})
-                            </label>
-                          </div>
-                        ))}
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Selected: {awaySelectedPlayers.length} players
+                      </p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Selected: {awaySelectedPlayers.length} players
-                    </p>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex gap-3 mt-6">
-                <Button onClick={handleSaveLineups} disabled={saveLineup.isPending}>
-                  Save Lineups
-                </Button>
-                <Button 
-                  onClick={handleStartMatch} 
-                  className="bg-green-600 hover:bg-green-700"
-                  disabled={!homeGoalkeeper || !awayGoalkeeper || homeSelectedPlayers.length < 4 || awaySelectedPlayers.length < 4}
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Start Match
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex gap-3 mt-6">
+                  <Button onClick={handleSaveLineups} disabled={saveLineup.isPending}>
+                    Save Lineups
+                  </Button>
+                  <Button 
+                    onClick={handleStartMatch} 
+                    className="bg-green-600 hover:bg-green-700"
+                    disabled={!homeGoalkeeper || !awayGoalkeeper || homeSelectedPlayers.length < 4 || awaySelectedPlayers.length < 4 || !refereeName}
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Start Match
+                  </Button>
+                </div>
+                {!refereeName && (
+                  <p className="text-xs text-destructive mt-2">* Centre Referee name is required to start the match</p>
+                )}
+              </CardContent>
+            </Card>
+          </>
         )}
 
         {/* Live Phase: Event Logging */}
@@ -585,18 +643,64 @@ export default function LiveMatch() {
                   </div>
 
                   {eventType === "substitution" && (
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <Label>Player Out (Leaving)</Label>
+                        <Select value={subOutPlayer} onValueChange={setSubOutPlayer}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select player leaving" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedTeamPlayers.map((player) => (
+                              <SelectItem key={player.id} value={player.id}>
+                                #{player.jersey_number} {player.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Player In (Entering)</Label>
+                        <Select value={subInPlayer} onValueChange={setSubInPlayer}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select player entering" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedTeamPlayers
+                              .filter((p) => p.id !== subOutPlayer)
+                              .map((player) => (
+                                <SelectItem key={player.id} value={player.id}>
+                                  #{player.jersey_number} {player.name}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+
+                  {(eventType === "yellow_card" || eventType === "red_card") && (
                     <div className="mb-4">
-                      <Label>Player Out</Label>
-                      <Select value={subOutPlayer} onValueChange={setSubOutPlayer}>
+                      <Label>Reason for Card</Label>
+                      <Select value={cardReason} onValueChange={setCardReason}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select player to substitute out" />
+                          <SelectValue placeholder="Select reason" />
                         </SelectTrigger>
                         <SelectContent>
-                          {selectedTeamPlayers.map((player) => (
-                            <SelectItem key={player.id} value={player.id}>
-                              #{player.jersey_number} {player.name}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="Unsporting behaviour">Unsporting behaviour</SelectItem>
+                          <SelectItem value="Dissent">Dissent</SelectItem>
+                          <SelectItem value="Persistent infringement">Persistent infringement</SelectItem>
+                          <SelectItem value="Delaying restart">Delaying restart</SelectItem>
+                          <SelectItem value="Failure to respect distance">Failure to respect distance</SelectItem>
+                          <SelectItem value="Entering/leaving without permission">Entering/leaving without permission</SelectItem>
+                          <SelectItem value="Serious foul play">Serious foul play</SelectItem>
+                          <SelectItem value="Violent conduct">Violent conduct</SelectItem>
+                          <SelectItem value="Spitting">Spitting</SelectItem>
+                          <SelectItem value="Denying goal (handball)">Denying goal (handball)</SelectItem>
+                          <SelectItem value="Denying goal (foul)">Denying goal (foul)</SelectItem>
+                          <SelectItem value="Offensive language">Offensive language</SelectItem>
+                          <SelectItem value="Second yellow card">Second yellow card</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
