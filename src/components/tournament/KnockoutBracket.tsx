@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
-import { Trophy } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { Trophy, HelpCircle } from "lucide-react";
 import { format } from "date-fns";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 interface Match {
   id: string;
@@ -32,18 +33,199 @@ interface KnockoutBracketProps {
   teamsQualifyingPerGroup?: number;
 }
 
-// Define the bracket structure with empty slots
 interface BracketSlot {
   id: string;
   match?: Match;
   homeTeamId?: string | null;
   awayTeamId?: string | null;
+  isNewlyQualified?: boolean;
 }
 
-interface BracketRound {
-  name: string;
-  stage: string;
-  slots: BracketSlot[];
+// Team slot component with animation
+function TeamSlot({ 
+  teamId, 
+  teams, 
+  score, 
+  showScore, 
+  isWinner,
+  isNewlyQualified = false
+}: { 
+  teamId: string | null; 
+  teams: Map<string, Team>; 
+  score?: number | null;
+  showScore: boolean;
+  isWinner: boolean;
+  isNewlyQualified?: boolean;
+}) {
+  const [showGlow, setShowGlow] = useState(isNewlyQualified);
+  
+  useEffect(() => {
+    if (isNewlyQualified) {
+      setShowGlow(true);
+      const timer = setTimeout(() => setShowGlow(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isNewlyQualified]);
+
+  const team = teamId ? teams.get(teamId) : null;
+  const hasTrueTeam = !!team;
+
+  return (
+    <div className={cn(
+      "flex items-center gap-3 py-2 px-3 transition-all duration-300",
+      isWinner && "bg-primary/10"
+    )}>
+      {/* Team Logo */}
+      <div className={cn(
+        "relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden transition-all duration-500",
+        hasTrueTeam && isNewlyQualified && "animate-team-appear",
+        showGlow && hasTrueTeam && "team-glow"
+      )}>
+        {hasTrueTeam && team.logo_url ? (
+          <img 
+            src={team.logo_url} 
+            alt={team.name}
+            className="w-full h-full object-cover rounded-full"
+          />
+        ) : hasTrueTeam ? (
+          <div className={cn(
+            "w-full h-full rounded-full flex items-center justify-center text-xs font-bold",
+            isWinner ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground"
+          )}>
+            {team.short_name || team.name.slice(0, 3).toUpperCase()}
+          </div>
+        ) : (
+          <div className="w-full h-full rounded-full bg-primary/30 flex items-center justify-center border-2 border-dashed border-primary/50">
+            <HelpCircle className="w-4 h-4 text-primary" />
+          </div>
+        )}
+      </div>
+
+      {/* Team Name */}
+      <span className={cn(
+        "flex-1 text-sm font-medium truncate transition-colors",
+        hasTrueTeam ? (isWinner ? "text-primary font-bold" : "text-foreground") : "text-muted-foreground italic"
+      )}>
+        {hasTrueTeam ? (team.short_name || team.name) : "TBD"}
+      </span>
+
+      {/* Score */}
+      <span className={cn(
+        "text-sm font-mono min-w-[20px] text-right",
+        isWinner ? "text-primary font-bold" : "text-muted-foreground"
+      )}>
+        {showScore ? (score ?? "-") : "-"}
+      </span>
+    </div>
+  );
+}
+
+// Match card component
+function MatchCard({
+  slot,
+  teams,
+  onClick,
+}: {
+  slot: BracketSlot;
+  teams: Map<string, Team>;
+  onClick?: () => void;
+}) {
+  const match = slot.match;
+  const isCompleted = match?.status === "completed";
+  const isLive = match?.status === "live";
+  const showScore = isCompleted || isLive;
+  const hasMatch = !!match;
+
+  const getWinner = () => {
+    if (!isCompleted || match.home_score === null || match.away_score === null) return null;
+    if (match.home_score > match.away_score) return match.home_team_id;
+    if (match.away_score > match.home_score) return match.away_team_id;
+    return null;
+  };
+
+  const winner = getWinner();
+
+  return (
+    <div
+      onClick={hasMatch ? onClick : undefined}
+      className={cn(
+        "bracket-match-card rounded-lg overflow-hidden transition-all duration-200",
+        "bg-secondary/80 border border-border/50",
+        "shadow-lg shadow-black/20",
+        hasMatch && "cursor-pointer hover:border-primary/50 hover:shadow-primary/10"
+      )}
+    >
+      {/* Live indicator */}
+      {isLive && (
+        <div className="bg-green-500/20 px-3 py-1 text-center">
+          <span className="text-xs font-bold text-green-400 animate-pulse">● LIVE</span>
+        </div>
+      )}
+
+      {/* Home Team */}
+      <TeamSlot
+        teamId={slot.homeTeamId || null}
+        teams={teams}
+        score={match?.home_score}
+        showScore={showScore}
+        isWinner={winner === slot.homeTeamId}
+        isNewlyQualified={slot.isNewlyQualified}
+      />
+
+      {/* VS Divider */}
+      <div className="flex items-center px-3">
+        <div className="flex-1 border-t border-border/30" />
+        <span className="px-2 text-[10px] text-muted-foreground font-medium">VS</span>
+        <div className="flex-1 border-t border-border/30" />
+      </div>
+
+      {/* Away Team */}
+      <TeamSlot
+        teamId={slot.awayTeamId || null}
+        teams={teams}
+        score={match?.away_score}
+        showScore={showScore}
+        isWinner={winner === slot.awayTeamId}
+        isNewlyQualified={slot.isNewlyQualified}
+      />
+
+      {/* Match Date */}
+      {match?.match_date && !isCompleted && (
+        <div className="px-3 py-1 text-center border-t border-border/30">
+          <p className="text-[10px] text-muted-foreground">
+            {format(new Date(match.match_date), "MMM d, HH:mm")}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Connector line component
+function ConnectorLines({ roundIndex, slotsInRound, isRightSide }: { 
+  roundIndex: number; 
+  slotsInRound: number;
+  isRightSide: boolean;
+}) {
+  // Don't show connectors for the round of 16 (first round) or for the final
+  if (roundIndex === 0) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none">
+      {Array.from({ length: slotsInRound }).map((_, i) => (
+        <div 
+          key={i}
+          className={cn(
+            "absolute w-4 border-t-2 border-border/40",
+            isRightSide ? "right-full" : "left-full"
+          )}
+          style={{
+            top: `${((i + 0.5) / slotsInRound) * 100}%`,
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 export function KnockoutBracket({ 
@@ -65,73 +247,66 @@ export function KnockoutBracket({
     return byStage;
   }, [matches]);
 
-  // Build the bracket structure based on actual knockout matches
-  const bracketStructure = useMemo(() => {
-    const stages = [
-      { name: 'Round of 16', stage: 'round_of_16', expectedSlots: 8 },
-      { name: 'Quarter-Finals', stage: 'quarter_final', expectedSlots: 4 },
-      { name: 'Semi-Finals', stage: 'semi_final', expectedSlots: 2 },
-      { name: 'Final', stage: 'final', expectedSlots: 1 },
-    ];
-
-    // Determine which stages we need based on what matches exist
-    const existingStages = Object.keys(matchesByStage);
+  // Build bracket slots for each round
+  const buildRoundSlots = (stage: string, expectedSlots: number): BracketSlot[] => {
+    const stageMatches = matchesByStage[stage] || [];
     
-    // If no knockout matches exist, show empty bracket structure
-    if (existingStages.length === 0) {
-      return stages.map(s => ({
-        name: s.name,
-        stage: s.stage,
-        slots: Array.from({ length: s.expectedSlots }, (_, i) => ({
-          id: `${s.stage}-${i}`,
-          match: undefined,
-          homeTeamId: null,
-          awayTeamId: null,
-        }))
+    if (stageMatches.length > 0) {
+      return stageMatches.map((m) => ({
+        id: m.id,
+        match: m,
+        homeTeamId: m.home_team_id,
+        awayTeamId: m.away_team_id,
       }));
     }
-
-    // Build structure based on existing matches
-    const result: BracketRound[] = [];
     
-    stages.forEach(stageInfo => {
-      const stageMatches = matchesByStage[stageInfo.stage] || [];
-      
-      if (stageMatches.length > 0) {
-        result.push({
-          name: stageInfo.name,
-          stage: stageInfo.stage,
-          slots: stageMatches.map((m, i) => ({
-            id: m.id,
-            match: m,
-            homeTeamId: m.home_team_id,
-            awayTeamId: m.away_team_id,
-          }))
-        });
-      } else if (result.length > 0) {
-        // Add empty slots for subsequent stages
-        const prevRound = result[result.length - 1];
-        const expectedSlots = Math.ceil(prevRound.slots.length / 2);
-        result.push({
-          name: stageInfo.name,
-          stage: stageInfo.stage,
-          slots: Array.from({ length: expectedSlots }, (_, i) => ({
-            id: `${stageInfo.stage}-${i}`,
-            match: undefined,
-            homeTeamId: null,
-            awayTeamId: null,
-          }))
-        });
-      }
-    });
+    return Array.from({ length: expectedSlots }, (_, i) => ({
+      id: `${stage}-${i}`,
+      match: undefined,
+      homeTeamId: null,
+      awayTeamId: null,
+    }));
+  };
 
-    return result;
+  // Build symmetric bracket structure
+  const bracketData = useMemo(() => {
+    const ro16Slots = buildRoundSlots('round_of_16', 8);
+    const qfSlots = buildRoundSlots('quarter_final', 4);
+    const sfSlots = buildRoundSlots('semi_final', 2);
+    const finalSlots = buildRoundSlots('final', 1);
+
+    // Split into left and right sides
+    return {
+      left: {
+        roundOf16: ro16Slots.slice(0, 4),
+        quarterFinals: qfSlots.slice(0, 2),
+        semiFinals: sfSlots.slice(0, 1),
+      },
+      right: {
+        roundOf16: ro16Slots.slice(4, 8),
+        quarterFinals: qfSlots.slice(2, 4),
+        semiFinals: sfSlots.slice(1, 2),
+      },
+      final: finalSlots[0],
+    };
   }, [matchesByStage]);
 
-  const getTeamDisplay = (teamId: string | null) => {
-    if (!teamId) {
-      return { name: 'TBD', shortName: '?', logo: null };
+  // Get champion if final is complete
+  const champion = useMemo(() => {
+    if (bracketData.final.match) {
+      const finalMatch = bracketData.final.match;
+      if (finalMatch.status === 'completed' && finalMatch.home_score !== null && finalMatch.away_score !== null) {
+        const winnerId = finalMatch.home_score > finalMatch.away_score 
+          ? finalMatch.home_team_id 
+          : finalMatch.away_team_id;
+        return winnerId ? teams.get(winnerId) : null;
+      }
     }
+    return null;
+  }, [bracketData.final, teams]);
+
+  const getTeamDisplay = (teamId: string | null) => {
+    if (!teamId) return { name: 'TBD', shortName: '?', logo: null };
     const team = teams.get(teamId);
     return {
       name: team?.name || 'Unknown',
@@ -140,167 +315,116 @@ export function KnockoutBracket({
     };
   };
 
-  const getWinner = (match: Match) => {
-    if (match.status !== 'completed' || match.home_score === null || match.away_score === null) {
-      return null;
-    }
-    if (match.home_score > match.away_score) return match.home_team_id;
-    if (match.away_score > match.home_score) return match.away_team_id;
-    return null;
-  };
+  // Render a single side of the bracket
+  const renderBracketSide = (
+    side: { roundOf16: BracketSlot[]; quarterFinals: BracketSlot[]; semiFinals: BracketSlot[] },
+    isRightSide: boolean
+  ) => {
+    const rounds = [
+      { name: "ROUND OF 16", slots: side.roundOf16, spacing: 0 },
+      { name: "QUARTERFINALS", slots: side.quarterFinals, spacing: 1 },
+      { name: "SEMIFINALS", slots: side.semiFinals, spacing: 2 },
+    ];
 
-  // Get champion if final is complete
-  const champion = useMemo(() => {
-    const finalRound = bracketStructure.find(r => r.stage === 'final');
-    if (finalRound?.slots[0]?.match) {
-      const finalMatch = finalRound.slots[0].match;
-      const winnerId = getWinner(finalMatch);
-      if (winnerId) {
-        return getTeamDisplay(winnerId);
-      }
-    }
-    return null;
-  }, [bracketStructure, teams]);
+    // Reverse order for right side to mirror
+    const orderedRounds = isRightSide ? [...rounds].reverse() : rounds;
 
-  // If no structure at all, show placeholder
-  if (bracketStructure.length === 0) {
     return (
-      <div className="glass-card p-8 text-center">
-        <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-        <p className="text-muted-foreground">Bracket not yet available</p>
-        <p className="text-sm text-muted-foreground mt-1">Knockout matches will appear here</p>
+      <div className={cn("flex gap-2 md:gap-4", isRightSide && "flex-row-reverse")}>
+        {orderedRounds.map((round, roundIndex) => {
+          const actualRoundIndex = isRightSide ? rounds.length - 1 - roundIndex : roundIndex;
+          
+          return (
+            <div key={round.name} className="flex flex-col" style={{ minWidth: 180 }}>
+              {/* Round Label */}
+              <h4 className="text-[10px] md:text-xs font-bold text-primary/80 text-center mb-3 tracking-wider uppercase">
+                {round.name}
+              </h4>
+
+              {/* Match Slots */}
+              <div 
+                className="relative flex flex-col justify-around flex-1"
+                style={{
+                  gap: `${Math.pow(2, actualRoundIndex) * 1.5}rem`,
+                  paddingTop: `${actualRoundIndex * 2}rem`,
+                  paddingBottom: `${actualRoundIndex * 2}rem`,
+                }}
+              >
+                <ConnectorLines 
+                  roundIndex={actualRoundIndex} 
+                  slotsInRound={round.slots.length} 
+                  isRightSide={isRightSide} 
+                />
+                
+                {round.slots.map((slot) => (
+                  <MatchCard
+                    key={slot.id}
+                    slot={slot}
+                    teams={teams}
+                    onClick={() => slot.match && setSelectedMatch(slot.match)}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
-  }
+  };
 
   return (
     <>
-      <div className="glass-card p-6 overflow-x-auto">
-        <div className="flex gap-8 min-w-max items-start">
-          {bracketStructure.map((round, roundIndex) => (
-            <div key={round.stage} className="flex flex-col gap-4" style={{ minWidth: 220 }}>
-              <h4 className="text-sm font-bold text-primary text-center mb-2">{round.name}</h4>
-              <div 
-                className="flex flex-col gap-4 justify-around h-full"
-                style={{ 
-                  paddingTop: roundIndex * 40,
-                  paddingBottom: roundIndex * 40 
-                }}
-              >
-                {round.slots.map((slot) => {
-                  const match = slot.match;
-                  const homeTeam = getTeamDisplay(slot.homeTeamId || null);
-                  const awayTeam = getTeamDisplay(slot.awayTeamId || null);
-                  const winner = match ? getWinner(match) : null;
-                  const isCompleted = match?.status === 'completed';
-                  const isLive = match?.status === 'live';
-                  const hasMatch = !!match;
+      <div className="bracket-container rounded-xl p-4 md:p-6 overflow-x-auto bg-[hsl(218,57%,10%)]">
+        <div className="flex items-stretch justify-center min-w-max gap-2 md:gap-4">
+          {/* Left Side */}
+          {renderBracketSide(bracketData.left, false)}
 
-                  return (
-                    <div 
-                      key={slot.id}
-                      onClick={() => match && setSelectedMatch(match)}
-                      className={`bg-secondary/50 rounded-lg p-3 border border-border transition-colors ${
-                        hasMatch ? 'cursor-pointer hover:bg-secondary hover:border-primary/50' : 'border-dashed opacity-70'
-                      }`}
-                    >
-                      {isLive && (
-                        <div className="flex justify-center mb-2">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-500 font-medium animate-pulse">
-                            LIVE
-                          </span>
-                        </div>
-                      )}
-                      
-                      {/* Home Team */}
-                      <div className={`flex items-center justify-between gap-2 py-1 ${
-                        isCompleted && winner === slot.homeTeamId ? 'text-primary font-bold' : ''
-                      }`}>
-                        <div className="flex items-center gap-2">
-                          {homeTeam.logo ? (
-                            <img 
-                              src={homeTeam.logo} 
-                              alt={homeTeam.name}
-                              className={`w-6 h-6 rounded-full object-cover ${
-                                winner === slot.homeTeamId ? 'ring-2 ring-primary' : ''
-                              }`}
-                            />
-                          ) : (
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              winner === slot.homeTeamId ? 'bg-primary text-primary-foreground' : 'bg-primary/20 text-primary'
-                            }`}>
-                              {homeTeam.shortName}
-                            </div>
-                          )}
-                          <span className="text-sm truncate max-w-[100px]">{homeTeam.name}</span>
-                        </div>
-                        <span className="text-sm font-mono">
-                          {isCompleted || isLive ? match?.home_score ?? '-' : '-'}
-                        </span>
-                      </div>
+          {/* Center - Final & Trophy */}
+          <div className="flex flex-col items-center justify-center" style={{ minWidth: 200 }}>
+            {/* Final Label */}
+            <h4 className="text-xs font-bold text-primary text-center mb-3 tracking-wider uppercase">
+              FINAL
+            </h4>
 
-                      {/* VS Divider */}
-                      <div className="flex items-center gap-2 my-1">
-                        <div className="flex-1 border-t border-border/50" />
-                        <span className="text-xs text-muted-foreground">VS</span>
-                        <div className="flex-1 border-t border-border/50" />
-                      </div>
+            {/* Final Match Card */}
+            <div className="mb-6">
+              <MatchCard
+                slot={bracketData.final}
+                teams={teams}
+                onClick={() => bracketData.final.match && setSelectedMatch(bracketData.final.match)}
+              />
+            </div>
 
-                      {/* Away Team */}
-                      <div className={`flex items-center justify-between gap-2 py-1 ${
-                        isCompleted && winner === slot.awayTeamId ? 'text-primary font-bold' : ''
-                      }`}>
-                        <div className="flex items-center gap-2">
-                          {awayTeam.logo ? (
-                            <img 
-                              src={awayTeam.logo} 
-                              alt={awayTeam.name}
-                              className={`w-6 h-6 rounded-full object-cover ${
-                                winner === slot.awayTeamId ? 'ring-2 ring-primary' : ''
-                              }`}
-                            />
-                          ) : (
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              winner === slot.awayTeamId ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground'
-                            }`}>
-                              {awayTeam.shortName}
-                            </div>
-                          )}
-                          <span className="text-sm truncate max-w-[100px]">{awayTeam.name}</span>
-                        </div>
-                        <span className="text-sm font-mono">
-                          {isCompleted || isLive ? match?.away_score ?? '-' : '-'}
-                        </span>
-                      </div>
-
-                      {/* Date */}
-                      {match?.match_date && !isCompleted && (
-                        <p className="text-[10px] text-muted-foreground text-center mt-2">
-                          {format(new Date(match.match_date), "MMM d, HH:mm")}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
+            {/* Trophy & Champion */}
+            <div className="flex flex-col items-center">
+              <div className={cn(
+                "w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500",
+                champion 
+                  ? "bg-gradient-to-br from-yellow-400 to-amber-600 shadow-[0_0_30px_rgba(255,215,0,0.5)]"
+                  : "bg-primary/20 border-2 border-dashed border-primary/40"
+              )}>
+                <Trophy className={cn(
+                  "h-10 w-10",
+                  champion ? "text-primary-foreground" : "text-primary/60"
+                )} />
               </div>
+              <p className={cn(
+                "text-sm font-bold mt-3 text-center",
+                champion ? "text-primary" : "text-muted-foreground"
+              )}>
+                {champion ? champion.name : "CHAMPION"}
+              </p>
             </div>
-          ))}
-
-          {/* Trophy/Champion */}
-          <div className="flex flex-col items-center justify-center min-w-[100px]" style={{ paddingTop: bracketStructure.length * 40 }}>
-            <div className="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center">
-              <Trophy className="h-8 w-8 text-yellow-500" />
-            </div>
-            <p className="text-sm font-bold mt-2 text-center">
-              {champion ? champion.name : 'Champion'}
-            </p>
           </div>
+
+          {/* Right Side */}
+          {renderBracketSide(bracketData.right, true)}
         </div>
       </div>
 
       {/* Match Detail Dialog */}
       <Dialog open={!!selectedMatch} onOpenChange={() => setSelectedMatch(null)}>
-        <DialogContent>
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
             <DialogTitle>Match Details</DialogTitle>
           </DialogHeader>
@@ -359,6 +483,44 @@ export function KnockoutBracket({
           )}
         </DialogContent>
       </Dialog>
+
+      {/* CSS for animations */}
+      <style>{`
+        @keyframes teamAppear {
+          0% {
+            opacity: 0;
+            transform: scale(0.5);
+          }
+          50% {
+            transform: scale(1.15);
+          }
+          100% {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(184, 154, 89, 0.8), 0 0 40px rgba(184, 154, 89, 0.4);
+          }
+          50% {
+            box-shadow: 0 0 30px rgba(184, 154, 89, 1), 0 0 60px rgba(184, 154, 89, 0.6);
+          }
+        }
+
+        .animate-team-appear {
+          animation: teamAppear 0.5s ease-out forwards;
+        }
+
+        .team-glow {
+          animation: glowPulse 1s ease-in-out infinite;
+        }
+
+        .bracket-match-card {
+          min-width: 160px;
+        }
+      `}</style>
     </>
   );
 }
