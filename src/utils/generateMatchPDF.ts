@@ -264,6 +264,31 @@ const addFooter = (doc: jsPDF, pageNum: number, totalPages: number, reportId: st
   doc.text(`Generated: ${format(new Date(), "MMM d, yyyy HH:mm")}`, pageWidth / 2, footerY + 4, { align: "center" });
 };
 
+// EYL Static Content for About Page
+const EYL_ABOUT = {
+  about: "The Ethiopian Youth League (EYL) is a digital tournament management system under Ramiyone administration, dedicated to the automatic management of football tournaments. It enables hosts to update information, handle operations digitally, and store data securely in collaboration with the Ethiopian Football Federation.",
+  mission: "To provide a robust data management system that improves the quality of tournaments, ensures equality in data access for football governing bodies, and enhances the overall growth of football through reliable data.",
+  vision: "To see Ethiopian talents identified from every corner of the country, given the opportunity they deserve, and to witness Ethiopian football grow and shine. Our long-term vision is to become Africa's leading data and talent identification platform.",
+  values: [
+    { title: "Integrity", desc: "Upholding the highest standards of honesty and transparency." },
+    { title: "Inclusivity", desc: "Every young person deserves a chance to show their talent." },
+    { title: "Excellence", desc: "Striving for the highest standards in data management." },
+    { title: "Innovation", desc: "Embracing modern technology to maximize football quality." },
+    { title: "Community", desc: "Building lasting connections between players, academies, and clubs." },
+  ],
+  story: "Founded in 2026, the Ethiopian Youth League began with a powerful vision: to raise the quality of Ethiopian football and give every young player the opportunity to showcase their talent through data. Our founders, Yonatan Dawit and Ramin Naser, recognized Ethiopia's abundant football talent but also the critical gap in opportunities. Partnering with the Ethiopian Football Federation, EYL set out to close this gap.",
+  dss: {
+    title: "Digital Scouting System (DSS)",
+    description: "A platform for talent identification that works side by side with EYL.",
+    features: [
+      "Player Profiles: Detailed stats, videos, and coach comments for remote scouting.",
+      "Academy/Project Profiles: Comprehensive profiles with player rosters and coach details.",
+      "Scouts Premium Access: Watch videos, review stats, request trials.",
+      "Ramiyone Scouts: Dedicated scouts prepare detailed reports and recommendations.",
+    ],
+  },
+};
+
 export const generateMatchReportPDF = async ({
   match,
   events,
@@ -743,7 +768,163 @@ export const generateMatchReportPDF = async ({
   doc.text("Signature: ___________________________", margin + sigColWidth + 7, y + 11);
   doc.text("Date: _______________", margin + sigColWidth + 7, y + 17);
   
-  addFooter(doc, 2, 2, reportId);
+  addFooter(doc, 2, 3, reportId);
+  
+  // Update page 1 footer
+  doc.setPage(1);
+  addFooter(doc, 1, 3, reportId);
+  
+  // ==================== PAGE 3: ABOUT EYL & DSS ====================
+  doc.addPage();
+  addWatermark(doc);
+  
+  // About EYL Header
+  doc.setFillColor(...COLORS.navy);
+  doc.rect(0, 0, pageWidth, 28, "F");
+  doc.setFillColor(...COLORS.gold);
+  doc.rect(0, 28, pageWidth, 2, "F");
+  
+  doc.setTextColor(...COLORS.gold);
+  doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.text("ETHIOPIAN YOUTH LEAGUE", pageWidth / 2, 14, { align: "center" });
+  doc.setTextColor(...COLORS.white);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("About Us & Digital Scouting System", pageWidth / 2, 23, { align: "center" });
+  
+  y = 38;
+  
+  // ABOUT EYL Section
+  y = drawSectionHeader(doc, "About EYL", y, pageWidth);
+  
+  doc.setFillColor(...COLORS.white);
+  doc.rect(margin, y, contentWidth, 22, "F");
+  doc.setDrawColor(...COLORS.gold);
+  doc.rect(margin, y, contentWidth, 22, "S");
+  
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...COLORS.darkGray);
+  doc.setFontSize(8);
+  const aboutText = doc.splitTextToSize(EYL_ABOUT.about, contentWidth - 6);
+  doc.text(aboutText, margin + 3, y + 5);
+  y += 25;
+  
+  // MISSION Section
+  y = drawSectionHeader(doc, "Our Mission", y, pageWidth);
+  
+  doc.setFillColor(...COLORS.white);
+  doc.rect(margin, y, contentWidth, 14, "F");
+  doc.setDrawColor(...COLORS.gold);
+  doc.rect(margin, y, contentWidth, 14, "S");
+  
+  const missionText = doc.splitTextToSize(EYL_ABOUT.mission, contentWidth - 6);
+  doc.text(missionText, margin + 3, y + 5);
+  y += 17;
+  
+  // VISION Section
+  y = drawSectionHeader(doc, "Our Vision", y, pageWidth);
+  
+  doc.setFillColor(...COLORS.white);
+  doc.rect(margin, y, contentWidth, 14, "F");
+  doc.setDrawColor(...COLORS.gold);
+  doc.rect(margin, y, contentWidth, 14, "S");
+  
+  const visionText = doc.splitTextToSize(EYL_ABOUT.vision, contentWidth - 6);
+  doc.text(visionText, margin + 3, y + 5);
+  y += 17;
+  
+  // CORE VALUES Section
+  y = drawSectionHeader(doc, "Our Core Values", y, pageWidth);
+  
+  EYL_ABOUT.values.forEach((val, idx) => {
+    const isAlt = idx % 2 === 1;
+    if (isAlt) {
+      doc.setFillColor(...COLORS.tableAlt);
+    } else {
+      doc.setFillColor(...COLORS.white);
+    }
+    doc.rect(margin, y, contentWidth, 7, "F");
+    doc.setDrawColor(...COLORS.gold);
+    doc.rect(margin, y, contentWidth, 7, "S");
+    
+    doc.setTextColor(...COLORS.navy);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+    doc.text(`• ${val.title}:`, margin + 3, y + 5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...COLORS.darkGray);
+    doc.text(val.desc, margin + 35, y + 5);
+    y += 7;
+  });
+  
+  y += 5;
+  
+  // OUR STORY Section
+  y = drawSectionHeader(doc, "Our Story", y, pageWidth);
+  
+  doc.setFillColor(...COLORS.white);
+  doc.rect(margin, y, contentWidth, 22, "F");
+  doc.setDrawColor(...COLORS.gold);
+  doc.rect(margin, y, contentWidth, 22, "S");
+  
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...COLORS.darkGray);
+  doc.setFontSize(8);
+  const storyText = doc.splitTextToSize(EYL_ABOUT.story, contentWidth - 6);
+  doc.text(storyText, margin + 3, y + 5);
+  y += 25;
+  
+  // DIGITAL SCOUTING SYSTEM Section
+  y = drawSectionHeader(doc, EYL_ABOUT.dss.title, y, pageWidth);
+  
+  doc.setFillColor(...COLORS.white);
+  doc.rect(margin, y, contentWidth, 10, "F");
+  doc.setDrawColor(...COLORS.gold);
+  doc.rect(margin, y, contentWidth, 10, "S");
+  
+  doc.setFont("helvetica", "italic");
+  doc.setTextColor(...COLORS.navy);
+  doc.setFontSize(8);
+  doc.text(EYL_ABOUT.dss.description, margin + 3, y + 6);
+  y += 12;
+  
+  // DSS Features
+  EYL_ABOUT.dss.features.forEach((feature, idx) => {
+    const isAlt = idx % 2 === 1;
+    if (isAlt) {
+      doc.setFillColor(...COLORS.tableAlt);
+    } else {
+      doc.setFillColor(...COLORS.white);
+    }
+    doc.rect(margin, y, contentWidth, 7, "F");
+    doc.setDrawColor(...COLORS.gold);
+    doc.rect(margin, y, contentWidth, 7, "S");
+    
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...COLORS.darkGray);
+    doc.setFontSize(8);
+    doc.text(`• ${feature}`, margin + 3, y + 5);
+    y += 7;
+  });
+  
+  y += 8;
+  
+  // Integration Notice
+  doc.setFillColor(...COLORS.navy);
+  doc.roundedRect(margin, y, contentWidth, 16, 2, 2, "F");
+  
+  doc.setTextColor(...COLORS.gold);
+  doc.setFontSize(9);
+  doc.setFont("helvetica", "bold");
+  doc.text("Integration with EYL", pageWidth / 2, y + 6, { align: "center" });
+  
+  doc.setTextColor(...COLORS.white);
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "normal");
+  doc.text("All academy and player profiles are linked with EYL. Tournament stats update automatically.", pageWidth / 2, y + 12, { align: "center" });
+  
+  addFooter(doc, 3, 3, reportId);
 
   return doc.output("blob");
 };
