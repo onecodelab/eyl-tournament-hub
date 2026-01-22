@@ -9,7 +9,6 @@ import eylLogo from "@/assets/eyl-logo.png";
 const topNavLinks = [
   { name: "Ethiopian Youth League", href: "/" },
   { name: "About Us", href: "/about" },
-  { name: "Football & Community", href: "/community" },
   { name: "Events", href: "/matches" },
   { name: "Youth Competitions", href: "/standings" },
   { name: "Media", href: "/news" },
