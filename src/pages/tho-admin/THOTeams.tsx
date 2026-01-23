@@ -303,9 +303,9 @@ export default function THOTeams() {
                   {editingTeam ? "Update team details" : "Add a new team to your tournament"}
                 </DialogDescription>
               </DialogHeader>
-              <ScrollArea className="flex-1 max-h-[60vh]">
+              <ScrollArea className="flex-1 max-h-[60vh] scrollbar-visible">
                 <form onSubmit={handleSubmit} id="team-form">
-                  <div className="space-y-4 py-4 pr-4">
+                  <div className="space-y-4 py-4 pr-4 scrollbar-visible">
                   <div className="space-y-2">
                     <Label>Team Name *</Label>
                     <Input

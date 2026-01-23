@@ -290,9 +290,9 @@ export default function THOMatches() {
                   {editingMatch ? "Update match details" : "Schedule a new match"}
                 </DialogDescription>
               </DialogHeader>
-              <ScrollArea className="flex-1 max-h-[60vh]">
+              <ScrollArea className="flex-1 max-h-[60vh] scrollbar-visible">
                 <form onSubmit={handleSubmit} id="match-form">
-                  <div className="space-y-4 py-4 pr-4">
+                  <div className="space-y-4 py-4 pr-4 scrollbar-visible">
                   {/* Match Stage Selection */}
                   <div className="space-y-2">
                     <Label>Match Stage *</Label>
