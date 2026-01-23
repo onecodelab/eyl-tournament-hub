@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useAllMatches, useTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { useCreateMatch, useUpdateMatch, useDeleteMatch } from "@/hooks/useAdminMutations";
-import { useReferees } from "@/hooks/useReferees";
+import { useRefereesWithEmail } from "@/hooks/useReferees";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,7 @@ export default function AdminMatches() {
   const { data: matches, isLoading } = useAllMatches();
   const { data: teams } = useTeams();
   const { data: tournaments } = useTournaments();
-  const { data: referees } = useReferees();
+  const { data: referees } = useRefereesWithEmail();
   const createMatch = useCreateMatch();
   const updateMatch = useUpdateMatch();
   const deleteMatch = useDeleteMatch();
@@ -117,7 +117,7 @@ export default function AdminMatches() {
   const getRefereeName = (refereeId: string | null) => {
     if (!refereeId) return null;
     const referee = referees?.find(r => r.user_id === refereeId);
-    return referee ? `Referee ${referee.user_id.slice(0, 8)}...` : null;
+    return referee?.email || null;
   };
 
   const getStatusBadge = (status: string | null) => {
@@ -233,7 +233,7 @@ export default function AdminMatches() {
                       )}
                       {referees?.map((r) => (
                         <SelectItem key={r.id} value={r.user_id}>
-                          Referee {r.user_id.slice(0, 8)}...
+                          {r.email}
                         </SelectItem>
                       ))}
                     </SelectContent>
