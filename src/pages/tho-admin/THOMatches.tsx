@@ -141,10 +141,15 @@ export default function THOMatches() {
     }
 
     const matchData = {
-      ...formData,
-      tournament_id: selectedTournamentId,
+      home_team_id: formData.home_team_id,
+      away_team_id: formData.away_team_id,
       match_date: formData.match_date ? new Date(formData.match_date).toISOString() : null,
+      venue: formData.venue,
+      status: formData.status,
       referee_id: formData.referee_id || null,
+      stage: formData.stage,
+      extra_time_option: isKnockoutStage ? formData.extra_time_option : null,
+      tournament_id: selectedTournamentId,
     };
 
     try {
