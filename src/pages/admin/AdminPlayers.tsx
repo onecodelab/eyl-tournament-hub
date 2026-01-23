@@ -124,7 +124,7 @@ export default function AdminPlayers() {
               <DialogHeader>
                 <DialogTitle>{editingPlayer ? "Edit Player" : "Create Player"}</DialogTitle>
               </DialogHeader>
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2 scrollbar-visible">
                 <div className="space-y-2">
                   <Label>Name *</Label>
                   <Input value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Player name" />

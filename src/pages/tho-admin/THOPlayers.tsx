@@ -243,9 +243,9 @@ export default function THOPlayers() {
                   {editingPlayer ? "Update player details" : "Add a new player to a team"}
                 </DialogDescription>
               </DialogHeader>
-              <ScrollArea className="flex-1 max-h-[60vh]">
+              <ScrollArea className="flex-1 max-h-[60vh] scrollbar-visible">
                 <form onSubmit={handleSubmit} id="player-form">
-                  <div className="space-y-4 py-4 pr-4">
+                  <div className="space-y-4 py-4 pr-4 scrollbar-visible">
                   <div className="space-y-2">
                     <Label>Player Name *</Label>
                     <Input
