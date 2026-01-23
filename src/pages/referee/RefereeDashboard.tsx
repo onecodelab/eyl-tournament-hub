@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { format, isToday, isFuture, isPast, parseISO } from "date-fns";
-import { Calendar, MapPin, Clock, Play, Eye, Shield } from "lucide-react";
+import { Calendar, MapPin, Clock, Play, Eye, Shield, Key } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useRefereeMatches } from "@/hooks/useRefereeMatches";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCurrentUserRole } from "@/hooks/useReferees";
+import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 
 type MatchWithTeams = {
   id: string;
@@ -208,9 +209,19 @@ export default function RefereeDashboard() {
   return (
     <Layout>
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Referee Dashboard</h1>
-          <p className="text-muted-foreground">Manage your assigned matches</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Referee Dashboard</h1>
+            <p className="text-muted-foreground">Manage your assigned matches</p>
+          </div>
+          <ChangePasswordDialog
+            trigger={
+              <Button variant="outline" size="sm" className="gap-2">
+                <Key className="h-4 w-4" />
+                Change Password
+              </Button>
+            }
+          />
         </div>
 
         {isLoading ? (

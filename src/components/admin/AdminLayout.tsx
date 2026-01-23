@@ -2,6 +2,7 @@ import { ReactNode, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -14,7 +15,8 @@ import {
   LogOut,
   Menu,
   Shield,
-  ShieldX
+  ShieldX,
+  Key
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -151,6 +153,13 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               <span className="text-sm text-muted-foreground hidden sm:inline">
                 {user.email}
               </span>
+              <ChangePasswordDialog
+                trigger={
+                  <Button variant="ghost" size="icon" title="Change Password">
+                    <Key className="h-4 w-4" />
+                  </Button>
+                }
+              />
               <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
                 <LogOut className="h-4 w-4" />
                 <span className="hidden sm:inline">Sign Out</span>
