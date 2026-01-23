@@ -665,6 +665,17 @@ export type Database = {
         Args: { _team_id: string; _user_id: string }
         Returns: boolean
       }
+      get_referees_with_email: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          user_id: string
+        }[]
+      }
+      get_user_email: { Args: { _user_id: string }; Returns: string }
       get_user_tournaments: { Args: { _user_id: string }; Returns: string[] }
       has_role: {
         Args: {

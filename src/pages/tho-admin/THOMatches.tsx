@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { useTeams, useMatches, useTournaments } from "@/hooks/useSupabaseData";
-import { useUserRoles } from "@/hooks/useReferees";
+import { useRefereesWithEmail } from "@/hooks/useReferees";
 import { useCreateMatch, useUpdateMatch, useDeleteMatch } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
@@ -40,8 +40,7 @@ export default function THOMatches() {
   const { data: allTeams = [] } = useTeams();
   const { data: allMatches = [], isLoading } = useMatches();
   const { data: tournaments = [] } = useTournaments();
-  const { data: userRoles = [] } = useUserRoles();
-  const referees = userRoles.filter((r: any) => r.role === "referee");
+  const { data: referees = [] } = useRefereesWithEmail();
   const { assignedTournaments } = useTournamentAdmin();
   const createMatch = useCreateMatch();
   const updateMatch = useUpdateMatch();
@@ -444,7 +443,7 @@ export default function THOMatches() {
                       <SelectContent>
                         {referees.map((ref: any) => (
                           <SelectItem key={ref.user_id} value={ref.user_id}>
-                            {ref.user_id.substring(0, 8)}...
+                            {ref.email}
                           </SelectItem>
                         ))}
                       </SelectContent>
