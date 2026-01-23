@@ -276,14 +276,43 @@ export function useSubmitMatchReport() {
     }) => {
       const { data: { user } } = await supabase.auth.getUser();
       
-      const { data, error } = await supabase
+      // Check if report already exists
+      const { data: existingReport } = await supabase
         .from("match_reports")
-        .insert({
-          ...report,
-          referee_id: user?.id,
-        })
-        .select()
-        .single();
+        .select("id")
+        .eq("match_id", report.match_id)
+        .maybeSingle();
+      
+      let data;
+      let error;
+
+      if (existingReport) {
+        // Update existing report
+        const result = await supabase
+          .from("match_reports")
+          .update({
+            attendance: report.attendance,
+            weather: report.weather,
+            notes: report.notes,
+          })
+          .eq("id", existingReport.id)
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+      } else {
+        // Insert new report
+        const result = await supabase
+          .from("match_reports")
+          .insert({
+            ...report,
+            referee_id: user?.id,
+          })
+          .select()
+          .single();
+        data = result.data;
+        error = result.error;
+      }
       
       if (error) throw error;
 
