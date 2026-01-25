@@ -296,16 +296,16 @@ export default function THOTeams() {
                   Add Team
                 </Button>
               </DialogTrigger>
-            <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
-              <DialogHeader>
+            <DialogContent className="max-w-md max-h-[90vh] overflow-hidden flex flex-col">
+              <DialogHeader className="flex-shrink-0">
                 <DialogTitle>{editingTeam ? "Edit Team" : "Add New Team"}</DialogTitle>
                 <DialogDescription>
                   {editingTeam ? "Update team details" : "Add a new team to your tournament"}
                 </DialogDescription>
               </DialogHeader>
-              <ScrollArea className="flex-1 max-h-[60vh] scrollbar-visible">
+              <div className="flex-1 overflow-y-auto pr-2" style={{ maxHeight: '60vh', scrollbarWidth: 'thin', scrollbarColor: 'hsl(var(--muted-foreground)) hsl(var(--muted))' }}>
                 <form onSubmit={handleSubmit} id="team-form">
-                  <div className="space-y-4 py-4 pr-4 scrollbar-visible">
+                  <div className="space-y-4 py-4 pr-2">
                   <div className="space-y-2">
                     <Label>Team Name *</Label>
                     <Input
@@ -382,8 +382,8 @@ export default function THOTeams() {
                   </div>
                   </div>
                 </form>
-              </ScrollArea>
-              <DialogFooter>
+              </div>
+              <DialogFooter className="flex-shrink-0">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancel
                 </Button>
