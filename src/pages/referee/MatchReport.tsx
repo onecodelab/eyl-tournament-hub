@@ -192,6 +192,8 @@ export default function MatchReport() {
           attendance: attendance ? parseInt(attendance) : null,
           weather: weather || null,
           notes: notes || null,
+          halfTimeHome: halfTimeHome ? parseInt(halfTimeHome) : null,
+          halfTimeAway: halfTimeAway ? parseInt(halfTimeAway) : null,
         },
         refereeEmail: refereeName || user?.email || undefined,
         lineups: {
@@ -199,6 +201,15 @@ export default function MatchReport() {
           away_goalkeeper: awayGK,
           home_players: homeLineupPlayers,
           away_players: awayLineupPlayers,
+        },
+        officials: {
+          refereeName: refereeName || undefined,
+          assistantRef1: assistantRef1 || undefined,
+          assistantRef2: assistantRef2 || undefined,
+          fourthOfficial: fourthOfficial || undefined,
+          matchCommissioner: matchCommissioner || undefined,
+          homeCoach: homeCoach || undefined,
+          awayCoach: awayCoach || undefined,
         },
       });
       toast.success("PDF report downloaded!");
@@ -248,6 +259,8 @@ export default function MatchReport() {
           attendance: attendance ? parseInt(attendance) : null,
           weather: weather || null,
           notes: notes || null,
+          halfTimeHome: halfTimeHome ? parseInt(halfTimeHome) : null,
+          halfTimeAway: halfTimeAway ? parseInt(halfTimeAway) : null,
         },
         refereeEmail: refereeName || user?.email || undefined,
         lineups: {
@@ -255,6 +268,15 @@ export default function MatchReport() {
           away_goalkeeper: awayGK,
           home_players: homeLineupPlayers,
           away_players: awayLineupPlayers,
+        },
+        officials: {
+          refereeName: refereeName || undefined,
+          assistantRef1: assistantRef1 || undefined,
+          assistantRef2: assistantRef2 || undefined,
+          fourthOfficial: fourthOfficial || undefined,
+          matchCommissioner: matchCommissioner || undefined,
+          homeCoach: homeCoach || undefined,
+          awayCoach: awayCoach || undefined,
         },
       });
       const url = URL.createObjectURL(blob);

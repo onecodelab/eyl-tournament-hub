@@ -47,8 +47,8 @@ export function useRefereeMatches() {
         .from("matches")
         .select(`
           *,
-          home_team:teams!matches_home_team_id_fkey(id, name, short_name, logo_url),
-          away_team:teams!matches_away_team_id_fkey(id, name, short_name, logo_url),
+          home_team:teams!matches_home_team_id_fkey(id, name, short_name, logo_url, coach),
+          away_team:teams!matches_away_team_id_fkey(id, name, short_name, logo_url, coach),
           tournament:tournaments(id, name)
         `)
         .eq("referee_id", user.id)
@@ -69,8 +69,8 @@ export function useMatchById(matchId: string) {
         .from("matches")
         .select(`
           *,
-          home_team:teams!matches_home_team_id_fkey(id, name, short_name, logo_url),
-          away_team:teams!matches_away_team_id_fkey(id, name, short_name, logo_url),
+          home_team:teams!matches_home_team_id_fkey(id, name, short_name, logo_url, coach),
+          away_team:teams!matches_away_team_id_fkey(id, name, short_name, logo_url, coach),
           tournament:tournaments(id, name)
         `)
         .eq("id", matchId)

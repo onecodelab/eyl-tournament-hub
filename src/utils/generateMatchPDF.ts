@@ -54,6 +54,18 @@ interface ReportData {
   weather?: string | null;
   notes?: string | null;
   referee_id?: string;
+  halfTimeHome?: number | null;
+  halfTimeAway?: number | null;
+}
+
+interface MatchOfficialsData {
+  refereeName?: string;
+  assistantRef1?: string;
+  assistantRef2?: string;
+  fourthOfficial?: string;
+  matchCommissioner?: string;
+  homeCoach?: string;
+  awayCoach?: string;
 }
 
 interface GeneratePDFOptions {
@@ -62,6 +74,7 @@ interface GeneratePDFOptions {
   report: ReportData;
   refereeEmail?: string;
   lineups?: LineupData;
+  officials?: MatchOfficialsData;
 }
 
 const addWatermark = (doc: jsPDF) => {
@@ -311,6 +324,7 @@ export const generateMatchReportPDF = async ({
   report,
   refereeEmail,
   lineups,
+  officials,
 }: GeneratePDFOptions): Promise<Blob> => {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -346,11 +360,11 @@ export const generateMatchReportPDF = async ({
   y = drawSectionHeader(doc, "Match Officials", y, pageWidth);
   
   const officialRows = [
-    ["Centre Referee", refereeEmail || "________________________", ""],
-    ["Assistant Referee 1", "________________________", ""],
-    ["Assistant Referee 2", "________________________", ""],
-    ["Fourth Official", "________________________", ""],
-    ["Match Commissioner", "________________________", ""],
+    ["Centre Referee", officials?.refereeName || refereeEmail || "________________________", ""],
+    ["Assistant Referee 1", officials?.assistantRef1 || "________________________", ""],
+    ["Assistant Referee 2", officials?.assistantRef2 || "________________________", ""],
+    ["Fourth Official", officials?.fourthOfficial || "________________________", ""],
+    ["Match Commissioner", officials?.matchCommissioner || "________________________", ""],
   ];
   
   doc.setFontSize(8);
@@ -380,6 +394,10 @@ export const generateMatchReportPDF = async ({
   // CLUB OFFICIALS Section
   y = drawSectionHeader(doc, "Club Officials", y, pageWidth);
   
+  // Get coach names - prefer officials override, then match data
+  const homeCoachName = officials?.homeCoach || match.home_team?.coach || "________________________";
+  const awayCoachName = officials?.awayCoach || match.away_team?.coach || "________________________";
+  
   // Home team officials
   doc.setFillColor(...COLORS.white);
   doc.rect(margin, y, contentWidth, 7, "F");
@@ -392,7 +410,7 @@ export const generateMatchReportPDF = async ({
   doc.setFont("helvetica", "normal");
   doc.text(match.home_team?.name || "TBD", margin + 35, y + 5);
   doc.text("Coach:", margin + 100, y + 5);
-  doc.text(match.home_team?.coach || "________________________", margin + 120, y + 5);
+  doc.text(homeCoachName, margin + 120, y + 5);
   y += 7;
   
   // Away team officials
@@ -406,7 +424,7 @@ export const generateMatchReportPDF = async ({
   doc.setFont("helvetica", "normal");
   doc.text(match.away_team?.name || "TBD", margin + 35, y + 5);
   doc.text("Coach:", margin + 100, y + 5);
-  doc.text(match.away_team?.coach || "________________________", margin + 120, y + 5);
+  doc.text(awayCoachName, margin + 120, y + 5);
   y += 10;
   
   // MATCH DETAILS Section
@@ -620,7 +638,7 @@ export const generateMatchReportPDF = async ({
     { text: "PLAYER IN", width: 35, align: "left" },
   ], margin, 6, true);
   
-  // Substitution rows
+  // Substitution rows - extract player in/out from event details
   const maxSubRows = Math.max(5, homeSubs.length, awaySubs.length);
   for (let i = 0; i < maxSubRows; i++) {
     const isAlt = i % 2 === 1;
@@ -633,18 +651,44 @@ export const generateMatchReportPDF = async ({
     doc.setDrawColor(...COLORS.gold);
     doc.rect(margin, y, contentWidth, 6, "S");
     
+    // Draw column separators for better readability
+    let colX = margin;
+    const subColWidths = [15, 12, 38, 38, 15, 12, 35, 35];
+    subColWidths.forEach((w, idx) => {
+      if (idx < subColWidths.length - 1) {
+        doc.line(colX + w, y, colX + w, y + 6);
+      }
+      colX += w;
+    });
+    
     doc.setTextColor(...COLORS.darkGray);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
     
+    // Home team substitution
     if (homeSubs[i]) {
-      doc.text(`${homeSubs[i].minute}'`, margin + 7.5, y + 4, { align: "center" });
-      doc.text(homeSubs[i].player?.name || "", margin + 27 + 3, y + 4);
+      const sub = homeSubs[i];
+      const playerOut = sub.details?.player_out_name || sub.player?.name || "";
+      const playerIn = sub.details?.player_in_name || "";
+      const playerOutNo = sub.details?.player_out_number || sub.player?.jersey_number || "";
+      
+      doc.text(`${sub.minute}'`, margin + 7.5, y + 4, { align: "center" });
+      doc.text(playerOutNo?.toString() || "", margin + 15 + 6, y + 4, { align: "center" });
+      doc.text(String(playerOut).substring(0, 20), margin + 27 + 2, y + 4);
+      doc.text(String(playerIn).substring(0, 20), margin + 65 + 2, y + 4);
     }
     
+    // Away team substitution
     if (awaySubs[i]) {
-      doc.text(`${awaySubs[i].minute}'`, margin + 103 + 7.5, y + 4, { align: "center" });
-      doc.text(awaySubs[i].player?.name || "", margin + 130 + 3, y + 4);
+      const sub = awaySubs[i];
+      const playerOut = sub.details?.player_out_name || sub.player?.name || "";
+      const playerIn = sub.details?.player_in_name || "";
+      const playerOutNo = sub.details?.player_out_number || sub.player?.jersey_number || "";
+      
+      doc.text(`${sub.minute}'`, margin + 103 + 7.5, y + 4, { align: "center" });
+      doc.text(playerOutNo?.toString() || "", margin + 118 + 6, y + 4, { align: "center" });
+      doc.text(String(playerOut).substring(0, 18), margin + 130 + 2, y + 4);
+      doc.text(String(playerIn).substring(0, 18), margin + 165 + 2, y + 4);
     }
     
     y += 6;
