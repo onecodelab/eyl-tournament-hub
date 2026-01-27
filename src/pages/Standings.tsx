@@ -52,11 +52,23 @@ export default function StandingsPage() {
   const getStatusBadge = (status: string | null) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-500/20 text-green-500 border-green-500/30">LIVE</Badge>;
+        return (
+          <span className="absolute top-3 right-3 status-badge status-live">
+            LIVE
+          </span>
+        );
       case 'upcoming':
-        return <Badge className="bg-blue-500/20 text-blue-500 border-blue-500/30">UPCOMING</Badge>;
+        return (
+          <span className="absolute top-3 right-3 status-badge status-upcoming">
+            UPCOMING
+          </span>
+        );
       case 'completed':
-        return <Badge className="bg-muted text-muted-foreground">COMPLETED</Badge>;
+        return (
+          <span className="absolute top-3 right-3 status-badge status-completed">
+            COMPLETED
+          </span>
+        );
       default:
         return null;
     }
@@ -65,11 +77,11 @@ export default function StandingsPage() {
   const getFormatBadge = (format: string | null) => {
     switch (format) {
       case 'league':
-        return <Badge variant="outline" className="text-xs">League</Badge>;
+        return <Badge variant="outline" className="text-[11px] px-2 py-0.5">League</Badge>;
       case 'knockout':
-        return <Badge variant="outline" className="text-xs">Knockout</Badge>;
+        return <Badge variant="outline" className="text-[11px] px-2 py-0.5">Knockout</Badge>;
       case 'group_knockout':
-        return <Badge variant="outline" className="text-xs">Group + Knockout</Badge>;
+        return <Badge variant="outline" className="text-[11px] px-2 py-0.5">Group + Knockout</Badge>;
       default:
         return null;
     }
@@ -77,114 +89,119 @@ export default function StandingsPage() {
 
   return (
     <Layout>
-      {/* Hero */}
-      <section className="relative py-12 overflow-hidden border-b border-border">
+      {/* Hero - Compact */}
+      <section className="relative py-8 overflow-hidden border-b border-border/50">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
         <div className="container mx-auto px-4 relative">
-          <div className="flex items-center gap-4">
-            <EYLLogo size={50} withGlow />
+          <div className="flex items-center gap-3">
+            <EYLLogo size={40} withGlow />
             <div>
-              <h1 className="text-4xl font-bold mb-2">
+              <h1 className="text-2xl md:text-3xl font-bold">
                 Youth <span className="text-primary">Competitions</span>
               </h1>
-              <p className="text-muted-foreground">Browse tournaments, view standings, and explore competition details</p>
+              <p className="text-sm text-muted-foreground">Browse tournaments and competition details</p>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         <Tabs defaultValue="tournaments" className="w-full">
-          <TabsList className="glass-card p-1 mb-8 inline-flex">
-            <TabsTrigger value="tournaments" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              Tournaments
-            </TabsTrigger>
-            <TabsTrigger value="formats" className="gap-2">
-              <Calendar className="h-4 w-4" />
-              Tournament Formats
-            </TabsTrigger>
-            <TabsTrigger value="rules" className="gap-2">
-              <Info className="h-4 w-4" />
-              Rules & Criteria
-            </TabsTrigger>
-          </TabsList>
+          {/* Horizontal Scroll Tabs */}
+          <div className="scroll-container mb-6">
+            <TabsList className="glass-card p-1 inline-flex gap-1">
+              <TabsTrigger value="tournaments" className="gap-2 text-sm">
+                <Trophy className="h-4 w-4" strokeWidth={1.5} />
+                Tournaments
+              </TabsTrigger>
+              <TabsTrigger value="formats" className="gap-2 text-sm">
+                <Calendar className="h-4 w-4" strokeWidth={1.5} />
+                Formats
+              </TabsTrigger>
+              <TabsTrigger value="rules" className="gap-2 text-sm">
+                <Info className="h-4 w-4" strokeWidth={1.5} />
+                Rules
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* Tournaments Tab */}
           <TabsContent value="tournaments">
-            <div className="mb-6">
-              <p className="text-muted-foreground">
-                Select a tournament to view standings, fixtures, and statistics
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Select a tournament to view standings and statistics
+            </p>
 
             {isLoading ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="glass-card h-48 animate-pulse" />
+                  <div key={i} className="glass-card h-[110px] animate-pulse" />
                 ))}
               </div>
             ) : tournaments.length === 0 ? (
               <div className="glass-card p-12 text-center">
-                <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold mb-2">No Tournaments</h3>
-                <p className="text-muted-foreground">Check back soon for upcoming competitions.</p>
+                <Trophy className="h-10 w-10 text-muted-foreground mx-auto mb-3" strokeWidth={1.5} />
+                <h3 className="font-semibold text-sm mb-1">No Tournaments</h3>
+                <p className="text-xs text-muted-foreground">Check back soon for upcoming competitions.</p>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {tournaments.map((tournament) => (
                   <Link 
                     key={tournament.id} 
                     to={`/tournaments/${tournament.id}`}
-                    className="glass-card p-6 hover:border-primary/50 transition-all group"
+                    className="relative glass-card-hover p-4 group min-h-[110px]"
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        {tournament.logo_url ? (
-                          <img 
-                            src={tournament.logo_url} 
-                            alt={tournament.name}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                            <Trophy className="h-6 w-6 text-primary" />
-                          </div>
-                        )}
-                        {getStatusBadge(tournament.status)}
-                      </div>
-                      <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                    </div>
-
-                    <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
-                      {tournament.name}
-                    </h3>
-
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {tournament.age_category && (
-                        <Badge variant="outline" className="text-xs">
-                          {tournament.age_category.toUpperCase()}
-                        </Badge>
+                    {getStatusBadge(tournament.status)}
+                    
+                    <div className="flex items-start gap-3 mb-3">
+                      {tournament.logo_url ? (
+                        <img 
+                          src={tournament.logo_url} 
+                          alt={tournament.name}
+                          className="w-10 h-10 rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Trophy className="h-5 w-5 text-primary" strokeWidth={1.5} />
+                        </div>
                       )}
-                      {getFormatBadge(tournament.format)}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-[15px] leading-tight group-hover:text-primary transition-colors line-clamp-1">
+                          {tournament.name}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                          {tournament.age_category && (
+                            <span className="text-[11px] text-muted-foreground">
+                              {tournament.age_category.toUpperCase()}
+                            </span>
+                          )}
+                          {tournament.format && (
+                            <>
+                              <span className="text-muted-foreground/50">•</span>
+                              {getFormatBadge(tournament.format)}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" strokeWidth={1.5} />
                     </div>
 
                     {tournament.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                      <p className="text-xs text-muted-foreground line-clamp-1 mb-2">
                         {tournament.description}
                       </p>
                     )}
 
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground pt-4 border-t border-border">
+                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground pt-2 border-t border-border/50">
                       {tournament.start_date && (
                         <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                          <Calendar className="h-3 w-3" strokeWidth={1.5} />
                           {format(new Date(tournament.start_date), "MMM d, yyyy")}
                         </span>
                       )}
                       {tournament.max_teams && (
                         <span className="flex items-center gap-1">
-                          <Users className="h-3 w-3" />
+                          <Users className="h-3 w-3" strokeWidth={1.5} />
                           {tournament.max_teams} teams
                         </span>
                       )}
@@ -197,19 +214,19 @@ export default function StandingsPage() {
 
           {/* Tournament Formats Tab */}
           <TabsContent value="formats">
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
               {tournamentFormats.map((format, index) => (
                 <div 
                   key={format.name}
-                  className="glass-card p-6 hover:border-primary/50 transition-all"
+                  className="glass-card p-4"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                    <Trophy className="h-6 w-6 text-primary" />
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
+                    <Trophy className="h-5 w-5 text-primary" strokeWidth={1.5} />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{format.name}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">{format.description}</p>
-                  <div className="space-y-2 text-sm">
+                  <h3 className="text-sm font-bold mb-1">{format.name}</h3>
+                  <p className="text-muted-foreground text-xs mb-3 line-clamp-2">{format.description}</p>
+                  <div className="space-y-1 text-xs">
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground">Matches:</span>
                       <span className="font-medium">{format.matchCount}</span>
@@ -224,34 +241,32 @@ export default function StandingsPage() {
             </div>
 
             {/* Tournament Brackets Info */}
-            <div className="glass-card p-6">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <ArrowUpDown className="h-5 w-5 text-primary" />
+            <div className="glass-card p-4">
+              <h3 className="text-base font-bold mb-3 flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-primary" strokeWidth={1.5} />
                 How Brackets Work
               </h3>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <h4 className="font-semibold mb-2">Seeding</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <h4 className="font-semibold text-sm mb-1">Seeding</h4>
+                  <p className="text-xs text-muted-foreground mb-3">
                     Teams are seeded based on their previous season performance and current league position. 
-                    Higher seeds face lower seeds in early rounds to reward consistent performance.
+                    Higher seeds face lower seeds in early rounds.
                   </p>
-                  <h4 className="font-semibold mb-2">Draw Process</h4>
-                  <p className="text-sm text-muted-foreground">
-                    The draw for knockout stages is conducted live with representatives from participating clubs. 
-                    Teams from the same group cannot meet until the semi-finals.
+                  <h4 className="font-semibold text-sm mb-1">Draw Process</h4>
+                  <p className="text-xs text-muted-foreground">
+                    The draw for knockout stages is conducted live with club representatives. 
+                    Teams from the same group cannot meet until semi-finals.
                   </p>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Match Scheduling</h4>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Fixtures are scheduled at least 2 weeks in advance. Weekend matches are prioritized for 
-                    player availability and spectator attendance.
+                  <h4 className="font-semibold text-sm mb-1">Match Scheduling</h4>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Fixtures are scheduled at least 2 weeks in advance. Weekend matches are prioritized.
                   </p>
-                  <h4 className="font-semibold mb-2">Venue Selection</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Semi-finals and finals are played at neutral venues. Earlier rounds follow home/away 
-                    format or single-leg at the higher-seeded team's ground.
+                  <h4 className="font-semibold text-sm mb-1">Venue Selection</h4>
+                  <p className="text-xs text-muted-foreground">
+                    Semi-finals and finals are played at neutral venues. Earlier rounds follow home/away format.
                   </p>
                 </div>
               </div>
@@ -261,33 +276,33 @@ export default function StandingsPage() {
           {/* Rules Tab */}
           <TabsContent value="rules">
             {/* Standings Rules */}
-            <div className="glass-card p-6 mb-6">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
+            <div className="glass-card p-4 mb-4">
+              <h3 className="text-base font-bold mb-3 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" strokeWidth={1.5} />
                 League Standings Rules
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {standingsRules.map((rule, index) => (
                   <div 
                     key={rule.title}
-                    className="p-4 rounded-lg bg-secondary/30 cursor-pointer hover:bg-secondary/50 transition-colors"
+                    className="p-3 rounded-lg bg-secondary/30 cursor-pointer hover:bg-secondary/50 transition-colors touch-target"
                     onClick={() => setExpandedRule(expandedRule === index ? null : index)}
                   >
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="w-8 h-8 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                      <div className="flex items-center gap-2">
+                        <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                           {index + 1}
                         </span>
-                        <span className="font-medium">{rule.title}</span>
+                        <span className="font-medium text-sm">{rule.title}</span>
                       </div>
                       {expandedRule === index ? (
-                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                        <ChevronUp className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" strokeWidth={1.5} />
                       )}
                     </div>
                     {expandedRule === index && (
-                      <p className="text-sm text-muted-foreground mt-3 ml-11">{rule.description}</p>
+                      <p className="text-xs text-muted-foreground mt-2 ml-8">{rule.description}</p>
                     )}
                   </div>
                 ))}
@@ -295,28 +310,28 @@ export default function StandingsPage() {
             </div>
 
             {/* Promotion/Relegation */}
-            <div className="glass-card p-6">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <ArrowUpDown className="h-5 w-5 text-primary" />
-                Promotion & Relegation Criteria
+            <div className="glass-card p-4">
+              <h3 className="text-base font-bold mb-3 flex items-center gap-2">
+                <ArrowUpDown className="h-4 w-4 text-primary" strokeWidth={1.5} />
+                Promotion & Relegation
               </h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 {promotionCriteria.map((zone) => (
-                  <div key={zone.zone} className="p-4 rounded-lg border border-border">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className={`w-3 h-3 rounded-full ${zone.color}`} />
-                      <span className="font-bold">{zone.zone}</span>
+                  <div key={zone.zone} className="p-3 rounded-lg border border-border/50">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`w-2.5 h-2.5 rounded-full ${zone.color}`} />
+                      <span className="font-bold text-xs">{zone.zone}</span>
                     </div>
-                    <p className="text-primary text-sm font-medium mb-1">{zone.positions}</p>
-                    <p className="text-xs text-muted-foreground">{zone.description}</p>
+                    <p className="text-primary text-xs font-medium mb-0.5">{zone.positions}</p>
+                    <p className="text-[11px] text-muted-foreground">{zone.description}</p>
                   </div>
                 ))}
               </div>
               
-              <div className="mt-6 p-4 rounded-lg border border-primary/30 bg-primary/5">
-                <p className="text-sm text-muted-foreground">
+              <div className="mt-4 p-3 rounded-lg border border-primary/30 bg-primary/5">
+                <p className="text-xs text-muted-foreground">
                   <strong className="text-foreground">Note:</strong> Promotion and relegation only apply to 
-                  multi-division tournaments. Single-division tournaments crown a champion without relegation.
+                  multi-division tournaments.
                 </p>
               </div>
             </div>
