@@ -4,9 +4,10 @@ import { Layout } from "@/components/layout/Layout";
 import { useTournaments, useTeams, useAllMatches, useNews, usePlayers } from "@/hooks/useSupabaseData";
 import { EYLLogo } from "@/components/EYLLogo";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Calendar, BarChart3, Newspaper, MapPin, Users, Clock, ArrowLeft, ChevronRight } from "lucide-react";
+import { Trophy, Calendar, BarChart3, Newspaper, MapPin, Users, Clock, ArrowLeft, ChevronRight, History } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { KnockoutBracket } from "@/components/tournament/KnockoutBracket";
 import { GroupStageView } from "@/components/tournament/GroupStageView";
 
@@ -234,6 +235,14 @@ export default function TournamentDetail() {
               </div>
               {tournament.description && (
                 <p className="text-muted-foreground mt-2">{tournament.description}</p>
+              )}
+              {tournament.status === 'completed' && (
+                <Link to={`/tournaments/${id}/history`}>
+                  <Button variant="outline" size="sm" className="mt-3">
+                    <History className="h-4 w-4 mr-2" />
+                    View Tournament Archive
+                  </Button>
+                </Link>
               )}
             </div>
           </div>

@@ -16,7 +16,8 @@ import {
   Menu,
   Shield,
   ShieldX,
-  Key
+  Key,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -40,6 +41,7 @@ const adminNavItems = [
   { title: "Teams", url: "/admin/teams", icon: Users },
   { title: "Players", url: "/admin/players", icon: UserCircle },
   { title: "Matches", url: "/admin/matches", icon: Calendar },
+  { title: "Match Reports", url: "/admin/match-reports", icon: FileText },
   { title: "News", url: "/admin/news", icon: Newspaper },
   { title: "Videos", url: "/admin/videos", icon: Video },
   { title: "Sponsors", url: "/admin/sponsors", icon: Handshake },
