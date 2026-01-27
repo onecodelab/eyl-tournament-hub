@@ -61,8 +61,19 @@ export default {
           cyan: "hsl(var(--eyl-cyan))",
           gold: "hsl(var(--eyl-gold))",
           navy: "hsl(var(--eyl-navy))",
+          "navy-light": "hsl(var(--eyl-navy-light))",
           live: "hsl(var(--eyl-live))",
+          success: "hsl(var(--eyl-success))",
         },
+        glass: {
+          surface: "hsl(var(--glass-surface))",
+          border: "hsl(var(--glass-border))",
+        },
+      },
+      spacing: {
+        'tight': '12px',
+        'standard': '16px',
+        'section': '24px',
       },
       borderRadius: {
         lg: "var(--radius)",
