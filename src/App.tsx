@@ -22,6 +22,7 @@ import AdminNews from "./pages/admin/AdminNews";
 import AdminVideos from "./pages/admin/AdminVideos";
 import AdminSponsors from "./pages/admin/AdminSponsors";
 import AdminRoles from "./pages/admin/AdminRoles";
+import AdminMatchReports from "./pages/admin/AdminMatchReports";
 import RefereeDashboard from "./pages/referee/RefereeDashboard";
 import LiveMatch from "./pages/referee/LiveMatch";
 import MatchReport from "./pages/referee/MatchReport";
@@ -33,6 +34,7 @@ import THOPlayers from "./pages/tho-admin/THOPlayers";
 import THOMatches from "./pages/tho-admin/THOMatches";
 import THONews from "./pages/tho-admin/THONews";
 import THOVideos from "./pages/tho-admin/THOVideos";
+import TournamentHistory from "./pages/TournamentHistory";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +65,7 @@ const App = () => (
             <Route path="/admin/videos" element={<AdminVideos />} />
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
             <Route path="/admin/roles" element={<AdminRoles />} />
+            <Route path="/admin/match-reports" element={<AdminMatchReports />} />
             <Route path="/tho-admin" element={<THODashboard />} />
             <Route path="/tho-admin/teams" element={<THOTeams />} />
             <Route path="/tho-admin/players" element={<THOPlayers />} />
@@ -72,7 +75,7 @@ const App = () => (
             <Route path="/referee" element={<RefereeDashboard />} />
             <Route path="/referee/match/:id" element={<LiveMatch />} />
             <Route path="/referee/match/:id/report" element={<MatchReport />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/tournaments/:id/history" element={<TournamentHistory />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

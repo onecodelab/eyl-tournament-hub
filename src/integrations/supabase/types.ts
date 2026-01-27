@@ -541,6 +541,7 @@ export type Database = {
           teams_per_group: number | null
           teams_qualifying_per_group: number | null
           updated_at: string
+          winner_team_id: string | null
         }
         Insert: {
           age_category?: string | null
@@ -563,6 +564,7 @@ export type Database = {
           teams_per_group?: number | null
           teams_qualifying_per_group?: number | null
           updated_at?: string
+          winner_team_id?: string | null
         }
         Update: {
           age_category?: string | null
@@ -585,8 +587,17 @@ export type Database = {
           teams_per_group?: number | null
           teams_qualifying_per_group?: number | null
           updated_at?: string
+          winner_team_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tournaments_winner_team_id_fkey"
+            columns: ["winner_team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
