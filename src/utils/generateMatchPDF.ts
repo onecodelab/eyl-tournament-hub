@@ -729,6 +729,9 @@ export const generateMatchReportPDF = async ({
       doc.text(card.player?.jersey_number?.toString() || "", margin + 50 + 7.5, y + 4, { align: "center" });
       doc.text(card.player?.name || "", margin + 65 + 3, y + 4);
       doc.text(`${card.minute}'`, margin + 120 + 7.5, y + 4, { align: "center" });
+      // Add card reason from details
+      const reason = card.details?.reason || "";
+      doc.text(String(reason).substring(0, 25), margin + 135 + 3, y + 4);
     }
     
     y += 6;
@@ -769,6 +772,9 @@ export const generateMatchReportPDF = async ({
       doc.text(card.player?.jersey_number?.toString() || "", margin + 50 + 7.5, y + 4, { align: "center" });
       doc.text(card.player?.name || "", margin + 65 + 3, y + 4);
       doc.text(`${card.minute}'`, margin + 120 + 7.5, y + 4, { align: "center" });
+      // Add card reason from details
+      const reason = card.details?.reason || "";
+      doc.text(String(reason).substring(0, 25), margin + 135 + 3, y + 4);
     }
     
     y += 6;

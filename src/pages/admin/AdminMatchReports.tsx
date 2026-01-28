@@ -147,7 +147,7 @@ export default function AdminMatchReports() {
 
     setIsGeneratingPDF(true);
     try {
-      // Fetch full match data and events for PDF generation
+      // Fetch full match data, events, lineups, and players for PDF generation
       const [matchResult, eventsResult, lineupsResult] = await Promise.all([
         supabase
           .from("matches")
@@ -175,11 +175,62 @@ export default function AdminMatchReports() {
 
       if (matchResult.error) throw matchResult.error;
 
+      const matchData = matchResult.data;
+      const lineupsData = lineupsResult.data || [];
+
+      // Fetch players for both teams to resolve lineups and event player names
+      const [homePlayersResult, awayPlayersResult] = await Promise.all([
+        matchData.home_team?.id
+          ? supabase.from("players").select("id, name, jersey_number, position").eq("team_id", matchData.home_team.id)
+          : Promise.resolve({ data: [] }),
+        matchData.away_team?.id
+          ? supabase.from("players").select("id, name, jersey_number, position").eq("team_id", matchData.away_team.id)
+          : Promise.resolve({ data: [] }),
+      ]);
+
+      const homePlayers = homePlayersResult.data || [];
+      const awayPlayers = awayPlayersResult.data || [];
+      const allPlayers = [...homePlayers, ...awayPlayers];
+
+      // Find lineup data for each team
+      const homeLineup = lineupsData.find((l: any) => l.team_id === matchData.home_team?.id);
+      const awayLineup = lineupsData.find((l: any) => l.team_id === matchData.away_team?.id);
+
+      // Resolve player IDs to player objects
+      const getPlayerById = (playerId: string) => allPlayers.find((p: any) => p.id === playerId);
+
+      const homeGK = homeLineup?.goalkeeper_id ? getPlayerById(homeLineup.goalkeeper_id) : null;
+      const awayGK = awayLineup?.goalkeeper_id ? getPlayerById(awayLineup.goalkeeper_id) : null;
+      const homeLineupPlayers = (homeLineup?.player_ids || []).map((id: string) => getPlayerById(id)).filter(Boolean);
+      const awayLineupPlayers = (awayLineup?.player_ids || []).map((id: string) => getPlayerById(id)).filter(Boolean);
+
+      // Enrich substitution events with player names
+      const enrichedEvents = (eventsResult.data || []).map((event: any) => {
+        if (event.event_type === "substitution" && event.details) {
+          const playerOutId = event.details.player_out;
+          const playerInId = event.details.player_in || event.player_id;
+          const playerOut = playerOutId ? getPlayerById(playerOutId) : null;
+          const playerIn = playerInId ? getPlayerById(playerInId) : null;
+
+          return {
+            ...event,
+            details: {
+              ...event.details,
+              player_out_name: playerOut?.name || event.player?.name || "",
+              player_out_number: playerOut?.jersey_number || event.player?.jersey_number || "",
+              player_in_name: playerIn?.name || "",
+              player_in_number: playerIn?.jersey_number || "",
+            },
+          };
+        }
+        return event;
+      });
+
       const { downloadMatchReportPDF } = await import("@/utils/generateMatchPDF");
 
       await downloadMatchReportPDF({
-        match: matchResult.data,
-        events: eventsResult.data || [],
+        match: matchData,
+        events: enrichedEvents,
         report: {
           attendance: report.attendance,
           weather: report.weather,
@@ -187,10 +238,10 @@ export default function AdminMatchReports() {
         },
         refereeEmail: getRefereeEmail(report.referee_id),
         lineups: {
-          home_players: [],
-          away_players: [],
-          home_goalkeeper: null,
-          away_goalkeeper: null,
+          home_players: homeLineupPlayers,
+          away_players: awayLineupPlayers,
+          home_goalkeeper: homeGK,
+          away_goalkeeper: awayGK,
         },
       });
 
