@@ -4,6 +4,7 @@ import { Menu, Search, User, X, LogOut, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRole } from "@/hooks/useUserRole";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import eylLogo from "@/assets/eyl-logo.png";
 
 const topNavLinks = [
@@ -97,8 +98,9 @@ export function Navbar() {
               ))}
             </nav>
 
-            {/* Right: Search + Auth */}
-            <div className="flex items-center gap-3 shrink-0">
+            {/* Right: Theme Toggle + Search + Auth */}
+            <div className="flex items-center gap-2 shrink-0">
+              <ThemeToggle />
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
