@@ -154,6 +154,33 @@ export default function MatchReport() {
     }
   };
 
+  // Helper to enrich events with player names for substitutions
+  const enrichEvents = (eventsData: any[]) => {
+    const allPlayers = [...homePlayers, ...awayPlayers];
+    const getPlayer = (id: string) => allPlayers.find((p) => p.id === id);
+
+    return eventsData.map((event: any) => {
+      if (event.event_type === "substitution" && event.details) {
+        const playerOutId = event.details.player_out;
+        const playerInId = event.details.player_in || event.player_id;
+        const playerOut = playerOutId ? getPlayer(playerOutId) : null;
+        const playerIn = playerInId ? getPlayer(playerInId) : null;
+
+        return {
+          ...event,
+          details: {
+            ...event.details,
+            player_out_name: playerOut?.name || event.player?.name || "",
+            player_out_number: playerOut?.jersey_number || event.player?.jersey_number || "",
+            player_in_name: playerIn?.name || "",
+            player_in_number: playerIn?.jersey_number || "",
+          },
+        };
+      }
+      return event;
+    });
+  };
+
   const handleDownloadPDF = async () => {
     if (!match) return;
 
@@ -175,6 +202,9 @@ export default function MatchReport() {
         .map((id: string) => getPlayerById(id, awayPlayers))
         .filter(Boolean);
 
+      // Enrich events with player names for substitutions
+      const enrichedEvents = enrichEvents(events);
+
       await downloadMatchReportPDF({
         match: {
           id: match.id,
@@ -187,7 +217,7 @@ export default function MatchReport() {
           tournament: match.tournament,
           stage: match.stage,
         },
-        events: events,
+        events: enrichedEvents,
         report: {
           attendance: attendance ? parseInt(attendance) : null,
           weather: weather || null,
@@ -242,6 +272,9 @@ export default function MatchReport() {
         .map((id: string) => getPlayerById(id, awayPlayers))
         .filter(Boolean);
 
+      // Enrich events with player names for substitutions
+      const enrichedEvents = enrichEvents(events);
+
       const blob = await generateMatchReportPDF({
         match: {
           id: match.id,
@@ -254,7 +287,7 @@ export default function MatchReport() {
           tournament: match.tournament,
           stage: match.stage,
         },
-        events: events,
+        events: enrichedEvents,
         report: {
           attendance: attendance ? parseInt(attendance) : null,
           weather: weather || null,

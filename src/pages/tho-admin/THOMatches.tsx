@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -282,16 +282,16 @@ export default function THOMatches() {
                 Add Match
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+            <DialogContent className="max-w-md max-h-[90vh] flex flex-col overflow-hidden">
               <DialogHeader>
                 <DialogTitle>{editingMatch ? "Edit Match" : "Add New Match"}</DialogTitle>
                 <DialogDescription>
                   {editingMatch ? "Update match details" : "Schedule a new match"}
                 </DialogDescription>
               </DialogHeader>
-              <ScrollArea className="flex-1 max-h-[60vh] scrollbar-visible">
+              <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
                 <form onSubmit={handleSubmit} id="match-form">
-                  <div className="space-y-4 py-4 pr-4 scrollbar-visible">
+                  <div className="space-y-4 py-4">
                   {/* Match Stage Selection */}
                   <div className="space-y-2">
                     <Label>Match Stage *</Label>
@@ -451,7 +451,7 @@ export default function THOMatches() {
                   </div>
                   </div>
                 </form>
-              </ScrollArea>
+              </div>
               <DialogFooter>
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancel
