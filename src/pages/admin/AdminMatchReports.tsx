@@ -235,6 +235,9 @@ export default function AdminMatchReports() {
           attendance: report.attendance,
           weather: report.weather,
           notes: report.notes,
+          // Include half-time scores if stored (future enhancement)
+          halfTimeHome: (report as any).half_time_home ?? null,
+          halfTimeAway: (report as any).half_time_away ?? null,
         },
         refereeEmail: getRefereeEmail(report.referee_id),
         lineups: {
@@ -242,6 +245,15 @@ export default function AdminMatchReports() {
           away_players: awayLineupPlayers,
           home_goalkeeper: homeGK,
           away_goalkeeper: awayGK,
+        },
+        officials: {
+          refereeName: (report as any).centre_referee || undefined,
+          assistantRef1: (report as any).assistant_referee_1 || undefined,
+          assistantRef2: (report as any).assistant_referee_2 || undefined,
+          fourthOfficial: (report as any).fourth_official || undefined,
+          matchCommissioner: (report as any).match_commissioner || undefined,
+          homeCoach: matchData.home_team?.coach || undefined,
+          awayCoach: matchData.away_team?.coach || undefined,
         },
       });
 
