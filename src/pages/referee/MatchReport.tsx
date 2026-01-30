@@ -107,16 +107,26 @@ export default function MatchReport() {
       setWeather(existingReport.weather || "");
       setNotes(existingReport.notes || "");
       setIsSubmitted(true);
+      // Load match officials from saved report
+      setRefereeName((existingReport as any).centre_referee || "");
+      setAssistantRef1((existingReport as any).assistant_referee_1 || "");
+      setAssistantRef2((existingReport as any).assistant_referee_2 || "");
+      setFourthOfficial((existingReport as any).fourth_official || "");
+      setMatchCommissioner((existingReport as any).match_commissioner || "");
+      setHomeCoach((existingReport as any).home_coach || match?.home_team?.coach || "");
+      setAwayCoach((existingReport as any).away_coach || match?.away_team?.coach || "");
+      setHalfTimeHome((existingReport as any).half_time_home?.toString() || "");
+      setHalfTimeAway((existingReport as any).half_time_away?.toString() || "");
     }
-  }, [existingReport]);
+  }, [existingReport, match]);
 
-  // Load team coach info
+  // Load team coach info (only if no existing report)
   useEffect(() => {
-    if (match) {
+    if (match && !existingReport) {
       setHomeCoach((match.home_team as any)?.coach || "");
       setAwayCoach((match.away_team as any)?.coach || "");
     }
-  }, [match]);
+  }, [match, existingReport]);
 
   // Get lineup data
   const homeLineup = lineups.find((l) => l.team_id === match?.home_team?.id);
@@ -145,6 +155,16 @@ export default function MatchReport() {
         attendance: attendance ? parseInt(attendance) : undefined,
         weather: weather || undefined,
         notes: notes || undefined,
+        // Save match officials
+        centre_referee: refereeName || undefined,
+        assistant_referee_1: assistantRef1 || undefined,
+        assistant_referee_2: assistantRef2 || undefined,
+        fourth_official: fourthOfficial || undefined,
+        match_commissioner: matchCommissioner || undefined,
+        home_coach: homeCoach || undefined,
+        away_coach: awayCoach || undefined,
+        half_time_home: halfTimeHome ? parseInt(halfTimeHome) : undefined,
+        half_time_away: halfTimeAway ? parseInt(halfTimeAway) : undefined,
       });
       setIsSubmitted(true);
       setIsEditing(false);
