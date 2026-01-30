@@ -33,6 +33,16 @@ export interface MatchReport {
   notes: string | null;
   submitted_at: string;
   created_at: string;
+  // Match officials
+  centre_referee: string | null;
+  assistant_referee_1: string | null;
+  assistant_referee_2: string | null;
+  fourth_official: string | null;
+  match_commissioner: string | null;
+  home_coach: string | null;
+  away_coach: string | null;
+  half_time_home: number | null;
+  half_time_away: number | null;
 }
 
 export function useRefereeMatches() {
@@ -273,6 +283,16 @@ export function useSubmitMatchReport() {
       attendance?: number;
       weather?: string;
       notes?: string;
+      // Match officials
+      centre_referee?: string;
+      assistant_referee_1?: string;
+      assistant_referee_2?: string;
+      fourth_official?: string;
+      match_commissioner?: string;
+      home_coach?: string;
+      away_coach?: string;
+      half_time_home?: number;
+      half_time_away?: number;
     }) => {
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -283,6 +303,21 @@ export function useSubmitMatchReport() {
         .eq("match_id", report.match_id)
         .maybeSingle();
       
+      const reportData = {
+        attendance: report.attendance,
+        weather: report.weather,
+        notes: report.notes,
+        centre_referee: report.centre_referee,
+        assistant_referee_1: report.assistant_referee_1,
+        assistant_referee_2: report.assistant_referee_2,
+        fourth_official: report.fourth_official,
+        match_commissioner: report.match_commissioner,
+        home_coach: report.home_coach,
+        away_coach: report.away_coach,
+        half_time_home: report.half_time_home,
+        half_time_away: report.half_time_away,
+      };
+
       let data;
       let error;
 
@@ -290,11 +325,7 @@ export function useSubmitMatchReport() {
         // Update existing report
         const result = await supabase
           .from("match_reports")
-          .update({
-            attendance: report.attendance,
-            weather: report.weather,
-            notes: report.notes,
-          })
+          .update(reportData)
           .eq("id", existingReport.id)
           .select()
           .single();
@@ -305,8 +336,9 @@ export function useSubmitMatchReport() {
         const result = await supabase
           .from("match_reports")
           .insert({
-            ...report,
+            match_id: report.match_id,
             referee_id: user?.id,
+            ...reportData,
           })
           .select()
           .single();

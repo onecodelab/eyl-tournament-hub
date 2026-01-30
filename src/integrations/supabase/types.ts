@@ -126,9 +126,18 @@ export type Database = {
       }
       match_reports: {
         Row: {
+          assistant_referee_1: string | null
+          assistant_referee_2: string | null
           attendance: number | null
+          away_coach: string | null
+          centre_referee: string | null
           created_at: string
+          fourth_official: string | null
+          half_time_away: number | null
+          half_time_home: number | null
+          home_coach: string | null
           id: string
+          match_commissioner: string | null
           match_id: string
           notes: string | null
           referee_id: string
@@ -136,9 +145,18 @@ export type Database = {
           weather: string | null
         }
         Insert: {
+          assistant_referee_1?: string | null
+          assistant_referee_2?: string | null
           attendance?: number | null
+          away_coach?: string | null
+          centre_referee?: string | null
           created_at?: string
+          fourth_official?: string | null
+          half_time_away?: number | null
+          half_time_home?: number | null
+          home_coach?: string | null
           id?: string
+          match_commissioner?: string | null
           match_id: string
           notes?: string | null
           referee_id: string
@@ -146,9 +164,18 @@ export type Database = {
           weather?: string | null
         }
         Update: {
+          assistant_referee_1?: string | null
+          assistant_referee_2?: string | null
           attendance?: number | null
+          away_coach?: string | null
+          centre_referee?: string | null
           created_at?: string
+          fourth_official?: string | null
+          half_time_away?: number | null
+          half_time_home?: number | null
+          home_coach?: string | null
           id?: string
+          match_commissioner?: string | null
           match_id?: string
           notes?: string | null
           referee_id?: string
