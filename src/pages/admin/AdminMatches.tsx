@@ -200,23 +200,13 @@ export default function AdminMatches() {
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="scheduled">Scheduled</SelectItem>
-                      <SelectItem value="live">Live</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="postponed">Postponed</SelectItem>
                     </SelectContent>
                   </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Note: Only referees can set matches to "Live" or "Completed" during the match workflow.
+                  </p>
                 </div>
-                {formData.status === "completed" && (
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Home Score</Label>
-                      <Input type="number" value={formData.home_score} onChange={(e) => setFormData({ ...formData, home_score: e.target.value })} />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Away Score</Label>
-                      <Input type="number" value={formData.away_score} onChange={(e) => setFormData({ ...formData, away_score: e.target.value })} />
-                    </div>
-                  </div>
-                )}
                 <div className="space-y-2">
                   <Label>Tagline</Label>
                   <Textarea value={formData.tagline} onChange={(e) => setFormData({ ...formData, tagline: e.target.value })} placeholder="Match description" />

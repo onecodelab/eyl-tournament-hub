@@ -34,13 +34,10 @@ export default function AdminPlayers() {
     jersey_number: "",
     team_id: "",
     photo_url: "",
-    goals: "0",
-    assists: "0",
-    appearances: "0",
   });
 
   const resetForm = () => {
-    setFormData({ name: "", position: "", jersey_number: "", team_id: "", photo_url: "", goals: "0", assists: "0", appearances: "0" });
+    setFormData({ name: "", position: "", jersey_number: "", team_id: "", photo_url: "" });
     setEditingPlayer(null);
   };
 
@@ -52,9 +49,6 @@ export default function AdminPlayers() {
       jersey_number: player.jersey_number?.toString() || "",
       team_id: player.team_id || "",
       photo_url: player.photo_url || "",
-      goals: player.goals?.toString() || "0",
-      assists: player.assists?.toString() || "0",
-      appearances: player.appearances?.toString() || "0",
     });
     setDialogOpen(true);
   };
@@ -71,9 +65,6 @@ export default function AdminPlayers() {
         jersey_number: formData.jersey_number ? parseInt(formData.jersey_number) : null,
         team_id: formData.team_id || null,
         photo_url: formData.photo_url || null,
-        goals: parseInt(formData.goals) || 0,
-        assists: parseInt(formData.assists) || 0,
-        appearances: parseInt(formData.appearances) || 0,
       };
       if (editingPlayer) {
         await updatePlayer.mutateAsync({ id: editingPlayer.id, ...data });
@@ -157,20 +148,6 @@ export default function AdminPlayers() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Goals</Label>
-                    <Input type="number" value={formData.goals} onChange={(e) => setFormData({ ...formData, goals: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Assists</Label>
-                    <Input type="number" value={formData.assists} onChange={(e) => setFormData({ ...formData, assists: e.target.value })} />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Apps</Label>
-                    <Input type="number" value={formData.appearances} onChange={(e) => setFormData({ ...formData, appearances: e.target.value })} />
-                  </div>
                 </div>
                 <ImageUpload
                   label="Player Photo"
