@@ -1,60 +1,23 @@
 import { Layout } from "@/components/layout/Layout";
-import { usePlayers, useTeams } from "@/hooks/useSupabaseData";
-import { Trophy, ChevronRight } from "lucide-react";
+import { useTopScorers, useTopAssisters, useTopAppearances } from "@/hooks/usePlayerStats";
+import { useTeams } from "@/hooks/useSupabaseData";
+import { Trophy, ChevronRight, Info } from "lucide-react";
 import { useState } from "react";
 import { EYLLogo } from "@/components/EYLLogo";
+import { Link } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const tabs = ["Dashboard", "Player", "Club", "All-time Stats", "Records"];
 
-// Mock data for stats not in DB
-const mockPlayerStats = [
-  { name: "Getaneh Kebede", team: "Saint George Youth", shortName: "GK", goals: 19, assists: 12, passes: 1523, cleanSheets: 10 },
-  { name: "Abebe Negash", team: "Ethiopian Coffee Academy", shortName: "AN", goals: 14, assists: 11, passes: 1487, cleanSheets: 8 },
-  { name: "Samuel Tesfaye", team: "Adama U-17", shortName: "ST", goals: 12, assists: 9, passes: 1392, cleanSheets: 7 },
-  { name: "Dawit Haile", team: "Hawassa Youth", shortName: "DH", goals: 11, assists: 8, passes: 1356, cleanSheets: 7 },
-  { name: "Yonas Bekele", team: "Saint George Youth", shortName: "YB", goals: 10, assists: 7, passes: 1298, cleanSheets: 6 },
-  { name: "Henok Girma", team: "Bahir Dar Academy", shortName: "HG", goals: 9, assists: 7, passes: 1298, cleanSheets: 5 },
-  { name: "Biniam Tadesse", team: "Jimma Stars", shortName: "BT", goals: 8, assists: 6, passes: 1245, cleanSheets: 5 },
-  { name: "Amanuel Desta", team: "Gondar United", shortName: "AD", goals: 8, assists: 6, passes: 1198, cleanSheets: 4 },
-  { name: "Temesgen Alemu", team: "Dire Dawa FC", shortName: "TA", goals: 7, assists: 6, passes: 1156, cleanSheets: 4 },
-  { name: "Eyasu Worku", team: "Mekelle Youth", shortName: "EW", goals: 7, assists: 5, passes: 1134, cleanSheets: 3 },
-];
-
-const mockClubStats = [
-  { name: "Saint George Youth", shortName: "SG", goals: 44, tackles: 245, blocks: 93, passes: 11245 },
-  { name: "Ethiopian Coffee Academy", shortName: "EC", goals: 38, tackles: 232, blocks: 87, passes: 10892 },
-  { name: "Adama U-17", shortName: "AD", goals: 34, tackles: 221, blocks: 82, passes: 10456 },
-  { name: "Hawassa Youth", shortName: "HW", goals: 31, tackles: 218, blocks: 79, passes: 9987 },
-  { name: "Bahir Dar Academy", shortName: "BD", goals: 29, tackles: 209, blocks: 76, passes: 9654 },
-  { name: "Jimma Stars", shortName: "JM", goals: 27, tackles: 198, blocks: 71, passes: 9321 },
-  { name: "Gondar United", shortName: "GN", goals: 25, tackles: 192, blocks: 68, passes: 8976 },
-  { name: "Dire Dawa FC", shortName: "DD", goals: 24, tackles: 187, blocks: 65, passes: 8654 },
-  { name: "Mekelle Youth", shortName: "MK", goals: 22, tackles: 181, blocks: 62, passes: 8321 },
-  { name: "Debre Birhan FC", shortName: "DB", goals: 20, tackles: 175, blocks: 58, passes: 7998 },
-];
-
 export default function StatisticsPage() {
   const [activeTab, setActiveTab] = useState("Dashboard");
-  const { data: players = [] } = usePlayers();
+  const { data: topScorers = [], isLoading: scorersLoading } = useTopScorers(10);
+  const { data: topAssisters = [], isLoading: assistersLoading } = useTopAssisters(10);
+  const { data: topAppearances = [], isLoading: appearancesLoading } = useTopAppearances(10);
   const { data: teams = [] } = useTeams();
 
-  // Merge real player data with mock for display
-  const playerStats = players.length > 0 
-    ? players.map((p, i) => ({
-        name: p.name,
-        team: teams.find(t => t.id === p.team_id)?.name || "Team",
-        shortName: p.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase(),
-        goals: p.goals || mockPlayerStats[i]?.goals || 0,
-        assists: p.assists || mockPlayerStats[i]?.assists || 0,
-        passes: mockPlayerStats[i]?.passes || 1000,
-        cleanSheets: mockPlayerStats[i]?.cleanSheets || 0,
-      }))
-    : mockPlayerStats;
-
-  const topGoals = [...playerStats].sort((a, b) => b.goals - a.goals).slice(0, 10);
-  const topAssists = [...playerStats].sort((a, b) => b.assists - a.assists).slice(0, 10);
-  const topPasses = [...mockPlayerStats].sort((a, b) => b.passes - a.passes).slice(0, 10);
-  const topCleanSheets = [...mockPlayerStats].sort((a, b) => b.cleanSheets - a.cleanSheets).slice(0, 10);
+  const isLoading = scorersLoading || assistersLoading || appearancesLoading;
+  const hasNoData = topScorers.length === 0 && topAssisters.length === 0 && topAppearances.length === 0;
 
   return (
     <Layout>
@@ -90,94 +53,155 @@ export default function StatisticsPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Player Stats Section */}
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-6">
-            <EYLLogo size={32} />
-            <h2 className="text-xl font-bold">
-              EYL 2025/26 <span className="text-primary">Player Stats</span>
-            </h2>
-          </div>
+        {/* Info Banner */}
+        <Alert className="mb-6 border-primary/30 bg-primary/5">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            All statistics are automatically calculated from official match reports submitted by referees. 
+            Stats update when matches are completed through the referee workflow.
+          </AlertDescription>
+        </Alert>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Goals */}
-            <LeaderboardCard 
-              title="Goals" 
-              data={topGoals} 
-              valueKey="goals"
-            />
-            
-            {/* Assists */}
-            <LeaderboardCard 
-              title="Assists" 
-              data={topAssists} 
-              valueKey="assists"
-            />
-            
-            {/* Total Passes */}
-            <LeaderboardCard 
-              title="Total Passes" 
-              data={topPasses} 
-              valueKey="passes"
-              valueColor="cyan"
-            />
-            
-            {/* Clean Sheets */}
-            <LeaderboardCard 
-              title="Clean Sheets" 
-              data={topCleanSheets} 
-              valueKey="cleanSheets"
-            />
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center">
+              <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-4" />
+              <p className="text-muted-foreground">Loading statistics...</p>
+            </div>
           </div>
-        </div>
+        ) : hasNoData ? (
+          <div className="text-center py-20">
+            <Trophy className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold mb-2">No Statistics Available Yet</h2>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Statistics will appear here once matches are completed through the referee workflow. 
+              Goals, assists, and appearances are calculated from official match reports.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Player Stats Section */}
+            <div className="mb-10">
+              <div className="flex items-center gap-3 mb-6">
+                <EYLLogo size={32} />
+                <h2 className="text-xl font-bold">
+                  EYL 2025/26 <span className="text-primary">Player Stats</span>
+                </h2>
+              </div>
 
-        {/* Club Stats Section */}
-        <div className="mb-10">
-          <div className="flex items-center gap-3 mb-6">
-            <EYLLogo size={32} />
-            <h2 className="text-xl font-bold">
-              EYL 2025/26 <span className="text-primary">Club Stats</span>
-            </h2>
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Goals */}
+                <LeaderboardCard 
+                  title="Top Scorers" 
+                  data={topScorers.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    team: p.team?.name || "Unknown",
+                    teamLogo: p.team?.logo_url,
+                    shortName: p.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase(),
+                    value: p.goals,
+                    photoUrl: p.photo_url,
+                  }))}
+                  valueLabel="goals"
+                />
+                
+                {/* Assists */}
+                <LeaderboardCard 
+                  title="Top Assisters" 
+                  data={topAssisters.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    team: p.team?.name || "Unknown",
+                    teamLogo: p.team?.logo_url,
+                    shortName: p.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase(),
+                    value: p.assists,
+                    photoUrl: p.photo_url,
+                  }))}
+                  valueLabel="assists"
+                  valueColor="cyan"
+                />
+                
+                {/* Appearances */}
+                <LeaderboardCard 
+                  title="Most Appearances" 
+                  data={topAppearances.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    team: p.team?.name || "Unknown",
+                    teamLogo: p.team?.logo_url,
+                    shortName: p.name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase(),
+                    value: p.appearances,
+                    photoUrl: p.photo_url,
+                  }))}
+                  valueLabel="apps"
+                />
+              </div>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Goals */}
-            <ClubLeaderboardCard 
-              title="Goals" 
-              data={mockClubStats} 
-              valueKey="goals"
-            />
-            
-            {/* Tackles Won */}
-            <ClubLeaderboardCard 
-              title="Tackles Won" 
-              data={mockClubStats} 
-              valueKey="tackles"
-            />
-            
-            {/* Blocks */}
-            <ClubLeaderboardCard 
-              title="Blocks" 
-              data={mockClubStats} 
-              valueKey="blocks"
-            />
-            
-            {/* Total Passes */}
-            <ClubLeaderboardCard 
-              title="Total Passes" 
-              data={mockClubStats} 
-              valueKey="passes"
-            />
-          </div>
-        </div>
+            {/* Club Stats Section */}
+            <div className="mb-10">
+              <div className="flex items-center gap-3 mb-6">
+                <EYLLogo size={32} />
+                <h2 className="text-xl font-bold">
+                  EYL 2025/26 <span className="text-primary">Team Standings</span>
+                </h2>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Goals Scored */}
+                <TeamLeaderboardCard 
+                  title="Goals Scored" 
+                  data={teams
+                    .filter(t => (t.goals_for || 0) > 0)
+                    .sort((a, b) => (b.goals_for || 0) - (a.goals_for || 0))
+                    .slice(0, 10)
+                    .map(t => ({
+                      name: t.name,
+                      shortName: t.short_name || t.name.slice(0, 2).toUpperCase(),
+                      logoUrl: t.logo_url,
+                      value: t.goals_for || 0,
+                    }))}
+                />
+                
+                {/* Most Wins */}
+                <TeamLeaderboardCard 
+                  title="Most Wins" 
+                  data={teams
+                    .filter(t => (t.wins || 0) > 0)
+                    .sort((a, b) => (b.wins || 0) - (a.wins || 0))
+                    .slice(0, 10)
+                    .map(t => ({
+                      name: t.name,
+                      shortName: t.short_name || t.name.slice(0, 2).toUpperCase(),
+                      logoUrl: t.logo_url,
+                      value: t.wins || 0,
+                    }))}
+                />
+                
+                {/* Points */}
+                <TeamLeaderboardCard 
+                  title="Total Points" 
+                  data={teams
+                    .filter(t => (t.points || 0) > 0)
+                    .sort((a, b) => (b.points || 0) - (a.points || 0))
+                    .slice(0, 10)
+                    .map(t => ({
+                      name: t.name,
+                      shortName: t.short_name || t.name.slice(0, 2).toUpperCase(),
+                      logoUrl: t.logo_url,
+                      value: t.points || 0,
+                    }))}
+                />
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Notice Banner */}
         <div className="glass-card p-4 border-l-4 border-l-primary">
           <p className="text-sm text-muted-foreground">
-            Some statistics are not available prior to the 2020/21 season.{" "}
-            <a href="#" className="text-primary hover:underline">
-              Click here for more details →
-            </a>
+            Statistics are calculated from match reports submitted by referees. 
+            Only completed matches with proper lineups and events are counted.
           </p>
         </div>
       </div>
@@ -188,16 +212,30 @@ export default function StatisticsPage() {
 interface LeaderboardCardProps {
   title: string;
   data: Array<{
+    id: string;
     name: string;
     team: string;
+    teamLogo?: string | null;
     shortName: string;
-    [key: string]: string | number;
+    value: number;
+    photoUrl?: string | null;
   }>;
-  valueKey: string;
+  valueLabel: string;
   valueColor?: "gold" | "cyan";
 }
 
-function LeaderboardCard({ title, data, valueKey, valueColor = "gold" }: LeaderboardCardProps) {
+function LeaderboardCard({ title, data, valueLabel, valueColor = "gold" }: LeaderboardCardProps) {
+  if (data.length === 0) {
+    return (
+      <div className="glass-card p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-sm">{title}</h3>
+        </div>
+        <p className="text-sm text-muted-foreground text-center py-4">No data yet</p>
+      </div>
+    );
+  }
+
   return (
     <div className="glass-card p-4">
       <div className="flex items-center justify-between mb-4">
@@ -205,10 +243,11 @@ function LeaderboardCard({ title, data, valueKey, valueColor = "gold" }: Leaderb
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </div>
       <div className="space-y-2">
-        {data.slice(0, 10).map((player, index) => (
-          <div 
-            key={player.name + index}
-            className="flex items-center gap-2 py-1"
+        {data.map((player, index) => (
+          <Link 
+            key={player.id}
+            to={`/players/${player.id}`}
+            className="flex items-center gap-2 py-1 hover:bg-muted/50 rounded-lg px-1 -mx-1 transition-colors"
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
               index === 0 
@@ -217,44 +256,63 @@ function LeaderboardCard({ title, data, valueKey, valueColor = "gold" }: Leaderb
             }`}>
               {index + 1}
             </span>
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${
-              index === 0 
-                ? "bg-primary/20 text-primary" 
-                : "bg-secondary text-muted-foreground"
-            }`}>
-              {player.shortName}
-            </div>
+            {player.photoUrl ? (
+              <img 
+                src={player.photoUrl} 
+                alt={player.name}
+                className="w-7 h-7 rounded-full object-cover"
+              />
+            ) : (
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                index === 0 
+                  ? "bg-primary/20 text-primary" 
+                  : "bg-secondary text-muted-foreground"
+              }`}>
+                {player.shortName}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{player.name}</p>
               <p className="text-[10px] text-muted-foreground truncate flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                {player.teamLogo && (
+                  <img src={player.teamLogo} alt="" className="w-3 h-3 object-contain" />
+                )}
                 {player.team}
               </p>
             </div>
             <span className={`text-sm font-bold ${
               valueColor === "cyan" ? "text-cyan-400" : "text-primary"
             }`}>
-              {player[valueKey]?.toLocaleString()}
+              {player.value}
             </span>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
   );
 }
 
-interface ClubLeaderboardCardProps {
+interface TeamLeaderboardCardProps {
   title: string;
   data: Array<{
     name: string;
     shortName: string;
-    [key: string]: string | number;
+    logoUrl?: string | null;
+    value: number;
   }>;
-  valueKey: string;
 }
 
-function ClubLeaderboardCard({ title, data, valueKey }: ClubLeaderboardCardProps) {
-  const sortedData = [...data].sort((a, b) => (b[valueKey] as number) - (a[valueKey] as number));
+function TeamLeaderboardCard({ title, data }: TeamLeaderboardCardProps) {
+  if (data.length === 0) {
+    return (
+      <div className="glass-card p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-sm">{title}</h3>
+        </div>
+        <p className="text-sm text-muted-foreground text-center py-4">No data yet</p>
+      </div>
+    );
+  }
 
   return (
     <div className="glass-card p-4">
@@ -263,9 +321,9 @@ function ClubLeaderboardCard({ title, data, valueKey }: ClubLeaderboardCardProps
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </div>
       <div className="space-y-1.5">
-        {sortedData.slice(0, 10).map((club, index) => (
+        {data.map((team, index) => (
           <div 
-            key={club.name + index}
+            key={team.name + index}
             className="flex items-center gap-2 py-1"
           >
             <span className={`w-5 text-xs font-bold ${
@@ -273,16 +331,24 @@ function ClubLeaderboardCard({ title, data, valueKey }: ClubLeaderboardCardProps
             }`}>
               {index + 1}
             </span>
-            <div className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold ${
-              index === 0 
-                ? "bg-primary/20 text-primary" 
-                : "bg-secondary text-muted-foreground"
-            }`}>
-              {club.shortName}
-            </div>
-            <span className="flex-1 text-sm truncate">{club.name}</span>
+            {team.logoUrl ? (
+              <img 
+                src={team.logoUrl} 
+                alt={team.name}
+                className="w-7 h-7 object-contain"
+              />
+            ) : (
+              <div className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold ${
+                index === 0 
+                  ? "bg-primary/20 text-primary" 
+                  : "bg-secondary text-muted-foreground"
+              }`}>
+                {team.shortName}
+              </div>
+            )}
+            <span className="flex-1 text-sm truncate">{team.name}</span>
             <span className="text-sm font-bold text-primary">
-              {(club[valueKey] as number).toLocaleString()}
+              {team.value.toLocaleString()}
             </span>
           </div>
         ))}

@@ -61,9 +61,8 @@ export const playerSchema = z.object({
     'Invalid date of birth'
   ).optional().nullable(),
   height: z.number().int().min(100, 'Minimum 100 cm').max(250, 'Maximum 250 cm').optional().nullable(),
-  goals: z.number().int().min(0, 'Cannot be negative').optional().nullable(),
-  assists: z.number().int().min(0, 'Cannot be negative').optional().nullable(),
-  appearances: z.number().int().min(0, 'Cannot be negative').optional().nullable(),
+  // Note: goals, assists, appearances are now calculated from match data
+  // and should not be manually edited
   photo_url: z.string().url('Invalid URL').optional().or(z.literal('')).nullable(),
   bio: z.string().max(1000, 'Bio too long').optional().nullable(),
 });

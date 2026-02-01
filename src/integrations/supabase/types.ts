@@ -703,6 +703,20 @@ export type Database = {
         Args: { _team_id: string; _user_id: string }
         Returns: boolean
       }
+      get_player_appearances: { Args: { p_player_id: string }; Returns: number }
+      get_player_assist_count: {
+        Args: { p_player_id: string }
+        Returns: number
+      }
+      get_player_goal_count: { Args: { p_player_id: string }; Returns: number }
+      get_player_stats: {
+        Args: { p_player_id: string }
+        Returns: {
+          appearances: number
+          assists: number
+          goals: number
+        }[]
+      }
       get_referees_with_email: {
         Args: never
         Returns: {

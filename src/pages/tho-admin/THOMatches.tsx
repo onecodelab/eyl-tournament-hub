@@ -429,10 +429,12 @@ export default function THOMatches() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="scheduled">Scheduled</SelectItem>
-                        <SelectItem value="live">Live</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="postponed">Postponed</SelectItem>
                       </SelectContent>
                     </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Note: Only referees can set matches to "Live" or "Completed" during the match workflow.
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label>Referee</Label>

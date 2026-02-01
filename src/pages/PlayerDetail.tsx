@@ -264,7 +264,7 @@ export default function PlayerDetail() {
               </div>
 
               {/* Performance Stats */}
-              <div className="flex flex-wrap gap-6 mb-6">
+              <div className="flex flex-wrap gap-6 mb-4">
                 <div>
                   <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Appearances</p>
                   <p className="text-3xl font-bold text-foreground">{player.appearances || 0}</p>
@@ -278,6 +278,9 @@ export default function PlayerDetail() {
                   <p className="text-3xl font-bold text-foreground">{player.assists || 0}</p>
                 </div>
               </div>
+              <p className="text-xs text-muted-foreground mb-6">
+                Stats calculated from official match reports
+              </p>
 
               {/* Full Bio Button */}
               <Button 
