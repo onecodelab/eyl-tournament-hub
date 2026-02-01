@@ -17,7 +17,8 @@ import {
   Shield,
   ShieldX,
   Key,
-  FileText
+  FileText,
+  Database
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -37,6 +38,7 @@ import {
 
 const adminNavItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+  { title: "Data Center", url: "/admin/data-center", icon: Database },
   { title: "Tournaments", url: "/admin/tournaments", icon: Trophy },
   { title: "Teams", url: "/admin/teams", icon: Users },
   { title: "Players", url: "/admin/players", icon: UserCircle },
