@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useTournaments } from "@/hooks/useSupabaseData";
 import { useCreateTournament, useUpdateTournament, useDeleteTournament } from "@/hooks/useAdminMutations";
 import { useTHOAdminUsers, useTournamentAdmins } from "@/hooks/useTHOAdminUsers";
@@ -220,21 +221,17 @@ export default function AdminTournaments() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <EYLLogo size={40} />
-            <div>
-              <h1 className="text-2xl font-bold">Tournaments</h1>
-              <p className="text-muted-foreground">Manage league tournaments</p>
-            </div>
-          </div>
-          <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" /> Add Tournament
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <AdminPageHeader
+          icon={Trophy}
+          title="Tournaments"
+          description="Manage league tournaments and configurations"
+          badge={<Badge variant="secondary" className="font-mono text-xs">{tournaments?.length ?? 0}</Badge>}
+          actions={
+            <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="gap-2"><Plus className="h-4 w-4" /> Add Tournament</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingTournament ? "Edit Tournament" : "Create Tournament"}</DialogTitle>
               </DialogHeader>
@@ -476,38 +473,33 @@ export default function AdminTournaments() {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
+          }
+        />
 
-        <Card className="border-border/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-primary" />
-              All Tournaments ({tournaments?.length ?? 0})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+        <Card className="border-border/50 overflow-hidden">
+          <CardContent className="p-0">
             {isLoading ? (
-              <p className="text-muted-foreground">Loading...</p>
+              <div className="flex items-center justify-center py-16"><p className="text-muted-foreground text-sm">Loading tournaments...</p></div>
             ) : tournaments?.length === 0 ? (
-              <p className="text-muted-foreground">No tournaments found. Create one to get started.</p>
+              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground"><Trophy className="h-10 w-10 mb-3 opacity-30" /><p className="text-sm">No tournaments found.</p></div>
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Age</TableHead>
-                    <TableHead>Format</TableHead>
-                    <TableHead>Teams</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Start Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                  <TableRow className="border-border/30 hover:bg-transparent">
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70">Name</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70">Age</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70">Format</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70">Teams</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70">Status</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70">Start Date</TableHead>
+                    <TableHead className="text-xs uppercase tracking-wider font-semibold text-muted-foreground/70 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tournaments?.map((tournament) => {
                     const t = tournament as any;
                     return (
-                      <TableRow key={tournament.id}>
+                      <TableRow key={tournament.id} className="border-border/20 hover:bg-muted/30 transition-colors">
                         <TableCell className="font-medium">{tournament.name}</TableCell>
                         <TableCell>
                           {t.age_category ? (
@@ -518,14 +510,15 @@ export default function AdminTournaments() {
                         <TableCell>{t.max_teams || "-"}</TableCell>
                         <TableCell>{getStatusBadge(tournament.status)}</TableCell>
                         <TableCell>{tournament.start_date || "-"}</TableCell>
-                        <TableCell className="text-right space-x-2">
-                          <Button variant="ghost" size="icon" onClick={() => handleEdit(tournament)}>
-                            <Pencil className="h-4 w-4" />
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleEdit(tournament)}>
+                            <Pencil className="h-3.5 w-3.5" />
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon" className="text-destructive">
-                                <Trash2 className="h-4 w-4" />
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive">
+                                <Trash2 className="h-3.5 w-3.5" />
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
@@ -538,8 +531,8 @@ export default function AdminTournaments() {
                                 <AlertDialogAction onClick={() => handleDelete(tournament.id)}>Delete</AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
-                          </AlertDialog>
-                        </TableCell>
+                        </AlertDialog>
+                        </div></TableCell>
                       </TableRow>
                     );
                   })}

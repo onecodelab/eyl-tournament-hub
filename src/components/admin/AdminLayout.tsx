@@ -18,7 +18,8 @@ import {
   ShieldX,
   Key,
   FileText,
-  Database
+  Database,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -58,26 +59,48 @@ function AdminSidebarContent() {
   return (
     <Sidebar className={collapsed ? "w-14" : "w-60"} collapsible="icon">
       <div className="p-4 flex items-center justify-center border-b border-border/50">
-        <Link to="/admin" className="flex items-center gap-2">
-          <EYLLogo size={collapsed ? 32 : 40} />
-          {!collapsed && <span className="font-bold text-lg">Admin</span>}
+        <Link to="/admin" className="flex items-center gap-3">
+          <EYLLogo size={collapsed ? 28 : 36} />
+          {!collapsed && (
+            <div className="flex flex-col">
+              <span className="font-bold text-sm tracking-tight">EYL Admin</span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Control Panel</span>
+            </div>
+          )}
         </Link>
       </div>
-      <SidebarContent>
+      <SidebarContent className="pt-2">
         <SidebarGroup>
-          <SidebarGroupLabel>Management</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground/60 px-4">
+            Management
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminNavItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname === item.url}>
-                    <Link to={item.url} className="flex items-center gap-2">
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {adminNavItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link 
+                        to={item.url} 
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 ${
+                          isActive 
+                            ? "bg-primary/10 text-primary border border-primary/20" 
+                            : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                        }`}
+                      >
+                        <item.icon className={`h-4 w-4 shrink-0 ${isActive ? "text-primary" : ""}`} />
+                        {!collapsed && (
+                          <>
+                            <span className="text-sm font-medium flex-1">{item.title}</span>
+                            {isActive && <ChevronRight className="h-3 w-3 text-primary/60" />}
+                          </>
+                        )}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -115,7 +138,6 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
   if (!user) return null;
 
-  // Show access denied for non-admin users
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -126,12 +148,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             You don't have permission to access the admin panel. This area is restricted to administrators only.
           </p>
           <div className="flex gap-3 mt-4">
-            <Button variant="outline" onClick={() => navigate("/")}>
-              Go Home
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
+            <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
+            <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
           </div>
         </div>
       </div>
@@ -142,37 +160,39 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <AdminSidebarContent />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-w-0">
           {/* Top Header */}
-          <header className="h-14 border-b border-border/50 bg-background/95 backdrop-blur flex items-center justify-between px-4">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger>
-                <Menu className="h-5 w-5" />
-              </SidebarTrigger>
-              <span className="text-sm text-muted-foreground hidden sm:inline">
-                Ethiopian Youth League Admin
-              </span>
-            </div>
+          <header className="h-14 border-b border-border/50 bg-card/50 backdrop-blur-sm flex items-center justify-between px-4 sticky top-0 z-20">
             <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground hidden sm:inline">
+              <SidebarTrigger>
+                <Menu className="h-4 w-4" />
+              </SidebarTrigger>
+              <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+                <span className="font-medium">Ethiopian Youth League</span>
+                <span className="text-border">•</span>
+                <span>Admin</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground hidden sm:inline px-3 py-1.5 rounded-full bg-muted/50 font-mono">
                 {user.email}
               </span>
               <ChangePasswordDialog
                 trigger={
-                  <Button variant="ghost" size="icon" title="Change Password">
-                    <Key className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" className="h-8 w-8" title="Change Password">
+                    <Key className="h-3.5 w-3.5" />
                   </Button>
                 }
               />
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
-                <LogOut className="h-4 w-4" />
+              <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2 h-8 text-xs">
+                <LogOut className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Sign Out</span>
               </Button>
             </div>
           </header>
           
           {/* Main Content */}
-          <main className="flex-1 p-4 md:p-6 overflow-auto">
+          <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
             {children}
           </main>
         </div>

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { useTournaments, useTeams, usePlayers, useAllMatches } from "@/hooks/useSupabaseData";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -267,34 +268,31 @@ export default function AdminDataCenter() {
     <AdminLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Database className="h-8 w-8 text-primary" />
-            <div>
-              <h1 className="text-2xl font-bold">Data Center</h1>
-              <p className="text-muted-foreground">Complete tournament archive & history</p>
-            </div>
-          </div>
-          
-          <Select value={selectedTournamentId} onValueChange={setSelectedTournamentId}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue placeholder="Select Tournament" />
-            </SelectTrigger>
-            <SelectContent>
-              {tournaments.map((t) => (
-                <SelectItem key={t.id} value={t.id}>
-                  <div className="flex items-center gap-2">
-                    <Trophy className="h-4 w-4" />
-                    {t.name}
-                    {t.status === "completed" && (
-                      <Badge variant="secondary" className="text-xs">Completed</Badge>
-                    )}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <AdminPageHeader
+          icon={Database}
+          title="Data Center"
+          description="Complete tournament archive & history"
+          actions={
+            <Select value={selectedTournamentId} onValueChange={setSelectedTournamentId}>
+              <SelectTrigger className="w-[280px]">
+                <SelectValue placeholder="Select Tournament" />
+              </SelectTrigger>
+              <SelectContent>
+                {tournaments.map((t) => (
+                  <SelectItem key={t.id} value={t.id}>
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-4 w-4" />
+                      {t.name}
+                      {t.status === "completed" && (
+                        <Badge variant="secondary" className="text-xs">Completed</Badge>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          }
+        />
 
         {!selectedTournamentId ? (
           <Card className="border-dashed">
