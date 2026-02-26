@@ -4,6 +4,8 @@ import { FileText, Download, Eye, Loader2, CheckCircle, Clock } from "lucide-rea
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { AdminStatCard } from "@/components/admin/AdminStatCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -269,54 +271,17 @@ export default function AdminMatchReports() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Match Reports</h1>
-          <p className="text-muted-foreground">
-            View all submitted referee match reports
-          </p>
-        </div>
+        <AdminPageHeader
+          icon={FileText}
+          title="Match Reports"
+          description="View all submitted referee match reports"
+          badge={<Badge variant="secondary" className="font-mono text-xs">{reports.length}</Badge>}
+        />
 
-        {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Total Reports
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{reports.length}</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                This Week
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {reports.filter((r) => {
-                  const submitted = new Date(r.submitted_at);
-                  const weekAgo = new Date();
-                  weekAgo.setDate(weekAgo.getDate() - 7);
-                  return submitted >= weekAgo;
-                }).length}
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Unique Referees
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {new Set(reports.map((r) => r.referee_id)).size}
-              </div>
-            </CardContent>
-          </Card>
+          <AdminStatCard label="Total Reports" value={reports.length} icon={FileText} />
+          <AdminStatCard label="This Week" value={reports.filter((r) => { const submitted = new Date(r.submitted_at); const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7); return submitted >= weekAgo; }).length} icon={Clock} accentColor="text-eyl-live" />
+          <AdminStatCard label="Unique Referees" value={new Set(reports.map((r) => r.referee_id)).size} icon={Eye} accentColor="text-emerald-400" />
         </div>
 
         {/* Filters */}
