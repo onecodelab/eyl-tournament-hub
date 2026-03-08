@@ -1,32 +1,42 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { useNews, useVideos } from "@/hooks/useSupabaseData";
-import { Clock, Image, FileText, Download, ExternalLink, Play, Eye, Instagram, Twitter, Facebook, Youtube, Mail } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { Clock, FileText, Download, ExternalLink, Play, Eye, Instagram, Twitter, Facebook, Youtube, Mail, ArrowRight, Sparkles, Camera } from "lucide-react";
+import { formatDistanceToNow, format } from "date-fns";
 import { Link } from "react-router-dom";
-import { EYLLogo } from "@/components/EYLLogo";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { NEWS_CATEGORIES } from "@/lib/constants";
 
 const socialLinks = [
-  { name: "Instagram", icon: Instagram, handle: "@ethiopianyouthleague", url: "https://instagram.com/ethiopianyouthleague", color: "hover:text-pink-500" },
-  { name: "Twitter/X", icon: Twitter, handle: "@EYL_official", url: "https://twitter.com/EYL_official", color: "hover:text-blue-400" },
-  { name: "Facebook", icon: Facebook, handle: "Ethiopian Youth League", url: "https://facebook.com/ethiopianyouthleague", color: "hover:text-blue-600" },
-  { name: "YouTube", icon: Youtube, handle: "EYL TV", url: "https://youtube.com/@EYLTV", color: "hover:text-red-500" }
+  { name: "Instagram", icon: Instagram, handle: "@ethiopianyouthleague", url: "https://instagram.com/ethiopianyouthleague", gradient: "from-pink-500/20 to-purple-500/20", iconColor: "text-pink-400" },
+  { name: "Twitter/X", icon: Twitter, handle: "@EYL_official", url: "https://twitter.com/EYL_official", gradient: "from-sky-500/20 to-blue-500/20", iconColor: "text-sky-400" },
+  { name: "Facebook", icon: Facebook, handle: "Ethiopian Youth League", url: "https://facebook.com/ethiopianyouthleague", gradient: "from-blue-500/20 to-indigo-500/20", iconColor: "text-blue-400" },
+  { name: "YouTube", icon: Youtube, handle: "EYL TV", url: "https://youtube.com/@EYLTV", gradient: "from-red-500/20 to-orange-500/20", iconColor: "text-red-400" }
 ];
 
 const mediaKitItems = [
-  { name: "EYL Logo Pack", description: "High-resolution logos in PNG, SVG, and EPS formats", size: "12 MB" },
-  { name: "Brand Guidelines", description: "Official colors, typography, and usage rules", size: "4 MB" },
-  { name: "Press Release Templates", description: "Official templates for news and announcements", size: "2 MB" },
-  { name: "Photo Assets", description: "Official tournament and event photography", size: "85 MB" }
+  { name: "EYL Logo Pack", description: "High-resolution logos in PNG, SVG, and EPS formats", size: "12 MB", icon: "🎨" },
+  { name: "Brand Guidelines", description: "Official colors, typography, and usage rules", size: "4 MB", icon: "📐" },
+  { name: "Press Release Templates", description: "Official templates for news and announcements", size: "2 MB", icon: "📝" },
+  { name: "Photo Assets", description: "Official tournament and event photography", size: "85 MB", icon: "📸" }
 ];
 
 const pressContacts = [
   { name: "Media Relations", email: "media@ethiopianyouthleague.com", phone: "+251 911 222 333" },
   { name: "Press Accreditation", email: "press@ethiopianyouthleague.com", phone: "+251 911 444 555" },
   { name: "Partnership Inquiries", email: "partners@ethiopianyouthleague.com", phone: "+251 911 666 777" }
+];
+
+const galleryImages = [
+  "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600",
+  "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=600",
+  "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=600",
+  "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=600",
+  "https://images.unsplash.com/photo-1459865264687-595d652de67e?w=600",
+  "https://images.unsplash.com/photo-1529629468155-5e37b2fc79fc?w=600",
+  "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=600",
+  "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=600"
 ];
 
 function extractYouTubeId(url: string): string | null {
@@ -41,66 +51,84 @@ function extractYouTubeId(url: string): string | null {
   return null;
 }
 
+type TabKey = "news" | "highlights" | "gallery" | "media-kit" | "contact";
+
+const tabs: { key: TabKey; label: string; icon: React.ElementType }[] = [
+  { key: "news", label: "News", icon: FileText },
+  { key: "highlights", label: "Highlights", icon: Play },
+  { key: "gallery", label: "Gallery", icon: Camera },
+  { key: "media-kit", label: "Media Kit", icon: Download },
+  { key: "contact", label: "Contact", icon: Mail },
+];
+
 export default function NewsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [activeTab, setActiveTab] = useState<TabKey>("news");
   const { data: news = [], isLoading } = useNews({ category: selectedCategory });
   const { data: videos = [] } = useVideos({ limit: 6 });
 
+  const featuredNews = news[0];
+  const restNews = news.slice(1);
+
   return (
     <Layout>
-      {/* Hero - Compact */}
-      <section className="relative py-8 overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
+      {/* Hero */}
+      <section className="relative py-12 md:py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/8 via-primary/3 to-transparent" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] -translate-y-1/2 translate-x-1/4" />
         <div className="container mx-auto px-4 relative">
-          <div className="flex items-center gap-3">
-            <EYLLogo size={40} withGlow />
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold">
-                Media <span className="text-primary">Center</span>
-              </h1>
-              <p className="text-sm text-muted-foreground">News, highlights, and press resources</p>
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.5} />
+              <span className="text-xs font-semibold text-primary uppercase tracking-widest">Media Center</span>
             </div>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3">
+              Stories & <span className="text-gradient-gold">Highlights</span>
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base max-w-lg">
+              The latest news, match highlights, and press resources from the Ethiopian Youth League.
+            </p>
           </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-6 animate-fade-in">
-        <Tabs defaultValue="news" className="w-full">
-          {/* Horizontal Scroll Tabs */}
-          <div className="scroll-container mb-6">
-            <TabsList className="glass-card p-1 inline-flex gap-1">
-              <TabsTrigger value="news" className="gap-2 text-sm">
-                <FileText className="h-4 w-4" strokeWidth={1.5} />
-                News
-              </TabsTrigger>
-              <TabsTrigger value="highlights" className="gap-2 text-sm">
-                <Play className="h-4 w-4" strokeWidth={1.5} />
-                Highlights
-              </TabsTrigger>
-              <TabsTrigger value="gallery" className="gap-2 text-sm">
-                <Image className="h-4 w-4" strokeWidth={1.5} />
-                Gallery
-              </TabsTrigger>
-              <TabsTrigger value="media-kit" className="gap-2 text-sm">
-                <Download className="h-4 w-4" strokeWidth={1.5} />
-                Media Kit
-              </TabsTrigger>
-              <TabsTrigger value="contact" className="gap-2 text-sm">
-                <Mail className="h-4 w-4" strokeWidth={1.5} />
-                Contact
-              </TabsTrigger>
-            </TabsList>
+      {/* Tab Navigation */}
+      <div className="sticky top-[64px] z-20 bg-background/80 backdrop-blur-xl border-b border-border/50">
+        <div className="container mx-auto px-4">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide py-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
+                  activeTab === tab.key
+                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                }`}
+              >
+                <tab.icon className="h-4 w-4" strokeWidth={1.5} />
+                {tab.label}
+              </button>
+            ))}
           </div>
+        </div>
+      </div>
 
-          {/* Latest News Tab */}
-          <TabsContent value="news">
-            {/* Category Filters - Horizontal Scroll Pills */}
-            <div className="scroll-container mb-4">
+      <div className="container mx-auto px-4 py-8">
+        {/* NEWS TAB */}
+        {activeTab === "news" && (
+          <div className="animate-fade-in">
+            {/* Category Pills */}
+            <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-4 mb-6">
               {NEWS_CATEGORIES.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={selectedCategory === category ? "pill-tab-active" : "pill-tab-inactive"}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
+                    selectedCategory === category
+                      ? "bg-primary/10 text-primary border-primary/30"
+                      : "text-muted-foreground border-border/50 hover:border-primary/20 hover:text-foreground"
+                  }`}
                 >
                   {category}
                 </button>
@@ -108,93 +136,134 @@ export default function NewsPage() {
             </div>
 
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="glass-card h-[100px] animate-pulse" />
-                ))}
+              <div className="space-y-4">
+                <div className="h-[340px] rounded-2xl bg-secondary/30 animate-pulse" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="h-[200px] rounded-xl bg-secondary/30 animate-pulse" />
+                  ))}
+                </div>
+              </div>
+            ) : news.length === 0 ? (
+              <div className="glass-card p-16 text-center rounded-2xl">
+                <FileText className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" strokeWidth={1.5} />
+                <h3 className="font-semibold mb-1">No articles found</h3>
+                <p className="text-sm text-muted-foreground">Try selecting a different category.</p>
               </div>
             ) : (
-              /* Compact News Cards - Horizontal Layout */
-              <div className="space-y-3">
-                {news.map((item, index) => (
-                  <Link 
-                    key={item.id}
-                    to={`/news/${item.id}`}
-                    className="news-card-compact group hover:border-primary/50 transition-all animate-fade-in"
-                    style={{ animationDelay: `${index * 50}ms` }}
-                  >
-                    <img 
-                      src={item.image_url || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400'}
-                      alt={item.title}
-                      className="news-card-compact-image"
-                    />
-                    <div className="flex-1 min-w-0 py-0.5">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-[10px] font-bold text-primary uppercase">{item.category}</span>
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                          <Clock className="h-2.5 w-2.5" strokeWidth={1.5} />
-                          {formatDistanceToNow(new Date(item.published_at || item.created_at), { addSuffix: true })}
-                        </span>
+              <div className="space-y-6">
+                {/* Featured Article — Full Width Hero Card */}
+                {featuredNews && (
+                  <Link to={`/news/${featuredNews.id}`} className="block group">
+                    <div className="relative h-[340px] md:h-[400px] rounded-2xl overflow-hidden">
+                      <img
+                        src={featuredNews.image_url || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1200"}
+                        alt={featuredNews.title}
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                        <div className="flex items-center gap-3 mb-3">
+                          <Badge variant="default" className="text-[10px] uppercase tracking-wider font-bold">
+                            {featuredNews.category || "General"}
+                          </Badge>
+                          <span className="text-xs text-foreground/60 flex items-center gap-1">
+                            <Clock className="h-3 w-3" strokeWidth={1.5} />
+                            {formatDistanceToNow(new Date(featuredNews.published_at || featuredNews.created_at), { addSuffix: true })}
+                          </span>
+                        </div>
+                        <h2 className="text-xl md:text-3xl font-bold leading-tight group-hover:text-primary transition-colors max-w-2xl">
+                          {featuredNews.title}
+                        </h2>
+                        {featuredNews.excerpt && (
+                          <p className="text-sm text-muted-foreground mt-2 max-w-xl line-clamp-2">{featuredNews.excerpt}</p>
+                        )}
+                        <div className="flex items-center gap-1.5 text-primary text-sm font-medium mt-4 group-hover:gap-3 transition-all">
+                          Read article <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
+                        </div>
                       </div>
-                      <h3 className="font-semibold text-[15px] leading-tight group-hover:text-primary transition-colors line-clamp-2">
-                        {item.title}
-                      </h3>
-                      {item.excerpt && (
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{item.excerpt}</p>
-                      )}
                     </div>
                   </Link>
-                ))}
+                )}
+
+                {/* Rest of News — Card Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {restNews.map((item, index) => (
+                    <Link
+                      key={item.id}
+                      to={`/news/${item.id}`}
+                      className="group rounded-xl overflow-hidden border border-border/50 bg-card hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 animate-fade-in"
+                      style={{ animationDelay: `${index * 60}ms` }}
+                    >
+                      <div className="relative h-40 overflow-hidden">
+                        <img
+                          src={item.image_url || "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400"}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-3 left-3">
+                          <Badge variant="secondary" className="text-[10px] uppercase tracking-wider font-bold bg-background/80 backdrop-blur-sm">
+                            {item.category || "General"}
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="p-4">
+                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground mb-2">
+                          <Clock className="h-3 w-3" strokeWidth={1.5} />
+                          {item.published_at
+                            ? format(new Date(item.published_at), "MMM d, yyyy")
+                            : formatDistanceToNow(new Date(item.created_at), { addSuffix: true })}
+                        </div>
+                        <h3 className="font-semibold text-sm leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+                          {item.title}
+                        </h3>
+                        {item.excerpt && (
+                          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{item.excerpt}</p>
+                        )}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             )}
+          </div>
+        )}
 
-            {news.length === 0 && !isLoading && (
-              <div className="glass-card p-10 text-center">
-                <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-3" strokeWidth={1.5} />
-                <h3 className="font-semibold text-sm mb-1">No articles found</h3>
-                <p className="text-xs text-muted-foreground">Check back later for updates.</p>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Highlights Tab */}
-          <TabsContent value="highlights">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {videos.length > 0 ? (
-                videos.map((video, index) => {
+        {/* HIGHLIGHTS TAB */}
+        {activeTab === "highlights" && (
+          <div className="animate-fade-in space-y-6">
+            {videos.length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {videos.map((video, index) => {
                   const youtubeId = extractYouTubeId(video.youtube_url);
-                  const thumbnailUrl = video.thumbnail_url || 
+                  const thumbnailUrl = video.thumbnail_url ||
                     (youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : null);
 
                   return (
-                    <a 
+                    <a
                       key={video.id}
                       href={video.youtube_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="glass-card overflow-hidden group hover:border-primary/50 transition-all"
-                      style={{ animationDelay: `${index * 100}ms` }}
+                      className="group rounded-xl overflow-hidden border border-border/50 bg-card hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 animate-fade-in"
+                      style={{ animationDelay: `${index * 80}ms` }}
                     >
                       <div className="relative aspect-video bg-secondary">
                         {thumbnailUrl && (
-                          <img 
-                            src={thumbnailUrl} 
-                            alt={video.title}
-                            className="w-full h-full object-cover"
-                          />
+                          <img src={thumbnailUrl} alt={video.title} className="w-full h-full object-cover" />
                         )}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors">
-                          <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <Play className="h-6 w-6 text-primary-foreground ml-0.5" strokeWidth={1.5} />
+                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                          <div className="w-14 h-14 rounded-full bg-primary/90 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform shadow-xl shadow-primary/30">
+                            <Play className="h-6 w-6 text-primary-foreground ml-0.5" strokeWidth={2} />
                           </div>
                         </div>
                       </div>
-                      <div className="p-3">
+                      <div className="p-4">
                         <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
                           {video.title}
                         </h3>
-                        {video.views_count && (
-                          <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                        {video.views_count != null && (
+                          <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1.5">
                             <Eye className="h-3 w-3" strokeWidth={1.5} />
                             {video.views_count.toLocaleString()} views
                           </p>
@@ -202,100 +271,94 @@ export default function NewsPage() {
                       </div>
                     </a>
                   );
-                })
-              ) : (
-                <div className="col-span-full glass-card p-10 text-center">
-                  <Play className="h-10 w-10 text-muted-foreground mx-auto mb-3" strokeWidth={1.5} />
-                  <h3 className="font-semibold text-sm mb-1">No highlights available</h3>
-                  <p className="text-xs text-muted-foreground">Video highlights will appear here after matches.</p>
-                </div>
-              )}
-            </div>
+                })}
+              </div>
+            ) : (
+              <div className="glass-card p-16 text-center rounded-2xl">
+                <Play className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" strokeWidth={1.5} />
+                <h3 className="font-semibold mb-1">No highlights available</h3>
+                <p className="text-sm text-muted-foreground">Video highlights will appear here after matches.</p>
+              </div>
+            )}
 
             {/* YouTube CTA */}
-            <div className="glass-card p-4 mt-6 border-red-500/30">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-red-500/10">
-                    <Youtube className="h-5 w-5 text-red-500" strokeWidth={1.5} />
+            <div className="rounded-2xl border border-red-500/20 bg-gradient-to-r from-red-500/5 to-transparent p-5">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-red-500/10">
+                    <Youtube className="h-6 w-6 text-red-400" strokeWidth={1.5} />
                   </div>
                   <div>
                     <h3 className="font-bold text-sm">Subscribe to EYL TV</h3>
-                    <p className="text-xs text-muted-foreground">Never miss a highlight</p>
+                    <p className="text-xs text-muted-foreground">Never miss a highlight or match recap</p>
                   </div>
                 </div>
-                <a 
+                <a
                   href="https://youtube.com/@EYLTV"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 text-white font-medium text-sm hover:bg-red-600 transition-colors touch-target"
                 >
-                  <Youtube className="h-4 w-4" strokeWidth={1.5} />
-                  Subscribe
+                  <Button className="bg-red-500 hover:bg-red-600 text-white gap-2 rounded-xl">
+                    <Youtube className="h-4 w-4" strokeWidth={1.5} />
+                    Subscribe
+                  </Button>
                 </a>
               </div>
             </div>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* Photo Gallery Tab */}
-          <TabsContent value="gallery">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {[
-                "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400",
-                "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400",
-                "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400",
-                "https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=400",
-                "https://images.unsplash.com/photo-1459865264687-595d652de67e?w=400",
-                "https://images.unsplash.com/photo-1529629468155-5e37b2fc79fc?w=400",
-                "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400",
-                "https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400"
-              ].map((url, index) => (
-                <div 
+        {/* GALLERY TAB */}
+        {activeTab === "gallery" && (
+          <div className="animate-fade-in space-y-6">
+            <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
+              {galleryImages.map((url, index) => (
+                <div
                   key={index}
-                  className="aspect-square rounded-lg overflow-hidden group cursor-pointer"
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="break-inside-avoid rounded-xl overflow-hidden group cursor-pointer border border-border/30 hover:border-primary/30 transition-all animate-fade-in"
+                  style={{ animationDelay: `${index * 60}ms` }}
                 >
-                  <img 
-                    src={url}
-                    alt={`Gallery image ${index + 1}`}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <div className="relative">
+                    <img
+                      src={url}
+                      alt={`Gallery image ${index + 1}`}
+                      className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={{ aspectRatio: index % 3 === 0 ? "3/4" : index % 2 === 0 ? "1/1" : "4/3" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </div>
                 </div>
               ))}
             </div>
 
-            <div className="glass-card p-6 mt-6 text-center">
-              <Image className="h-10 w-10 text-muted-foreground mx-auto mb-3" strokeWidth={1.5} />
+            <div className="rounded-2xl border border-border/50 p-8 text-center bg-card">
+              <Camera className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" strokeWidth={1.5} />
               <h3 className="font-semibold text-sm mb-1">More Photos Coming Soon</h3>
-              <p className="text-xs text-muted-foreground mb-3">
-                Our gallery is being updated with the latest tournament images.
-              </p>
+              <p className="text-xs text-muted-foreground mb-3">Our gallery is being updated with the latest tournament images.</p>
               <p className="text-xs text-muted-foreground">
                 For inquiries: <a href="mailto:media@ethiopianyouthleague.com" className="text-primary hover:underline">media@ethiopianyouthleague.com</a>
               </p>
             </div>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* Media Kit Tab */}
-          <TabsContent value="media-kit">
-            <div className="grid md:grid-cols-2 gap-4 mb-6">
+        {/* MEDIA KIT TAB */}
+        {activeTab === "media-kit" && (
+          <div className="animate-fade-in space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
               {mediaKitItems.map((item, index) => (
-                <div 
+                <div
                   key={item.name}
-                  className="glass-card p-4 flex items-center justify-between hover:border-primary/50 transition-all"
-                  style={{ animationDelay: `${index * 100}ms` }}
+                  className="group rounded-xl border border-border/50 bg-card p-5 flex items-start gap-4 hover:border-primary/30 transition-all animate-fade-in"
+                  style={{ animationDelay: `${index * 80}ms` }}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-xl bg-primary/10">
-                      <Download className="h-5 w-5 text-primary" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm">{item.name}</h3>
-                      <p className="text-xs text-muted-foreground">{item.description}</p>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{item.size}</p>
-                    </div>
+                  <div className="text-2xl">{item.icon}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-sm">{item.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                    <span className="text-[10px] text-muted-foreground/60 font-mono">{item.size}</span>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8 shrink-0 rounded-lg">
                     <Download className="h-3 w-3" strokeWidth={1.5} />
                     Download
                   </Button>
@@ -303,86 +366,78 @@ export default function NewsPage() {
               ))}
             </div>
 
-            {/* Usage Guidelines */}
-            <div className="glass-card p-4">
+            <div className="rounded-2xl border border-border/50 bg-card p-5">
               <h3 className="text-sm font-bold mb-3">Usage Guidelines</h3>
-              <div className="space-y-1.5 text-xs text-muted-foreground">
-                <p>• EYL logos and assets may only be used with prior written permission</p>
+              <div className="grid sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
+                <p>• EYL logos may only be used with prior written permission</p>
                 <p>• Do not alter, distort, or recolor official logos</p>
-                <p>• Always maintain clear space around logos as specified</p>
+                <p>• Maintain clear space around logos as specified</p>
                 <p>• For commercial use, contact our partnership team</p>
                 <p>• Photo credits must include "Ethiopian Youth League" or "EYL"</p>
               </div>
             </div>
-          </TabsContent>
+          </div>
+        )}
 
-          {/* Press Contact Tab */}
-          <TabsContent value="contact">
-            {/* Social Media Links */}
-            <div className="glass-card p-4 mb-4">
-              <h3 className="text-sm font-bold mb-3">Follow Us</h3>
+        {/* CONTACT TAB */}
+        {activeTab === "contact" && (
+          <div className="animate-fade-in space-y-6">
+            {/* Social Media */}
+            <div>
+              <h3 className="text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">Follow Us</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                {socialLinks.map((social) => (
+                {socialLinks.map((social, index) => (
                   <a
                     key={social.name}
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-2 p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors touch-target ${social.color}`}
+                    className="group rounded-xl border border-border/50 bg-card p-4 hover:border-primary/30 transition-all animate-fade-in"
+                    style={{ animationDelay: `${index * 80}ms` }}
                   >
-                    <social.icon className="h-5 w-5" strokeWidth={1.5} />
-                    <div>
-                      <p className="font-medium text-sm">{social.name}</p>
-                      <p className="text-[11px] text-muted-foreground">{social.handle}</p>
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${social.gradient} flex items-center justify-center mb-3`}>
+                      <social.icon className={`h-5 w-5 ${social.iconColor}`} strokeWidth={1.5} />
                     </div>
+                    <p className="font-semibold text-sm">{social.name}</p>
+                    <p className="text-xs text-muted-foreground">{social.handle}</p>
                   </a>
                 ))}
               </div>
             </div>
 
             {/* Press Contacts */}
-            <div className="grid md:grid-cols-3 gap-4">
-              {pressContacts.map((contact, index) => (
-                <div 
-                  key={contact.name}
-                  className="glass-card p-4"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <h3 className="font-bold text-sm mb-3">{contact.name}</h3>
-                  <div className="space-y-2">
-                    <a 
-                      href={`mailto:${contact.email}`}
-                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <Mail className="h-3.5 w-3.5" strokeWidth={1.5} />
-                      {contact.email}
-                    </a>
-                    <a 
-                      href={`tel:${contact.phone.replace(/\s/g, '')}`}
-                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.5} />
-                      {contact.phone}
-                    </a>
+            <div>
+              <h3 className="text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">Press Contacts</h3>
+              <div className="grid md:grid-cols-3 gap-4">
+                {pressContacts.map((contact, index) => (
+                  <div
+                    key={contact.name}
+                    className="rounded-xl border border-border/50 bg-card p-5 animate-fade-in"
+                    style={{ animationDelay: `${index * 80}ms` }}
+                  >
+                    <h4 className="font-bold text-sm mb-3">{contact.name}</h4>
+                    <div className="space-y-2">
+                      <a
+                        href={`mailto:${contact.email}`}
+                        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <Mail className="h-3.5 w-3.5" strokeWidth={1.5} />
+                        {contact.email}
+                      </a>
+                      <a
+                        href={`tel:${contact.phone.replace(/\s/g, "")}`}
+                        className="flex items-center gap-2 text-xs text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.5} />
+                        {contact.phone}
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-
-            {/* Press Accreditation */}
-            <div className="glass-card p-4 mt-4 border-primary/30">
-              <h3 className="font-bold text-sm mb-2">Press Accreditation</h3>
-              <p className="text-xs text-muted-foreground mb-3">
-                Media professionals seeking accreditation for EYL events should apply at least 
-                7 days before the event date.
-              </p>
-              <Button className="gap-2 text-sm h-9">
-                <Mail className="h-4 w-4" strokeWidth={1.5} />
-                Apply for Accreditation
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </div>
     </Layout>
   );
