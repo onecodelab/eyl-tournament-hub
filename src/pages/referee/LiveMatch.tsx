@@ -145,7 +145,7 @@ export default function LiveMatch() {
 
   // Timer effect
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (isTimerRunning) {
       interval = setInterval(() => {
         setMatchTime((prev) => prev + 1);
