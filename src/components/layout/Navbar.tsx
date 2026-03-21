@@ -49,7 +49,7 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className="nav-link hover:text-primary"
+                  className="nav-link hover:text-foreground"
                 >
                   {link.name}
                 </Link>
