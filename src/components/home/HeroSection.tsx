@@ -102,7 +102,7 @@ export function HeroSection() {
                     <span className="text-primary text-[10px] font-bold uppercase tracking-wider">
                       {newsCategories[item.category || "General"] || item.category}
                     </span>
-                    <p className="text-sm font-medium text-foreground line-clamp-2 mt-0.5 group-hover:text-primary transition-colors">
+                    <p className="text-sm font-medium text-foreground line-clamp-2 mt-0.5 group-hover:text-foreground transition-colors">
                       {item.title}
                     </p>
                   </div>
