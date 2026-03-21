@@ -83,7 +83,7 @@ export function HeroSection() {
                 <Link 
                   key={item.id} 
                   to={`/news/${item.id}`}
-                  className="flex gap-3 p-2 rounded-lg hover:bg-secondary/50 transition-colors group"
+                  className="flex gap-3 p-2 rounded-lg hover:bg-secondary/70 transition-colors group"
                 >
                   <div className="w-16 h-16 rounded-lg bg-secondary flex-shrink-0 overflow-hidden">
                     {item.image_url ? (
