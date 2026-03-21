@@ -197,44 +197,46 @@ export default function TournamentDetail() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative py-12 overflow-hidden border-b border-border">
+      <section className="relative py-6 md:py-12 overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
         <div className="container mx-auto px-4 relative">
-          <Link to="/standings" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4">
+          <Link to="/standings" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 text-sm">
             <ArrowLeft className="h-4 w-4" />
             Back to Competitions
           </Link>
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-3 md:gap-4">
             {tournament.logo_url ? (
-              <img src={tournament.logo_url} alt={tournament.name} className="w-16 h-16 rounded-lg object-cover" />
+              <img src={tournament.logo_url} alt={tournament.name} className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover flex-shrink-0" />
             ) : (
-              <EYLLogo size={64} withGlow />
+              <div className="flex-shrink-0">
+                <EYLLogo size={48} withGlow />
+              </div>
             )}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold">{tournament.name}</h1>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h1 className="text-xl md:text-3xl font-bold">{tournament.name}</h1>
                 {getStatusBadge()}
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-muted-foreground">
                 {tournament.age_category && (
-                  <Badge variant="outline">{tournament.age_category.toUpperCase()}</Badge>
+                  <Badge variant="outline" className="text-xs">{tournament.age_category.toUpperCase()}</Badge>
                 )}
                 {tournament.format && (
-                  <Badge variant="outline" className="capitalize">{tournament.format.replace('_', ' + ')}</Badge>
+                  <Badge variant="outline" className="capitalize text-xs">{tournament.format.replace('_', ' + ')}</Badge>
                 )}
                 {tournament.start_date && tournament.end_date && (
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4" />
                     {format(new Date(tournament.start_date), "MMM d")} - {format(new Date(tournament.end_date), "MMM d, yyyy")}
                   </span>
                 )}
                 <span className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
+                  <Users className="h-3 w-3 md:h-4 md:w-4" />
                   {teams.length} Teams
                 </span>
               </div>
               {tournament.description && (
-                <p className="text-muted-foreground mt-2">{tournament.description}</p>
+                <p className="text-muted-foreground mt-2 text-sm">{tournament.description}</p>
               )}
               {tournament.status === 'completed' && (
                 <Link to={`/tournaments/${id}/history`}>
