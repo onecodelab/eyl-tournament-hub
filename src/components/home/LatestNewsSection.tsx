@@ -90,7 +90,7 @@ export function LatestNewsSection() {
                           {formatDistanceToNow(new Date(featuredNews.published_at || featuredNews.created_at), { addSuffix: true })}
                         </span>
                       </div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+                      <h3 className="font-bold text-lg group-hover:text-foreground transition-colors">
                         {featuredNews.title}
                       </h3>
                     </div>
