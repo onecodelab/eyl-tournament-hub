@@ -136,110 +136,120 @@ export function HeroSection() {
             </div>
           </div>
 
-        {/* Latest News - Middle Column */}
-        <div className="lg:col-span-4">
-          <div className="glass-card h-full p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-                <Newspaper className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground">Latest News</h3>
-            </div>
-            <div className="space-y-3">
-              {latestNews.map((item, index) => (
-                <Link 
-                  key={item.id} 
-                  to={`/news/${item.id}`}
-                  className="flex gap-3 p-2 rounded-lg hover:bg-secondary/70 transition-colors group"
-                >
-                  <div className="w-16 h-16 rounded-lg bg-secondary flex-shrink-0 overflow-hidden">
-                    {item.image_url ? (
-                      <img 
-                        src={item.image_url} 
-                        alt="" 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
-                        EYL
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-primary text-[10px] font-bold uppercase tracking-wider">
-                      {newsCategories[item.category || "General"] || item.category}
-                    </span>
-                    <p className="text-sm font-medium text-foreground line-clamp-2 mt-0.5 group-hover:text-foreground transition-colors">
-                      {item.title}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-            <Link 
-              to="/news"
-              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
-            >
-              View All News
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-        </div>
-
-        {/* Match Center - Right Column */}
-        <div className="lg:col-span-3">
-          <div className="glass-card h-full p-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
+          {/* Latest News - Middle Column */}
+          <div className="col-span-4">
+            <div className="glass-card h-full p-4">
+              <div className="flex items-center gap-2 mb-4">
                 <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-                  <Trophy className="h-3.5 w-3.5 text-primary" />
+                  <Newspaper className="h-3.5 w-3.5 text-primary" />
                 </div>
-                <h3 className="font-semibold text-foreground">Match Center</h3>
+                <h3 className="font-semibold text-foreground">Latest News</h3>
               </div>
-              <Link to="/matches" className="text-muted-foreground hover:text-foreground text-xs">
-                View all →
+              <div className="space-y-3">
+                {latestNews.map((item) => (
+                  <NewsItem key={item.id} item={item} />
+                ))}
+              </div>
+              <Link 
+                to="/news"
+                className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
+              >
+                View All News
+                <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
+          </div>
 
-            {/* Today */}
-            <div className="mb-4">
-              <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">TODAY</span>
-              <div className="mt-2 space-y-2">
-                {todayMatches.length > 0 ? (
-                  todayMatches.slice(0, 2).map((match) => (
-                    <MatchCenterItem key={match.id} match={match} />
-                  ))
-                ) : liveMatch ? (
-                  <MatchCenterItem match={liveMatch} />
-                ) : (
-                  <p className="text-xs text-muted-foreground py-2">No matches today</p>
-                )}
-              </div>
-            </div>
-
-            {/* Tomorrow */}
-            <div>
-              <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">TOMORROW</span>
-              <div className="mt-2 space-y-2">
-                {tomorrowMatches.length > 0 ? (
-                  tomorrowMatches.slice(0, 2).map((match) => (
-                    <MatchCenterItem key={match.id} match={match} />
-                  ))
-                ) : (
-                  <p className="text-xs text-muted-foreground py-2">No matches scheduled</p>
-                )}
-              </div>
-            </div>
-
-            {/* EYL Stream Button */}
-            <Button className="w-full mt-4 bg-secondary text-foreground hover:bg-secondary/80 border border-border">
-              <Clock className="mr-2 h-4 w-4" />
-              EYL Stream
-            </Button>
+          {/* Match Center - Right Column */}
+          <div className="col-span-3">
+            <MatchCenterCard 
+              todayMatches={todayMatches} 
+              tomorrowMatches={tomorrowMatches} 
+              liveMatch={liveMatch} 
+            />
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+function NewsItem({ item }: { item: { id: string; image_url: string | null; category: string | null; title: string } }) {
+  return (
+    <Link 
+      to={`/news/${item.id}`}
+      className="flex gap-3 p-2 rounded-lg hover:bg-secondary/70 transition-colors group"
+    >
+      <div className="w-16 h-16 rounded-lg bg-secondary flex-shrink-0 overflow-hidden">
+        {item.image_url ? (
+          <img src={item.image_url} alt="" className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">EYL</div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <span className="text-primary text-[10px] font-bold uppercase tracking-wider">
+          {newsCategories[item.category || "General"] || item.category}
+        </span>
+        <p className="text-sm font-medium text-foreground line-clamp-2 mt-0.5 group-hover:text-foreground transition-colors">
+          {item.title}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+interface MatchCenterCardProps {
+  todayMatches: any[];
+  tomorrowMatches: any[];
+  liveMatch: any;
+}
+
+function MatchCenterCard({ todayMatches, tomorrowMatches, liveMatch }: MatchCenterCardProps) {
+  return (
+    <div className="glass-card h-full p-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
+            <Trophy className="h-3.5 w-3.5 text-primary" />
+          </div>
+          <h3 className="font-semibold text-foreground">Match Center</h3>
+        </div>
+        <Link to="/matches" className="text-muted-foreground hover:text-foreground text-xs">
+          View all →
+        </Link>
+      </div>
+      <div className="mb-4">
+        <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">TODAY</span>
+        <div className="mt-2 space-y-2">
+          {todayMatches.length > 0 ? (
+            todayMatches.slice(0, 2).map((match: any) => (
+              <MatchCenterItem key={match.id} match={match} />
+            ))
+          ) : liveMatch ? (
+            <MatchCenterItem match={liveMatch} />
+          ) : (
+            <p className="text-xs text-muted-foreground py-2">No matches today</p>
+          )}
+        </div>
+      </div>
+      <div>
+        <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">TOMORROW</span>
+        <div className="mt-2 space-y-2">
+          {tomorrowMatches.length > 0 ? (
+            tomorrowMatches.slice(0, 2).map((match: any) => (
+              <MatchCenterItem key={match.id} match={match} />
+            ))
+          ) : (
+            <p className="text-xs text-muted-foreground py-2">No matches scheduled</p>
+          )}
+        </div>
+      </div>
+      <Button className="w-full mt-4 bg-secondary text-foreground hover:bg-secondary/80 border border-border">
+        <Clock className="mr-2 h-4 w-4" />
+        EYL Stream
+      </Button>
+    </div>
   );
 }
 
