@@ -145,16 +145,16 @@ export function GroupStageView({
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border text-xs text-muted-foreground">
-                    <th className="p-3 text-left">#</th>
-                    <th className="p-3 text-left">Team</th>
-                    <th className="p-3 text-center">P</th>
-                    <th className="p-3 text-center">W</th>
-                    <th className="p-3 text-center">D</th>
-                    <th className="p-3 text-center">L</th>
-                    <th className="p-3 text-center">GD</th>
-                    <th className="p-3 text-center text-primary">Pts</th>
+                 <thead>
+                  <tr className="border-b border-border text-[10px] md:text-xs text-muted-foreground">
+                     <th className="p-2 md:p-3 text-left">#</th>
+                     <th className="p-2 md:p-3 text-left">Team</th>
+                     <th className="p-2 md:p-3 text-center">P</th>
+                     <th className="p-2 md:p-3 text-center">W</th>
+                     <th className="p-2 md:p-3 text-center">D</th>
+                     <th className="p-2 md:p-3 text-center">L</th>
+                     <th className="p-2 md:p-3 text-center">GD</th>
+                     <th className="p-2 md:p-3 text-center text-primary">Pts</th>
                   </tr>
                 </thead>
                 <tbody>
