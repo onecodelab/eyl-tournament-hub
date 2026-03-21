@@ -36,38 +36,105 @@ export function HeroSection() {
   const liveMatch = matches.find((m) => m.status === "live");
 
   return (
-    <section className="container mx-auto px-4 py-6">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Featured Story - Left Column */}
-        <div className="lg:col-span-5">
-          <div 
-            className="relative h-[420px] sm:h-[460px] lg:h-full min-h-[400px] rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl shadow-primary/10 border border-white/5"
-            style={{ 
-              backgroundImage: featuredNews?.image_url
-                ? `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('${featuredNews.image_url}')`
-                : `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
-            }}
-          >
-            {liveMatch && (
-              <div className="absolute top-4 left-4">
-                <span className="live-badge flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                  LIVE
-                </span>
-              </div>
-            )}
-            <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
-              <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-white mb-3 leading-tight tracking-tight">
-                {featuredNews?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
-              </h2>
-              <p className="text-white/50 text-sm mb-5 font-light">Tonight Under the Lights</p>
-              <Button variant="secondary" size="sm" className="group rounded-full px-5 backdrop-blur-sm bg-white/90 text-background hover:bg-white transition-all">
-                Read Full Story
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
+    <section>
+      {/* Mobile: Full-bleed hero like RB Leipzig */}
+      <div className="lg:hidden">
+        <div 
+          className="relative w-full min-h-[75vh] bg-cover bg-center flex flex-col justify-end"
+          style={{ 
+            backgroundImage: featuredNews?.image_url
+              ? `url('${featuredNews.image_url}')`
+              : `url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
+          }}
+        >
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background" />
+          
+          {liveMatch && (
+            <div className="absolute top-4 left-4 z-10">
+              <span className="live-badge flex items-center gap-1.5">
+                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                LIVE
+              </span>
             </div>
+          )}
+
+          <div className="relative z-10 p-6 pb-8">
+            <h2 className="text-3xl font-extrabold text-white mb-3 leading-[1.1] tracking-tight uppercase">
+              {featuredNews?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
+            </h2>
+            <Button variant="secondary" size="sm" className="group rounded-full px-6 py-2.5 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 transition-all">
+              Read article
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
         </div>
+
+        {/* Mobile: News + Match cards below hero */}
+        <div className="container mx-auto px-4 py-4 space-y-4">
+          {/* Latest News */}
+          <div className="glass-card p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
+                <Newspaper className="h-3.5 w-3.5 text-primary" />
+              </div>
+              <h3 className="font-semibold text-foreground">Latest News</h3>
+            </div>
+            <div className="space-y-3">
+              {latestNews.map((item) => (
+                <NewsItem key={item.id} item={item} />
+              ))}
+            </div>
+            <Link 
+              to="/news"
+              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
+            >
+              View All News
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+
+          {/* Match Center */}
+          <MatchCenterCard 
+            todayMatches={todayMatches} 
+            tomorrowMatches={tomorrowMatches} 
+            liveMatch={liveMatch} 
+          />
+        </div>
+      </div>
+
+      {/* Desktop: Original 3-column layout */}
+      <div className="hidden lg:block container mx-auto px-4 py-6">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-5">
+            <div 
+              className="relative h-full min-h-[400px] rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl shadow-primary/10 border border-white/5"
+              style={{ 
+                backgroundImage: featuredNews?.image_url
+                  ? `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('${featuredNews.image_url}')`
+                  : `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
+              }}
+            >
+              {liveMatch && (
+                <div className="absolute top-4 left-4">
+                  <span className="live-badge flex items-center gap-1.5">
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                    LIVE
+                  </span>
+                </div>
+              )}
+              <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
+                <h2 className="text-3xl font-bold text-white mb-3 leading-tight tracking-tight">
+                  {featuredNews?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
+                </h2>
+                <p className="text-white/50 text-sm mb-5 font-light">Tonight Under the Lights</p>
+                <Button variant="secondary" size="sm" className="group rounded-full px-5 backdrop-blur-sm bg-white/90 text-background hover:bg-white transition-all">
+                  Read Full Story
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </div>
+            </div>
+          </div>
 
         {/* Latest News - Middle Column */}
         <div className="lg:col-span-4">
