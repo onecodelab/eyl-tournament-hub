@@ -197,44 +197,46 @@ export default function TournamentDetail() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative py-12 overflow-hidden border-b border-border">
+      <section className="relative py-6 md:py-12 overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
         <div className="container mx-auto px-4 relative">
-          <Link to="/standings" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4">
+          <Link to="/standings" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 text-sm">
             <ArrowLeft className="h-4 w-4" />
             Back to Competitions
           </Link>
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-3 md:gap-4">
             {tournament.logo_url ? (
-              <img src={tournament.logo_url} alt={tournament.name} className="w-16 h-16 rounded-lg object-cover" />
+              <img src={tournament.logo_url} alt={tournament.name} className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover flex-shrink-0" />
             ) : (
-              <EYLLogo size={64} withGlow />
+              <div className="flex-shrink-0">
+                <EYLLogo size={48} withGlow />
+              </div>
             )}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold">{tournament.name}</h1>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h1 className="text-xl md:text-3xl font-bold">{tournament.name}</h1>
                 {getStatusBadge()}
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-muted-foreground">
                 {tournament.age_category && (
-                  <Badge variant="outline">{tournament.age_category.toUpperCase()}</Badge>
+                  <Badge variant="outline" className="text-xs">{tournament.age_category.toUpperCase()}</Badge>
                 )}
                 {tournament.format && (
-                  <Badge variant="outline" className="capitalize">{tournament.format.replace('_', ' + ')}</Badge>
+                  <Badge variant="outline" className="capitalize text-xs">{tournament.format.replace('_', ' + ')}</Badge>
                 )}
                 {tournament.start_date && tournament.end_date && (
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4" />
                     {format(new Date(tournament.start_date), "MMM d")} - {format(new Date(tournament.end_date), "MMM d, yyyy")}
                   </span>
                 )}
                 <span className="flex items-center gap-1">
-                  <Users className="h-4 w-4" />
+                  <Users className="h-3 w-3 md:h-4 md:w-4" />
                   {teams.length} Teams
                 </span>
               </div>
               {tournament.description && (
-                <p className="text-muted-foreground mt-2">{tournament.description}</p>
+                <p className="text-muted-foreground mt-2 text-sm">{tournament.description}</p>
               )}
               {tournament.status === 'completed' && (
                 <Link to={`/tournaments/${id}/history`}>
@@ -249,23 +251,26 @@ export default function TournamentDetail() {
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="glass-card p-1 mb-8 inline-flex">
-            <TabsTrigger value="overview" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              Overview
+          <TabsList className="glass-card p-1 mb-6 md:mb-8 w-full md:w-auto grid grid-cols-4 md:inline-flex">
+            <TabsTrigger value="overview" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <Trophy className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Overview</span>
+              <span className="sm:hidden">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="fixtures" className="gap-2">
-              <Calendar className="h-4 w-4" />
-              Fixtures & Results
+            <TabsTrigger value="fixtures" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Fixtures & Results</span>
+              <span className="sm:hidden">Fixtures</span>
             </TabsTrigger>
-            <TabsTrigger value="stats" className="gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Statistics
+            <TabsTrigger value="stats" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <BarChart3 className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Statistics</span>
+              <span className="sm:hidden">Stats</span>
             </TabsTrigger>
-            <TabsTrigger value="news" className="gap-2">
-              <Newspaper className="h-4 w-4" />
+            <TabsTrigger value="news" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <Newspaper className="h-3.5 w-3.5 md:h-4 md:w-4" />
               News
             </TabsTrigger>
           </TabsList>
@@ -475,7 +480,7 @@ export default function TournamentDetail() {
 
           {/* Stats Tab */}
           <TabsContent value="stats">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {/* Goals */}
               <div className="glass-card p-4">
                 <h4 className="font-semibold text-sm mb-4">Top Scorers</h4>

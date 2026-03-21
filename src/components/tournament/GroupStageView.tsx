@@ -137,7 +137,7 @@ export function GroupStageView({
         Group Stage
       </h3>
       
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
         {groups.map((group) => (
           <div key={group.name} className="glass-card overflow-hidden">
             <div className="bg-primary/10 px-4 py-2 border-b border-border">
@@ -145,16 +145,16 @@ export function GroupStageView({
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead>
-                  <tr className="border-b border-border text-xs text-muted-foreground">
-                    <th className="p-3 text-left">#</th>
-                    <th className="p-3 text-left">Team</th>
-                    <th className="p-3 text-center">P</th>
-                    <th className="p-3 text-center">W</th>
-                    <th className="p-3 text-center">D</th>
-                    <th className="p-3 text-center">L</th>
-                    <th className="p-3 text-center">GD</th>
-                    <th className="p-3 text-center text-primary">Pts</th>
+                 <thead>
+                  <tr className="border-b border-border text-[10px] md:text-xs text-muted-foreground">
+                     <th className="p-2 md:p-3 text-left">#</th>
+                     <th className="p-2 md:p-3 text-left">Team</th>
+                     <th className="p-2 md:p-3 text-center">P</th>
+                     <th className="p-2 md:p-3 text-center">W</th>
+                     <th className="p-2 md:p-3 text-center">D</th>
+                     <th className="p-2 md:p-3 text-center">L</th>
+                     <th className="p-2 md:p-3 text-center">GD</th>
+                     <th className="p-2 md:p-3 text-center text-primary">Pts</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -168,9 +168,9 @@ export function GroupStageView({
                           qualifies ? 'border-l-2 border-l-green-500 bg-green-500/5' : ''
                         }`}
                       >
-                        <td className="p-3">
+                        <td className="p-2 md:p-3">
                           <div className="flex items-center gap-1">
-                            <span className={`font-bold ${qualifies ? 'text-green-500' : ''}`}>
+                            <span className={`font-bold text-xs md:text-sm ${qualifies ? 'text-green-500' : ''}`}>
                               {team.position}
                             </span>
                             {qualifies && (
@@ -178,35 +178,35 @@ export function GroupStageView({
                             )}
                           </div>
                         </td>
-                        <td className="p-3">
-                          <div className="flex items-center gap-2">
+                        <td className="p-2 md:p-3">
+                          <div className="flex items-center gap-1.5 md:gap-2">
                             {team.logo_url ? (
                               <img 
                                 src={team.logo_url} 
                                 alt={team.name}
-                                className="w-6 h-6 rounded-full object-cover"
+                                className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover flex-shrink-0"
                               />
                             ) : (
-                              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
+                              <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary/20 flex items-center justify-center text-[8px] md:text-[10px] font-bold text-primary flex-shrink-0">
                                 {team.short_name || team.name.slice(0, 2).toUpperCase()}
                               </div>
                             )}
-                            <span className="text-sm font-medium truncate max-w-[120px]">
+                            <span className="text-xs md:text-sm font-medium truncate max-w-[80px] md:max-w-[120px]">
                               {team.name}
                             </span>
                           </div>
                         </td>
-                        <td className="p-3 text-center text-sm">{team.played}</td>
-                        <td className="p-3 text-center text-sm text-green-500">{team.wins}</td>
-                        <td className="p-3 text-center text-sm">{team.draws}</td>
-                        <td className="p-3 text-center text-sm text-red-500">{team.losses}</td>
-                        <td className="p-3 text-center text-sm">
+                        <td className="p-2 md:p-3 text-center text-xs">{team.played}</td>
+                        <td className="p-2 md:p-3 text-center text-xs text-green-500">{team.wins}</td>
+                        <td className="p-2 md:p-3 text-center text-xs">{team.draws}</td>
+                        <td className="p-2 md:p-3 text-center text-xs text-red-500">{team.losses}</td>
+                        <td className="p-2 md:p-3 text-center text-xs">
                           <span className={team.goal_difference > 0 ? 'text-green-500' : team.goal_difference < 0 ? 'text-red-500' : ''}>
                             {team.goal_difference > 0 ? `+${team.goal_difference}` : team.goal_difference}
                           </span>
                         </td>
-                        <td className="p-3 text-center">
-                          <span className="font-bold text-primary">{team.points}</span>
+                        <td className="p-2 md:p-3 text-center">
+                          <span className="font-bold text-xs md:text-sm text-primary">{team.points}</span>
                         </td>
                       </tr>
                     );
