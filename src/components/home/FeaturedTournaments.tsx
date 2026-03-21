@@ -20,7 +20,7 @@ export function FeaturedTournaments() {
         </h2>
         <Link 
           to="/standings"
-          className="text-muted-foreground hover:text-primary text-sm flex items-center gap-1 transition-colors touch-target"
+          className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1 transition-colors touch-target"
         >
           View All
           <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
