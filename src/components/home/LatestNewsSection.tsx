@@ -104,7 +104,7 @@ export function LatestNewsSection() {
                   <Link 
                     key={item.id}
                     to={`/news/${item.id}`}
-                    className="glass-card p-3 group hover:border-primary/50 transition-all"
+                    className="glass-card p-3 group hover:border-foreground/20 transition-all"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-[10px] font-bold text-primary uppercase">{item.category}</span>
