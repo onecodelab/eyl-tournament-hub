@@ -113,7 +113,7 @@ export function LatestNewsSection() {
                         {formatDistanceToNow(new Date(item.published_at || item.created_at), { addSuffix: true })}
                       </span>
                     </div>
-                    <h4 className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">
+                    <h4 className="text-sm font-medium line-clamp-2 group-hover:text-foreground transition-colors">
                       {item.title}
                     </h4>
                   </Link>
