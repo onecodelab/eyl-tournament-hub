@@ -3,6 +3,7 @@ import { ArrowRight, Clock, Newspaper, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNews, useMatchWithTeams } from "@/hooks/useSupabaseData";
 import { format } from "date-fns";
+import { useState, useEffect, useCallback } from "react";
 
 const newsCategories: Record<string, string> = {
   "Breakthrough": "TALENT SPOTLIGHT",
@@ -17,7 +18,21 @@ export function HeroSection() {
 
   const featuredNews = news[0];
   const latestNews = news.slice(0, 4);
+  const heroSlides = news.slice(0, 4);
+  const [currentSlide, setCurrentSlide] = useState(0);
   
+  const nextSlide = useCallback(() => {
+    if (heroSlides.length > 0) {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }
+  }, [heroSlides.length]);
+
+  useEffect(() => {
+    if (heroSlides.length <= 1) return;
+    const timer = setInterval(nextSlide, 3000);
+    return () => clearInterval(timer);
+  }, [nextSlide, heroSlides.length]);
+
   const todayMatches = matches.filter((m) => {
     if (!m.match_date) return false;
     const matchDate = new Date(m.match_date);
@@ -35,21 +50,30 @@ export function HeroSection() {
 
   const liveMatch = matches.find((m) => m.status === "live");
 
+  const currentHero = heroSlides[currentSlide] || featuredNews;
+
   return (
     <section>
-      {/* Mobile: Full-bleed hero like RB Leipzig */}
+      {/* Mobile: Full-bleed hero carousel */}
       <div className="lg:hidden">
-        <div 
-          className="relative w-full min-h-[75vh] bg-cover bg-center flex flex-col justify-end"
-          style={{ 
-            backgroundImage: featuredNews?.image_url
-              ? `url('${featuredNews.image_url}')`
-              : `url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
-          }}
-        >
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background" />
-          
+        <div className="relative w-full min-h-[75vh] overflow-hidden">
+          {heroSlides.map((slide, index) => (
+            <div
+              key={slide.id}
+              className="absolute inset-0 w-full h-full bg-cover bg-center flex flex-col justify-end transition-opacity duration-700 ease-in-out"
+              style={{
+                backgroundImage: slide.image_url
+                  ? `url('${slide.image_url}')`
+                  : `url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')`,
+                opacity: index === currentSlide ? 1 : 0,
+                zIndex: index === currentSlide ? 1 : 0,
+              }}
+            >
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background" />
+            </div>
+          ))}
+
           {liveMatch && (
             <div className="absolute top-4 left-4 z-10">
               <span className="live-badge flex items-center gap-1.5">
@@ -59,14 +83,34 @@ export function HeroSection() {
             </div>
           )}
 
-          <div className="relative z-10 p-6 pb-8">
+          <div className="relative z-10 p-6 pb-8 mt-auto flex flex-col justify-end min-h-[75vh]">
             <h2 className="text-3xl font-extrabold text-white mb-3 leading-[1.1] tracking-tight uppercase">
-              {featuredNews?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
+              {currentHero?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
             </h2>
-            <Button variant="secondary" size="sm" className="group rounded-full px-6 py-2.5 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 transition-all">
-              Read article
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <div className="flex items-center justify-between">
+              <Link to={currentHero ? `/news/${currentHero.id}` : "/news"}>
+                <Button variant="secondary" size="sm" className="group rounded-full px-6 py-2.5 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 transition-all">
+                  Read article
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+              {/* Dot indicators */}
+              {heroSlides.length > 1 && (
+                <div className="flex items-center gap-1.5">
+                  {heroSlides.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                        index === currentSlide
+                          ? "w-6 bg-white"
+                          : "w-1.5 bg-white/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
