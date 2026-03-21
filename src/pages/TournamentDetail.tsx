@@ -253,21 +253,24 @@ export default function TournamentDetail() {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="glass-card p-1 mb-8 inline-flex">
-            <TabsTrigger value="overview" className="gap-2">
-              <Trophy className="h-4 w-4" />
-              Overview
+          <TabsList className="glass-card p-1 mb-6 md:mb-8 w-full md:w-auto grid grid-cols-4 md:inline-flex">
+            <TabsTrigger value="overview" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <Trophy className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Overview</span>
+              <span className="sm:hidden">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="fixtures" className="gap-2">
-              <Calendar className="h-4 w-4" />
-              Fixtures & Results
+            <TabsTrigger value="fixtures" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Fixtures & Results</span>
+              <span className="sm:hidden">Fixtures</span>
             </TabsTrigger>
-            <TabsTrigger value="stats" className="gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Statistics
+            <TabsTrigger value="stats" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <BarChart3 className="h-3.5 w-3.5 md:h-4 md:w-4" />
+              <span className="hidden sm:inline">Statistics</span>
+              <span className="sm:hidden">Stats</span>
             </TabsTrigger>
-            <TabsTrigger value="news" className="gap-2">
-              <Newspaper className="h-4 w-4" />
+            <TabsTrigger value="news" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
+              <Newspaper className="h-3.5 w-3.5 md:h-4 md:w-4" />
               News
             </TabsTrigger>
           </TabsList>
