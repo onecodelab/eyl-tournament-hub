@@ -111,7 +111,7 @@ export function HeroSection() {
             </div>
             <Link 
               to="/news"
-              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-primary text-sm mt-3 transition-colors"
+              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
             >
               View All News
               <ArrowRight className="h-3 w-3" />
