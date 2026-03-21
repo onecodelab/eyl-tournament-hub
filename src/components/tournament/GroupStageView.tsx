@@ -168,9 +168,9 @@ export function GroupStageView({
                           qualifies ? 'border-l-2 border-l-green-500 bg-green-500/5' : ''
                         }`}
                       >
-                        <td className="p-3">
+                        <td className="p-2 md:p-3">
                           <div className="flex items-center gap-1">
-                            <span className={`font-bold ${qualifies ? 'text-green-500' : ''}`}>
+                            <span className={`font-bold text-xs md:text-sm ${qualifies ? 'text-green-500' : ''}`}>
                               {team.position}
                             </span>
                             {qualifies && (
