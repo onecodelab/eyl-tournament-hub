@@ -172,6 +172,33 @@ export function Navbar() {
                 Referee Dashboard
               </Link>
             )}
+            <div className="border-t border-border my-2" />
+            {user ? (
+              <>
+                <Link
+                  to="/admin"
+                  className="py-2 px-3 rounded-lg text-sm text-muted-foreground truncate"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {user.email}
+                </Link>
+                <button
+                  onClick={() => { handleAuthClick(); setMobileMenuOpen(false); }}
+                  className="py-2 px-3 rounded-lg text-sm font-medium text-muted-foreground flex items-center gap-2"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { navigate("/auth"); setMobileMenuOpen(false); }}
+                className="py-2 px-3 rounded-lg text-sm font-medium text-muted-foreground flex items-center gap-2"
+              >
+                <User className="h-4 w-4" />
+                Sign In
+              </button>
+            )}
           </nav>
         </div>
       )}
