@@ -41,7 +41,7 @@ export function LatestNewsSection() {
             </h2>
             <Link 
               to="/news"
-              className="text-muted-foreground hover:text-primary text-sm flex items-center gap-1"
+              className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1"
             >
               All News
               <ArrowRight className="h-3 w-3" />
