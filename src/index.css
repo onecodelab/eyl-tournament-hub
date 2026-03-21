@@ -17,8 +17,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 218 70% 12%;
 
-    /* Primary - Champion Gold */
-    --primary: 43 65% 45%;
+    /* Primary - EYL Cyan (Logo Color) */
+    --primary: 187 100% 40%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary */
@@ -29,8 +29,8 @@
     --muted: 218 15% 90%;
     --muted-foreground: 218 25% 40%;
 
-    /* Accent - Gold */
-    --accent: 43 65% 45%;
+    /* Accent - Cyan */
+    --accent: 187 100% 40%;
     --accent-foreground: 0 0% 100%;
 
     /* Destructive */
@@ -40,15 +40,15 @@
     /* Border - Subtle */
     --border: 218 20% 88%;
     --input: 218 20% 92%;
-    --ring: 43 65% 45%;
+    --ring: 187 100% 40%;
 
     --radius: 0.75rem;
 
     /* Custom EYL Colors - Light Mode */
     --eyl-navy: 218 70% 12%;
     --eyl-navy-light: 218 60% 20%;
-    --eyl-gold: 43 65% 45%;
-    --eyl-gold-dark: 43 55% 35%;
+    --eyl-gold: 187 100% 40%;
+    --eyl-gold-dark: 187 80% 30%;
     --eyl-success: 142 70% 40%;
     --eyl-live: 187 100% 40%;
     --eyl-cyan: 187 100% 40%;
@@ -56,12 +56,12 @@
     /* Sidebar - Light */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 218 70% 12%;
-    --sidebar-primary: 43 65% 45%;
+    --sidebar-primary: 187 100% 40%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 218 20% 95%;
     --sidebar-accent-foreground: 218 70% 12%;
     --sidebar-border: 218 20% 88%;
-    --sidebar-ring: 43 65% 45%;
+    --sidebar-ring: 187 100% 40%;
 
     /* Glass Surface - Light */
     --glass-surface: 218 30% 50% / 0.05;
@@ -82,8 +82,8 @@
     --popover: 218 60% 9%;
     --popover-foreground: 0 0% 100%;
 
-    /* Primary - Champion Gold */
-    --primary: 43 65% 52%;
+    /* Primary - EYL Cyan (Logo Color) */
+    --primary: 187 100% 50%;
     --primary-foreground: 218 70% 8%;
 
     /* Secondary */
@@ -94,8 +94,8 @@
     --muted: 218 45% 18%;
     --muted-foreground: 215 25% 60%;
 
-    /* Accent - Gold */
-    --accent: 43 65% 52%;
+    /* Accent - Cyan */
+    --accent: 187 100% 50%;
     --accent-foreground: 218 70% 8%;
 
     /* Destructive */
@@ -105,13 +105,13 @@
     /* Border - Subtle */
     --border: 0 0% 100% / 0.08;
     --input: 218 40% 18%;
-    --ring: 43 65% 52%;
+    --ring: 187 100% 50%;
 
     /* Custom EYL Colors */
     --eyl-navy: 218 70% 8%;
     --eyl-navy-light: 218 60% 12%;
-    --eyl-gold: 43 65% 52%;
-    --eyl-gold-dark: 43 55% 42%;
+    --eyl-gold: 187 100% 50%;
+    --eyl-gold-dark: 187 80% 40%;
     --eyl-success: 142 70% 45%;
     --eyl-live: 187 100% 50%;
     --eyl-cyan: 187 100% 50%;
@@ -119,12 +119,12 @@
     /* Sidebar */
     --sidebar-background: 218 70% 6%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 43 65% 52%;
+    --sidebar-primary: 187 100% 50%;
     --sidebar-primary-foreground: 218 70% 8%;
     --sidebar-accent: 218 50% 14%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 0 0% 100% / 0.08;
-    --sidebar-ring: 43 65% 52%;
+    --sidebar-ring: 187 100% 50%;
 
     /* Glass Surface */
     --glass-surface: 0 0% 100% / 0.03;
@@ -173,7 +173,7 @@
     transform: scale(0.98);
   }
 
-  /* Gold Text */
+  /* Cyan Text */
   .gold-text {
     @apply text-primary;
   }
@@ -316,8 +316,13 @@
 }
 
 @layer utilities {
+  .text-gradient-cyan {
+    @apply bg-gradient-to-r from-primary to-cyan-300 bg-clip-text text-transparent;
+  }
+
+  /* Keep old class name for backward compat */
   .text-gradient-gold {
-    @apply bg-gradient-to-r from-primary to-amber-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-cyan-300 bg-clip-text text-transparent;
   }
 
   /* Hide Scrollbar */
