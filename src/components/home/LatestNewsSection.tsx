@@ -141,7 +141,7 @@ export function LatestNewsSection() {
                   href={getFullYouTubeUrl(video.youtube_url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="glass-card p-3 flex items-center gap-4 hover:border-primary/50 transition-all cursor-pointer group block"
+                  className="glass-card p-3 flex items-center gap-4 hover:border-foreground/20 transition-all cursor-pointer group block"
                 >
                   <div 
                     className="w-20 h-14 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 relative overflow-hidden bg-cover bg-center"
