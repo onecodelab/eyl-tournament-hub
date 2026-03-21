@@ -137,7 +137,7 @@ export function GroupStageView({
         Group Stage
       </h3>
       
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-4 md:gap-6">
         {groups.map((group) => (
           <div key={group.name} className="glass-card overflow-hidden">
             <div className="bg-primary/10 px-4 py-2 border-b border-border">
