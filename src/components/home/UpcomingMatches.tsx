@@ -47,7 +47,7 @@ export function UpcomingMatches() {
               <Link
                 key={match.id}
                 to={`/matches/${match.id}`}
-                className="glass-card min-w-[260px] p-4 hover:border-primary/50 transition-all flex-shrink-0"
+                className="glass-card min-w-[260px] p-4 hover:border-foreground/20 transition-all flex-shrink-0"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">

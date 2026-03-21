@@ -165,7 +165,7 @@ export function HeroSection() {
             </div>
 
             {/* EYL Stream Button */}
-            <Button className="w-full mt-4 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30">
+            <Button className="w-full mt-4 bg-secondary text-foreground hover:bg-secondary/80 border border-border">
               <Clock className="mr-2 h-4 w-4" />
               EYL Stream
             </Button>

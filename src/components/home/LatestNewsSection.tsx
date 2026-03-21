@@ -151,7 +151,7 @@ export function LatestNewsSection() {
                     <Play className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                    <h4 className="text-sm font-medium truncate group-hover:text-foreground transition-colors">
                       {video.title}
                     </h4>
                     <span className="text-xs text-muted-foreground">{formatViews(video.views_count)}</span>
