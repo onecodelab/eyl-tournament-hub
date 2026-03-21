@@ -41,11 +41,11 @@ export function HeroSection() {
         {/* Featured Story - Left Column */}
         <div className="lg:col-span-5">
           <div 
-            className="relative h-80 lg:h-full min-h-[320px] rounded-2xl overflow-hidden bg-cover bg-center"
+            className="relative h-[420px] sm:h-[460px] lg:h-full min-h-[400px] rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl shadow-primary/10 border border-white/5"
             style={{ 
               backgroundImage: featuredNews?.image_url
-                ? `linear-gradient(to bottom, rgba(14, 27, 49, 0.3), rgba(14, 27, 49, 0.9)), url('${featuredNews.image_url}')`
-                : `linear-gradient(to bottom, rgba(14, 27, 49, 0.3), rgba(14, 27, 49, 0.9)), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
+                ? `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('${featuredNews.image_url}')`
+                : `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
             }}
           >
             {liveMatch && (
@@ -56,12 +56,12 @@ export function HeroSection() {
                 </span>
               </div>
             )}
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 leading-tight">
+            <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
+              <h2 className="text-2xl sm:text-3xl md:text-3xl font-bold text-white mb-3 leading-tight tracking-tight">
                 {featuredNews?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
               </h2>
-              <p className="text-white/70 text-sm mb-4">Tonight Under the Lights</p>
-              <Button variant="secondary" size="sm" className="group">
+              <p className="text-white/50 text-sm mb-5 font-light">Tonight Under the Lights</p>
+              <Button variant="secondary" size="sm" className="group rounded-full px-5 backdrop-blur-sm bg-white/90 text-background hover:bg-white transition-all">
                 Read Full Story
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
