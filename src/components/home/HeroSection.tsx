@@ -129,7 +129,7 @@ export function HeroSection() {
                 </div>
                 <h3 className="font-semibold text-foreground">Match Center</h3>
               </div>
-              <Link to="/matches" className="text-muted-foreground hover:text-primary text-xs">
+              <Link to="/matches" className="text-muted-foreground hover:text-foreground text-xs">
                 View all →
               </Link>
             </div>
