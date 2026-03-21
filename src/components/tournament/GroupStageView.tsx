@@ -196,17 +196,17 @@ export function GroupStageView({
                             </span>
                           </div>
                         </td>
-                        <td className="p-3 text-center text-sm">{team.played}</td>
-                        <td className="p-3 text-center text-sm text-green-500">{team.wins}</td>
-                        <td className="p-3 text-center text-sm">{team.draws}</td>
-                        <td className="p-3 text-center text-sm text-red-500">{team.losses}</td>
-                        <td className="p-3 text-center text-sm">
+                        <td className="p-2 md:p-3 text-center text-xs">{team.played}</td>
+                        <td className="p-2 md:p-3 text-center text-xs text-green-500">{team.wins}</td>
+                        <td className="p-2 md:p-3 text-center text-xs">{team.draws}</td>
+                        <td className="p-2 md:p-3 text-center text-xs text-red-500">{team.losses}</td>
+                        <td className="p-2 md:p-3 text-center text-xs">
                           <span className={team.goal_difference > 0 ? 'text-green-500' : team.goal_difference < 0 ? 'text-red-500' : ''}>
                             {team.goal_difference > 0 ? `+${team.goal_difference}` : team.goal_difference}
                           </span>
                         </td>
-                        <td className="p-3 text-center">
-                          <span className="font-bold text-primary">{team.points}</span>
+                        <td className="p-2 md:p-3 text-center">
+                          <span className="font-bold text-xs md:text-sm text-primary">{team.points}</span>
                         </td>
                       </tr>
                     );
