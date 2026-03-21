@@ -17,7 +17,7 @@ export function UpcomingMatches() {
         </h2>
         <Link 
           to="/matches"
-          className="text-muted-foreground hover:text-primary text-sm flex items-center gap-1 transition-colors touch-target"
+          className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1 transition-colors touch-target"
         >
           Full Schedule
           <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
