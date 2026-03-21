@@ -41,7 +41,7 @@ export function LatestNewsSection() {
             </h2>
             <Link 
               to="/news"
-              className="text-muted-foreground hover:text-primary text-sm flex items-center gap-1"
+              className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1"
             >
               All News
               <ArrowRight className="h-3 w-3" />
@@ -90,7 +90,7 @@ export function LatestNewsSection() {
                           {formatDistanceToNow(new Date(featuredNews.published_at || featuredNews.created_at), { addSuffix: true })}
                         </span>
                       </div>
-                      <h3 className="font-bold text-lg group-hover:text-primary transition-colors">
+                      <h3 className="font-bold text-lg group-hover:text-foreground transition-colors">
                         {featuredNews.title}
                       </h3>
                     </div>
@@ -104,7 +104,7 @@ export function LatestNewsSection() {
                   <Link 
                     key={item.id}
                     to={`/news/${item.id}`}
-                    className="glass-card p-3 group hover:border-primary/50 transition-all"
+                    className="glass-card p-3 group hover:border-foreground/20 transition-all"
                   >
                     <div className="flex items-center gap-2 mb-2">
                       <span className="text-[10px] font-bold text-primary uppercase">{item.category}</span>
@@ -113,7 +113,7 @@ export function LatestNewsSection() {
                         {formatDistanceToNow(new Date(item.published_at || item.created_at), { addSuffix: true })}
                       </span>
                     </div>
-                    <h4 className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">
+                    <h4 className="text-sm font-medium line-clamp-2 group-hover:text-foreground transition-colors">
                       {item.title}
                     </h4>
                   </Link>
@@ -141,7 +141,7 @@ export function LatestNewsSection() {
                   href={getFullYouTubeUrl(video.youtube_url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="glass-card p-3 flex items-center gap-4 hover:border-primary/50 transition-all cursor-pointer group block"
+                  className="glass-card p-3 flex items-center gap-4 hover:border-foreground/20 transition-all cursor-pointer group block"
                 >
                   <div 
                     className="w-20 h-14 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0 relative overflow-hidden bg-cover bg-center"
@@ -151,7 +151,7 @@ export function LatestNewsSection() {
                     <Play className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                    <h4 className="text-sm font-medium truncate group-hover:text-foreground transition-colors">
                       {video.title}
                     </h4>
                     <span className="text-xs text-muted-foreground">{formatViews(video.views_count)}</span>

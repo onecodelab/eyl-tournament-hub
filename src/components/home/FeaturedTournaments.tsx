@@ -20,7 +20,7 @@ export function FeaturedTournaments() {
         </h2>
         <Link 
           to="/standings"
-          className="text-muted-foreground hover:text-primary text-sm flex items-center gap-1 transition-colors touch-target"
+          className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1 transition-colors touch-target"
         >
           View All
           <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
@@ -56,7 +56,7 @@ export function FeaturedTournaments() {
                 <div className="flex items-start gap-3 mb-2">
                   <EYLLogo size={28} className="opacity-60 group-hover:opacity-100 transition-opacity" />
                   <div className="flex-1 min-w-0 pr-12">
-                    <h3 className="font-semibold text-[15px] leading-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                    <h3 className="font-semibold text-[15px] leading-tight text-foreground group-hover:text-foreground transition-colors line-clamp-1">
                       {tournament.name}
                     </h3>
                     <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">

@@ -52,7 +52,7 @@ export function PartnersSection() {
                       href={sponsor.website_url || "#"}
                       target={sponsor.website_url ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="group flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 hover:bg-primary/5"
+                      className="group flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-300 hover:bg-foreground/5"
                     >
                       <div className="relative">
                         {/* Glow effect on hover */}

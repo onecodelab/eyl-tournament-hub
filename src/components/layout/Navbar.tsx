@@ -49,7 +49,7 @@ export function Navbar() {
                 <Link
                   key={link.name}
                   to={link.href}
-                  className="nav-link hover:text-primary"
+                  className="nav-link hover:text-foreground"
                 >
                   {link.name}
                 </Link>
@@ -119,7 +119,7 @@ export function Navbar() {
               )}
               {user ? (
                 <div className="hidden sm:flex items-center gap-2">
-                  <Link to="/admin" className="text-xs text-muted-foreground hover:text-primary truncate max-w-[120px]">
+                  <Link to="/admin" className="text-xs text-muted-foreground hover:text-foreground truncate max-w-[120px]">
                     {user.email}
                   </Link>
                   <Button variant="outline" size="sm" onClick={handleAuthClick} className="gap-2">

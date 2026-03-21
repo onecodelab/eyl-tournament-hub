@@ -83,7 +83,7 @@ export function HeroSection() {
                 <Link 
                   key={item.id} 
                   to={`/news/${item.id}`}
-                  className="flex gap-3 p-2 rounded-lg hover:bg-secondary/50 transition-colors group"
+                  className="flex gap-3 p-2 rounded-lg hover:bg-secondary/70 transition-colors group"
                 >
                   <div className="w-16 h-16 rounded-lg bg-secondary flex-shrink-0 overflow-hidden">
                     {item.image_url ? (
@@ -102,7 +102,7 @@ export function HeroSection() {
                     <span className="text-primary text-[10px] font-bold uppercase tracking-wider">
                       {newsCategories[item.category || "General"] || item.category}
                     </span>
-                    <p className="text-sm font-medium text-foreground line-clamp-2 mt-0.5 group-hover:text-primary transition-colors">
+                    <p className="text-sm font-medium text-foreground line-clamp-2 mt-0.5 group-hover:text-foreground transition-colors">
                       {item.title}
                     </p>
                   </div>
@@ -111,7 +111,7 @@ export function HeroSection() {
             </div>
             <Link 
               to="/news"
-              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-primary text-sm mt-3 transition-colors"
+              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
             >
               View All News
               <ArrowRight className="h-3 w-3" />
@@ -129,7 +129,7 @@ export function HeroSection() {
                 </div>
                 <h3 className="font-semibold text-foreground">Match Center</h3>
               </div>
-              <Link to="/matches" className="text-muted-foreground hover:text-primary text-xs">
+              <Link to="/matches" className="text-muted-foreground hover:text-foreground text-xs">
                 View all →
               </Link>
             </div>
@@ -165,7 +165,7 @@ export function HeroSection() {
             </div>
 
             {/* EYL Stream Button */}
-            <Button className="w-full mt-4 bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30">
+            <Button className="w-full mt-4 bg-secondary text-foreground hover:bg-secondary/80 border border-border">
               <Clock className="mr-2 h-4 w-4" />
               EYL Stream
             </Button>
