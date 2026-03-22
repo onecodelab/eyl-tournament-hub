@@ -50,6 +50,7 @@ const thoNavItems = [
   { title: "Match Reports", url: "/tho-admin/match-reports", icon: FileText },
   { title: "News", url: "/tho-admin/news", icon: Newspaper },
   { title: "Videos", url: "/tho-admin/videos", icon: Video },
+  { title: "Sponsors", url: "/tho-admin/sponsors", icon: Handshake },
 ];
 
 interface THOAdminLayoutProps {
