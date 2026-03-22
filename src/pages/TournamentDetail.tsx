@@ -252,6 +252,9 @@ export default function TournamentDetail() {
         </div>
       </section>
 
+      {/* Tournament Sponsors Banner */}
+      {id && <TournamentSponsorBanner tournamentId={id} />}
+
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="glass-card p-1 mb-6 md:mb-8 w-full md:w-auto grid grid-cols-4 md:inline-flex">

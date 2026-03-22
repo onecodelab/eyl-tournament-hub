@@ -16,7 +16,8 @@ import {
   ShieldX,
   Trophy,
   Key,
-  FileText
+  FileText,
+  Handshake
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
