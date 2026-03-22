@@ -37,6 +37,7 @@ import THOMatches from "./pages/tho-admin/THOMatches";
 import THONews from "./pages/tho-admin/THONews";
 import THOVideos from "./pages/tho-admin/THOVideos";
 import THOMatchReports from "./pages/tho-admin/THOMatchReports";
+import THOSponsors from "./pages/tho-admin/THOSponsors";
 import TournamentHistory from "./pages/TournamentHistory";
 
 const queryClient = new QueryClient();
