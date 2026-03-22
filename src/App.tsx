@@ -37,6 +37,7 @@ import THOMatches from "./pages/tho-admin/THOMatches";
 import THONews from "./pages/tho-admin/THONews";
 import THOVideos from "./pages/tho-admin/THOVideos";
 import THOMatchReports from "./pages/tho-admin/THOMatchReports";
+import THOSponsors from "./pages/tho-admin/THOSponsors";
 import TournamentHistory from "./pages/TournamentHistory";
 
 const queryClient = new QueryClient();
@@ -78,6 +79,7 @@ const App = () => (
             <Route path="/tho-admin/news" element={<THONews />} />
             <Route path="/tho-admin/videos" element={<THOVideos />} />
             <Route path="/tho-admin/match-reports" element={<THOMatchReports />} />
+            <Route path="/tho-admin/sponsors" element={<THOSponsors />} />
             <Route path="/referee" element={<RefereeDashboard />} />
             <Route path="/referee/match/:id" element={<LiveMatch />} />
             <Route path="/referee/match/:id/report" element={<MatchReport />} />

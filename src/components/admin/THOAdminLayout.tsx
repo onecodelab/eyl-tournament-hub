@@ -16,7 +16,8 @@ import {
   ShieldX,
   Trophy,
   Key,
-  FileText
+  FileText,
+  Handshake
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -49,6 +50,7 @@ const thoNavItems = [
   { title: "Match Reports", url: "/tho-admin/match-reports", icon: FileText },
   { title: "News", url: "/tho-admin/news", icon: Newspaper },
   { title: "Videos", url: "/tho-admin/videos", icon: Video },
+  { title: "Sponsors", url: "/tho-admin/sponsors", icon: Handshake },
 ];
 
 interface THOAdminLayoutProps {

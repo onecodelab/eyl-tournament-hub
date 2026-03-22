@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
 import { useTournaments, useTeams, useAllMatches, useNews, usePlayers } from "@/hooks/useSupabaseData";
 import { EYLLogo } from "@/components/EYLLogo";
+import { TournamentSponsorBanner } from "@/components/tournament/TournamentSponsorBanner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Calendar, BarChart3, Newspaper, MapPin, Users, Clock, ArrowLeft, ChevronRight, History } from "lucide-react";
 import { format } from "date-fns";
@@ -250,6 +251,9 @@ export default function TournamentDetail() {
           </div>
         </div>
       </section>
+
+      {/* Tournament Sponsors Banner */}
+      {id && <TournamentSponsorBanner tournamentId={id} />}
 
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
