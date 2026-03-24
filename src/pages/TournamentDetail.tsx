@@ -198,51 +198,51 @@ export default function TournamentDetail() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative py-6 md:py-12 overflow-hidden border-b border-border">
+      <section className="relative py-5 md:py-12 overflow-hidden border-b border-border">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
-        <div className="container mx-auto px-4 relative">
-          <Link to="/standings" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-4 text-sm">
-            <ArrowLeft className="h-4 w-4" />
+        <div className="container mx-auto px-3 md:px-4 relative">
+          <Link to="/standings" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-3 md:mb-4 text-xs md:text-sm">
+            <ArrowLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
             Back to Competitions
           </Link>
           <div className="flex items-start gap-3 md:gap-4">
             {tournament.logo_url ? (
-              <img src={tournament.logo_url} alt={tournament.name} className="w-12 h-12 md:w-16 md:h-16 rounded-lg object-cover flex-shrink-0" />
+              <img src={tournament.logo_url} alt={tournament.name} className="w-10 h-10 md:w-16 md:h-16 rounded-lg object-cover flex-shrink-0" />
             ) : (
               <div className="flex-shrink-0">
-                <EYLLogo size={48} withGlow />
+                <EYLLogo size={40} withGlow />
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <h1 className="text-xl md:text-3xl font-bold">{tournament.name}</h1>
+              <div className="flex flex-wrap items-center gap-2 mb-1.5 md:mb-2">
+                <h1 className="text-lg md:text-3xl font-bold leading-tight">{tournament.name}</h1>
                 {getStatusBadge()}
               </div>
-              <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-1.5 md:gap-4 text-[11px] md:text-sm text-muted-foreground">
                 {tournament.age_category && (
-                  <Badge variant="outline" className="text-xs">{tournament.age_category.toUpperCase()}</Badge>
+                  <Badge variant="outline" className="text-[10px] md:text-xs px-1.5 py-0 md:px-2.5 md:py-0.5">{tournament.age_category.toUpperCase()}</Badge>
                 )}
                 {tournament.format && (
-                  <Badge variant="outline" className="capitalize text-xs">{tournament.format.replace('_', ' + ')}</Badge>
+                  <Badge variant="outline" className="capitalize text-[10px] md:text-xs px-1.5 py-0 md:px-2.5 md:py-0.5">{tournament.format.replace('_', ' + ')}</Badge>
                 )}
                 {tournament.start_date && tournament.end_date && (
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3 md:h-4 md:w-4" />
+                    <Calendar className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
                     {format(new Date(tournament.start_date), "MMM d")} - {format(new Date(tournament.end_date), "MMM d, yyyy")}
                   </span>
                 )}
                 <span className="flex items-center gap-1">
-                  <Users className="h-3 w-3 md:h-4 md:w-4" />
+                  <Users className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
                   {teams.length} Teams
                 </span>
               </div>
               {tournament.description && (
-                <p className="text-muted-foreground mt-2 text-sm">{tournament.description}</p>
+                <p className="text-muted-foreground mt-1.5 md:mt-2 text-xs md:text-sm line-clamp-2">{tournament.description}</p>
               )}
               {tournament.status === 'completed' && (
                 <Link to={`/tournaments/${id}/history`}>
-                  <Button variant="outline" size="sm" className="mt-3">
-                    <History className="h-4 w-4 mr-2" />
+                  <Button variant="outline" size="sm" className="mt-2 md:mt-3 text-xs md:text-sm h-7 md:h-9">
+                    <History className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2" />
                     View Tournament Archive
                   </Button>
                 </Link>
