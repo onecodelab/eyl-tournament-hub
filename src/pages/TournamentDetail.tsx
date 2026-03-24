@@ -484,7 +484,7 @@ export default function TournamentDetail() {
 
           {/* Stats Tab */}
           <TabsContent value="stats">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {/* Goals */}
               <div className="glass-card p-4">
                 <h4 className="font-semibold text-sm mb-4">Top Scorers</h4>
