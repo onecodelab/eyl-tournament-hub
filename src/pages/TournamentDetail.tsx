@@ -159,31 +159,31 @@ export default function TournamentDetail() {
                       isChampion ? "border-l-2 border-l-yellow-500" : ""
                     }`}
                   >
-                    <td className="p-4">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold">{index + 1}</span>
-                        {index === 0 && <Trophy className="h-4 w-4 text-yellow-500" />}
+                    <td className="p-2 md:p-4">
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <span className="font-bold text-xs md:text-sm">{index + 1}</span>
+                        {index === 0 && <Trophy className="h-3 w-3 md:h-4 md:w-4 text-yellow-500" />}
                       </div>
                     </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+                    <td className="p-2 md:p-4">
+                      <div className="flex items-center gap-1.5 md:gap-3">
+                        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary/20 flex items-center justify-center text-[10px] md:text-xs font-bold text-primary flex-shrink-0">
                           {team.short_name || team.name.slice(0, 2).toUpperCase()}
                         </div>
-                        <span className="font-medium">{team.name}</span>
+                        <span className="font-medium text-xs md:text-sm truncate max-w-[100px] md:max-w-none">{team.name}</span>
                       </div>
                     </td>
-                    <td className="p-4 text-center">{played}</td>
-                    <td className="p-4 text-center text-green-500 font-medium">{team.wins || 0}</td>
-                    <td className="p-4 text-center">{team.draws || 0}</td>
-                    <td className="p-4 text-center text-red-500 font-medium">{team.losses || 0}</td>
-                    <td className="p-4 text-center">
+                    <td className="p-2 md:p-4 text-center text-xs md:text-sm">{played}</td>
+                    <td className="p-2 md:p-4 text-center text-green-500 font-medium text-xs md:text-sm">{team.wins || 0}</td>
+                    <td className="p-2 md:p-4 text-center text-xs md:text-sm">{team.draws || 0}</td>
+                    <td className="p-2 md:p-4 text-center text-red-500 font-medium text-xs md:text-sm">{team.losses || 0}</td>
+                    <td className="p-2 md:p-4 text-center text-xs md:text-sm">
                       <span className={gd > 0 ? "text-green-500" : gd < 0 ? "text-red-500" : ""}>
                         {gd > 0 ? `+${gd}` : gd}
                       </span>
                     </td>
-                    <td className="p-4 text-center">
-                      <span className="text-lg font-bold text-primary">{team.points || 0}</span>
+                    <td className="p-2 md:p-4 text-center">
+                      <span className="text-sm md:text-lg font-bold text-primary">{team.points || 0}</span>
                     </td>
                   </tr>
                 );
