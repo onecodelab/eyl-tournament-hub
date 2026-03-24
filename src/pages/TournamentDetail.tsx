@@ -136,14 +136,14 @@ export default function TournamentDetail() {
           <table className="w-full">
             <thead>
               <tr className="border-b border-border text-xs text-muted-foreground uppercase">
-                <th className="p-4 text-left">#</th>
-                <th className="p-4 text-left">Team</th>
-                <th className="p-4 text-center">P</th>
-                <th className="p-4 text-center text-green-500">W</th>
-                <th className="p-4 text-center">D</th>
-                <th className="p-4 text-center text-red-500">L</th>
-                <th className="p-4 text-center">GD</th>
-                <th className="p-4 text-center text-primary font-bold">PTS</th>
+              <th className="p-2 md:p-4 text-left">#</th>
+                <th className="p-2 md:p-4 text-left">Team</th>
+                <th className="p-2 md:p-4 text-center">P</th>
+                <th className="p-2 md:p-4 text-center text-green-500">W</th>
+                <th className="p-2 md:p-4 text-center">D</th>
+                <th className="p-2 md:p-4 text-center text-red-500">L</th>
+                <th className="p-2 md:p-4 text-center">GD</th>
+                <th className="p-2 md:p-4 text-center text-primary font-bold">PTS</th>
               </tr>
             </thead>
             <tbody>
