@@ -255,9 +255,9 @@ export default function TournamentDetail() {
       {/* Tournament Sponsors Banner */}
       {id && <TournamentSponsorBanner tournamentId={id} />}
 
-      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8">
+      <div className="container mx-auto px-3 md:px-4 py-3 md:py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="glass-card p-1 mb-6 md:mb-8 w-full md:w-auto grid grid-cols-4 md:inline-flex">
+          <TabsList className="glass-card p-1 mb-4 md:mb-8 w-full md:w-auto grid grid-cols-4 md:inline-flex h-9 md:h-10">
             <TabsTrigger value="overview" className="gap-1 md:gap-2 text-xs md:text-sm px-2 md:px-3">
               <Trophy className="h-3.5 w-3.5 md:h-4 md:w-4" />
               <span className="hidden sm:inline">Overview</span>
