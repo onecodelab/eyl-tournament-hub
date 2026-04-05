@@ -126,7 +126,7 @@ export default function About() {
                 Digital Tournament Management
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                About the <span className="text-primary">Ethiopian Youth League</span>
+                What is the <span className="text-primary">Ethiopian Youth League</span> (EYL)?
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl">
                 The Ethiopian Youth League (EYL) is a digital tournament management system under Ramiyone administration, 
