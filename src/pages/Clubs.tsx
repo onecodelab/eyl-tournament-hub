@@ -3,11 +3,27 @@ import { Layout } from "@/components/layout/Layout";
 import { useTeams } from "@/hooks/useSupabaseData";
 import { Trophy, Users, MapPin, Calendar, TrendingUp, Target, ChevronRight } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
+import { useState, useMemo } from "react";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 export default function Clubs() {
   const { data: teams, isLoading } = useTeams();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const sortedTeams = teams?.sort((a, b) => (b.points || 0) - (a.points || 0)) || [];
+  const filteredTeams = useMemo(() => {
+    if (!teams) return [];
+    return teams.filter(team => 
+      team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (team.short_name && team.short_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (team.stadium && team.stadium.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+  }, [teams, searchQuery]);
+
+  const sortedTeams = useMemo(() => 
+    [...filteredTeams].sort((a, b) => (b.points || 0) - (a.points || 0)),
+    [filteredTeams]
+  );
 
   return (
     <Layout>
@@ -24,6 +40,19 @@ export default function Clubs() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+      
+      {/* Global Search */}
+      <section className="container mx-auto px-4 mb-8">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Search clubs by name or stadium..." 
+            className="pl-10 h-11 bg-card border-border/50 focus:border-primary/50 transition-all rounded-xl"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </section>
 

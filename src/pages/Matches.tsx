@@ -4,6 +4,8 @@ import { Calendar, Clock, MapPin, Users, Trophy, Info, MapPinned, ClipboardList 
 import { format } from "date-fns";
 import { useState, useMemo } from "react";
 import { EYLLogo } from "@/components/EYLLogo";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import {
@@ -65,6 +67,7 @@ export default function MatchesPage() {
   const { data: tournaments = [] } = useTournaments();
   const [filter, setFilter] = useState("all");
   const [selectedTournament, setSelectedTournament] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const tournamentsMap = new Map(tournaments.map((t) => [t.id, t]));
 
@@ -73,6 +76,16 @@ export default function MatchesPage() {
     
     if (selectedTournament !== "all") {
       result = result.filter(m => m.tournament_id === selectedTournament);
+    }
+    
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(m => 
+        m.home_team?.name.toLowerCase().includes(query) ||
+        m.away_team?.name.toLowerCase().includes(query) ||
+        (m.venue && m.venue.toLowerCase().includes(query)) ||
+        (m.tagline && m.tagline.toLowerCase().includes(query))
+      );
     }
     
     if (filter === "live") {
@@ -84,7 +97,7 @@ export default function MatchesPage() {
     }
     
     return result;
-  }, [matches, selectedTournament, filter]);
+  }, [matches, selectedTournament, filter, searchQuery]);
 
   const counts = useMemo(() => {
     const tournamentMatches = selectedTournament === "all" 
@@ -166,6 +179,17 @@ export default function MatchesPage() {
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Keyword Search */}
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input 
+                placeholder="Search games by team, venue or event details..." 
+                className="pl-10 h-11 bg-card border-border/50 focus:border-primary/50 transition-all rounded-xl"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
 
             {/* Status Filter Pills - Horizontal Scroll */}

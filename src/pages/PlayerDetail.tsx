@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { usePlayers, useTeams, useAllMatches } from "@/hooks/useSupabaseData";
 import { Button } from "@/components/ui/button";
@@ -117,6 +117,12 @@ export default function PlayerDetail() {
     }
     return age;
   };
+
+  useEffect(() => {
+    if (player) {
+      document.title = `${player.name} | EYL Player Profile`;
+    }
+  }, [player]);
 
   if (playersLoading || teamsLoading) {
     return (

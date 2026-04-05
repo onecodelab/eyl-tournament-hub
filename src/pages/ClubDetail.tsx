@@ -9,7 +9,7 @@ import {
   ChevronRight, Globe, Instagram, Facebook, Twitter
 } from "lucide-react";
 import { format } from "date-fns";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 export default function ClubDetail() {
   const { id } = useParams<{ id: string }>();
@@ -19,12 +19,16 @@ export default function ClubDetail() {
 
   const team = useMemo(() => teams?.find(t => t.id === id), [teams, id]);
 
-  const teamMatches = useMemo(() => {
+  const allTeamMatches = useMemo(() => {
     if (!matches || !id) return [];
     return matches
       .filter(m => m.home_team_id === id || m.away_team_id === id)
-      .slice(0, 5);
+      .sort((a, b) => new Date(a.match_date || "").getTime() - new Date(b.match_date || "").getTime());
   }, [matches, id]);
+
+  const teamMatches = useMemo(() => {
+    return allTeamMatches.slice(0, 5);
+  }, [allTeamMatches]);
 
   const teamsMap = useMemo(() => {
     if (!teams) return new Map();
@@ -95,6 +99,12 @@ export default function ClubDetail() {
     const sorted = [...teams].sort((a, b) => (b.points || 0) - (a.points || 0));
     return sorted.findIndex(t => t.id === team.id) + 1;
   }, [teams, team]);
+
+  useEffect(() => {
+    if (team) {
+      document.title = `${team.name} | EYL Club Profile & Schedule`;
+    }
+  }, [team]);
 
   if (teamsLoading) {
     return (
@@ -313,7 +323,7 @@ export default function ClubDetail() {
                 
                 <div className="space-y-4">
                   {topScorer && (topScorer.goals || 0) > 0 && (
-                    <Link to={`/players/${topScorer.id}`} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors group">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 group">
                       <Avatar className="h-12 w-12 border-2 border-primary/30">
                         <AvatarImage src={topScorer.photo_url || undefined} />
                         <AvatarFallback className="bg-primary/20 text-primary">
@@ -321,18 +331,18 @@ export default function ClubDetail() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{topScorer.name}</p>
+                        <p className="font-medium text-foreground truncate">{topScorer.name}</p>
                         <p className="text-xs text-muted-foreground">Top Scorer</p>
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-primary">{topScorer.goals}</p>
                         <p className="text-xs text-muted-foreground">Goals</p>
                       </div>
-                    </Link>
+                    </div>
                   )}
                   
                   {topAssister && (topAssister.assists || 0) > 0 && topAssister.id !== topScorer?.id && (
-                    <Link to={`/players/${topAssister.id}`} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors group">
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 group">
                       <Avatar className="h-12 w-12 border-2 border-primary/30">
                         <AvatarImage src={topAssister.photo_url || undefined} />
                         <AvatarFallback className="bg-primary/20 text-primary">
@@ -340,18 +350,60 @@ export default function ClubDetail() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground group-hover:text-primary transition-colors truncate">{topAssister.name}</p>
+                        <p className="font-medium text-foreground truncate">{topAssister.name}</p>
                         <p className="text-xs text-muted-foreground">Top Assists</p>
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold text-primary">{topAssister.assists}</p>
                         <p className="text-xs text-muted-foreground">Assists</p>
                       </div>
-                    </Link>
+                    </div>
                   )}
                 </div>
               </div>
             )}
+
+            {/* Full Schedule */}
+            <div className="rounded-xl bg-card border border-border p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  Full Schedule
+                </h3>
+              </div>
+              
+              {allTeamMatches.length > 0 ? (
+                <div className="space-y-3">
+                  {allTeamMatches.map((match, i) => {
+                    const isCompleted = match.status === 'completed';
+                    const isHome = match.home_team_id === id;
+                    const opponentId = isHome ? match.away_team_id : match.home_team_id;
+                    const opponent = teamsMap.get(opponentId || "");
+                    
+                    return (
+                      <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-muted/10">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                            {match.match_date ? format(new Date(match.match_date), 'EEE, MMM d') : 'TBD'}
+                          </span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs font-medium text-muted-foreground">{isHome ? 'Home' : 'Away'} vs</span>
+                            <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">{opponent?.name || 'Unknown'}</span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`px-3 py-1 rounded text-xs font-bold ${isCompleted ? 'bg-secondary text-foreground' : 'bg-primary/20 text-primary border border-primary/30'}`}>
+                            {isCompleted ? `${match.home_score}-${match.away_score}` : match.match_date ? format(new Date(match.match_date), 'HH:mm') : 'TBD'}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-4">No matches scheduled yet</p>
+              )}
+            </div>
           </div>
 
           {/* Right Column - Squad */}
@@ -375,12 +427,11 @@ export default function ClubDetail() {
               ) : players && players.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {players.map((player) => (
-                    <Link
+                    <div
                       key={player.id}
-                      to={`/players/${player.id}`}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-border/50 hover:border-primary/50 hover:bg-muted/30 transition-all group"
+                      className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-muted/30 group"
                     >
-                      <Avatar className="h-11 w-11 border border-border/50 group-hover:border-primary/50 transition-colors">
+                      <Avatar className="h-11 w-11 border border-border/50">
                         <AvatarImage src={player.photo_url || undefined} />
                         <AvatarFallback className="bg-muted text-muted-foreground text-sm">
                           {player.name.split(' ').map(n => n[0]).join('')}
@@ -393,7 +444,7 @@ export default function ClubDetail() {
                               {player.jersey_number}
                             </span>
                           )}
-                          <p className="font-medium text-foreground group-hover:text-primary transition-colors truncate">
+                          <p className="font-medium text-foreground truncate">
                             {player.name}
                           </p>
                         </div>
@@ -403,8 +454,7 @@ export default function ClubDetail() {
                           </span>
                         )}
                       </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </Link>
+                    </div>
                   ))}
                 </div>
               ) : (

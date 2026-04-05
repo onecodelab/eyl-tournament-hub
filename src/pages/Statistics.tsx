@@ -244,10 +244,9 @@ function LeaderboardCard({ title, data, valueLabel, valueColor = "gold" }: Leade
       </div>
       <div className="space-y-2">
         {data.map((player, index) => (
-          <Link 
+          <div 
             key={player.id}
-            to={`/players/${player.id}`}
-            className="flex items-center gap-2 py-1 hover:bg-muted/50 rounded-lg px-1 -mx-1 transition-colors"
+            className="flex items-center gap-2 py-1 rounded-lg px-1 -mx-1"
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
               index === 0 
@@ -285,7 +284,7 @@ function LeaderboardCard({ title, data, valueLabel, valueColor = "gold" }: Leade
             }`}>
               {player.value}
             </span>
-          </Link>
+          </div>
         ))}
       </div>
     </div>
