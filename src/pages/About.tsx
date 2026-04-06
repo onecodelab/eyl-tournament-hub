@@ -173,12 +173,12 @@ export default function About() {
                 <h2 className="text-2xl font-bold">Our Vision</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                To see Ethiopian talents identified from every corner of the country, given the opportunity they deserve, 
-                and to witness Ethiopian football grow and shine.
+                To become the trusted digital backbone of Ethiopian youth football — ensuring every talented player, 
+                regardless of location, gets recorded, recognized, and connected to bigger opportunities.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Our long-term vision is to become Africa's leading data and talent identification platform, helping 
-                players across the continent get their chance to succeed.
+                In the long term, we aim to grow into one of Africa's leading youth football data and talent 
+                identification platforms.
               </p>
             </div>
           </div>
