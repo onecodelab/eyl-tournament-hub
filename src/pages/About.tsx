@@ -126,12 +126,16 @@ export default function About() {
                 Digital Tournament Management
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                What is the <span className="text-primary">Ethiopian Youth League</span> (EYL)?
+                About the <span className="text-primary">Ethiopian Youth League</span> (EYL)
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl">
-                The Ethiopian Youth League (EYL) is a digital tournament management system under Ramiyone administration, 
-                dedicated to the automatic management of football tournaments. It enables hosts to update information, 
-                handle operations digitally, and store data securely in collaboration with the Ethiopian Football Federation.
+                The Ethiopian Youth League (EYL) is a modern digital tournament management platform developed by Ramiyone. 
+                It is designed to fully digitize youth football tournaments across Ethiopia, from announcement and fixture 
+                creation to live match reporting, results and referee documentation.
+              </p>
+              <p className="text-lg text-muted-foreground max-w-2xl mt-4">
+                EYL provides tournament hosts with powerful, easy-to-use tools while delivering real-time visibility 
+                to fans, players, and academies through a responsive website and mobile app.
               </p>
             </div>
             <div className="relative">
