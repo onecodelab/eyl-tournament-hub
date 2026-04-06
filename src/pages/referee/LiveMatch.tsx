@@ -404,11 +404,18 @@ export default function LiveMatch() {
                 <div className="text-4xl font-bold mb-1">
                   {scores.home} - {scores.away}
                 </div>
+                {matchPhase === "penalties" && (
+                  <div className="text-sm font-semibold text-muted-foreground mb-1">
+                    Pen: {penaltyHome} - {penaltyAway}
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-2">
                   <Clock className="h-4 w-4" />
                   <span className="font-mono text-lg">{formatTime(matchTime)}</span>
                   {isLive && (
-                    <Badge className="bg-red-500 animate-pulse text-xs">LIVE</Badge>
+                    <Badge className="bg-destructive animate-pulse text-xs text-destructive-foreground">
+                      {matchPhase === "regular" ? "LIVE" : matchPhase === "extra_time" ? "ET" : "PEN"}
+                    </Badge>
                   )}
                 </div>
               </div>
