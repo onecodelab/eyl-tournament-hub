@@ -25,27 +25,27 @@ const coreValues = [
   {
     icon: Shield,
     title: "Integrity",
-    description: "Upholding the highest standards of honesty and transparency."
+    description: "Honesty, transparency, and accuracy in every piece of data."
   },
   {
     icon: Users,
     title: "Inclusivity",
-    description: "Every young person deserves a chance to show their talent, regardless of location."
+    description: "Giving equal opportunity to young talents from all regions and backgrounds."
   },
   {
     icon: Star,
     title: "Excellence",
-    description: "Striving for the highest standards in data management and talent identification."
+    description: "Maintaining high standards in technology and service."
   },
   {
     icon: Zap,
     title: "Innovation",
-    description: "Embracing modern technology to maximize football quality and talent discovery."
+    description: "Using modern tools to solve real problems in Ethiopian football."
   },
   {
     icon: Heart,
     title: "Community",
-    description: "Building lasting connections between players, academies, and clubs."
+    description: "Building strong connections between players, academies, coaches, clubs, and fans."
   }
 ];
 
@@ -126,12 +126,16 @@ export default function About() {
                 Digital Tournament Management
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                What is the <span className="text-primary">Ethiopian Youth League</span> (EYL)?
+                About the <span className="text-primary">Ethiopian Youth League</span> (EYL)
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl">
-                The Ethiopian Youth League (EYL) is a digital tournament management system under Ramiyone administration, 
-                dedicated to the automatic management of football tournaments. It enables hosts to update information, 
-                handle operations digitally, and store data securely in collaboration with the Ethiopian Football Federation.
+                The Ethiopian Youth League (EYL) is a modern digital tournament management platform developed by Ramiyone. 
+                It is designed to fully digitize youth football tournaments across Ethiopia, from announcement and fixture 
+                creation to live match reporting, results and referee documentation.
+              </p>
+              <p className="text-lg text-muted-foreground max-w-2xl mt-4">
+                EYL provides tournament hosts with powerful, easy-to-use tools while delivering real-time visibility 
+                to fans, players, and academies through a responsive website and mobile app.
               </p>
             </div>
             <div className="relative">
@@ -155,8 +159,9 @@ export default function About() {
                 <h2 className="text-2xl font-bold">Our Mission</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                To provide a robust data management system that improves the quality of tournaments, ensures equality 
-                in data access for football governing bodies, and enhances the overall growth of football through reliable data.
+                To digitize Ethiopian youth football tournaments, create verified and reliable match data, give academies 
+                proper credit for talent development, and open real scouting opportunities for young players from every 
+                corner of the country.
               </p>
             </div>
             
@@ -168,12 +173,12 @@ export default function About() {
                 <h2 className="text-2xl font-bold">Our Vision</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                To see Ethiopian talents identified from every corner of the country, given the opportunity they deserve, 
-                and to witness Ethiopian football grow and shine.
+                To become the trusted digital backbone of Ethiopian youth football — ensuring every talented player, 
+                regardless of location, gets recorded, recognized, and connected to bigger opportunities.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Our long-term vision is to become Africa's leading data and talent identification platform, helping 
-                players across the continent get their chance to succeed.
+                In the long term, we aim to grow into one of Africa's leading youth football data and talent 
+                identification platforms.
               </p>
             </div>
           </div>
@@ -222,21 +227,19 @@ export default function About() {
             <div className="glass-card p-8 md:p-12">
               <div className="prose prose-invert max-w-none">
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Founded in 2026, the Ethiopian Youth League began with a powerful vision: to raise the quality of 
-                  Ethiopian football and give every young player the opportunity to showcase their talent through data.
+                  Founded in 2023 by <strong className="text-foreground">Yonatan Dawit</strong> and <strong className="text-foreground">Ramin Naser</strong>, 
+                  Ramiyone was born from a simple observation: Ethiopia has immense football talent, but many young players 
+                  lack proper records and opportunities, especially outside major cities.
                 </p>
                 <p className="text-muted-foreground leading-relaxed mb-6">
-                  Our founders, <strong className="text-foreground">Yonatan Dawit</strong> and <strong className="text-foreground">Ramin Naser</strong>, 
-                  recognized Ethiopia's abundant football talent but also the critical gap in opportunities — especially for players outside the capital. 
-                  Partnering with the Ethiopian Football Federation, EYL set out to close this gap.
-                </p>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  Over the past four years, we developed the Digital Scouting System (DSS), a platform for talent identification. 
-                  Through this journey, we discovered the need for better player data management and built EYL to address it.
+                  Starting with the vision to professionalize youth tournaments, we built the Ethiopian Youth League (EYL), 
+                  an easy-to-use digital platform. EYL works seamlessly with our Digital Scouting System (DSS) to turn 
+                  match data into permanent, verified player profiles.
                 </p>
                 <p className="text-muted-foreground leading-relaxed">
-                  Today, Ramiyone has partnered with the Ethiopian Football Federation to provide this digital tournament 
-                  management and data handling tool to multiple host organizations, working side by side with DSS.
+                  Today, EYL helps tournament organizers run their events more efficiently while creating lasting value: 
+                  academies receive digital credit, players build verifiable career records, and the entire ecosystem 
+                  contributes to Ethiopia's national youth development goals.
                 </p>
               </div>
             </div>
