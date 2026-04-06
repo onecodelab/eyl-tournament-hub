@@ -187,6 +187,15 @@ export default function LiveMatch() {
   const isLive = match?.status === "live";
   const isCompleted = match?.status === "completed";
 
+  // Determine if this is a knockout match (not group stage)
+  const isKnockoutMatch = useMemo(() => {
+    if (!match) return false;
+    const stage = match.stage || "group";
+    return stage !== "group";
+  }, [match]);
+
+  const isScoreTied = scores.home === scores.away;
+
   const handleSaveLineups = async () => {
     if (!matchId || !match) return;
 
