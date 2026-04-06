@@ -763,6 +763,79 @@ export default function LiveMatch() {
               </Card>
             )}
 
+            {/* Match Phase Indicator */}
+            {isLive && matchPhase !== "regular" && (
+              <Card className="mb-6 border-primary/50 bg-primary/5">
+                <CardContent className="py-3 text-center">
+                  <Badge className="text-sm px-4 py-1" variant={matchPhase === "penalties" ? "destructive" : "default"}>
+                    {matchPhase === "extra_time" ? "⏱️ EXTRA TIME" : "🎯 PENALTY SHOOTOUT"}
+                  </Badge>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Penalty Shootout Panel */}
+            {isLive && matchPhase === "penalties" && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="text-center">Penalty Shootout</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-center gap-8">
+                    <div className="text-center space-y-3">
+                      <p className="font-semibold text-sm">{match.home_team?.short_name || "Home"}</p>
+                      <div className="text-4xl font-bold">{penaltyHome}</div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="text-green-500 border-green-500/30" onClick={() => setPenaltyHome(p => p + 1)}>
+                          ✓ Scored
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-destructive border-destructive/30" onClick={() => setPenaltyHome(p => Math.max(0, p - 1))}>
+                          ✗ Undo
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="text-2xl font-bold text-muted-foreground">vs</div>
+                    <div className="text-center space-y-3">
+                      <p className="font-semibold text-sm">{match.away_team?.short_name || "Away"}</p>
+                      <div className="text-4xl font-bold">{penaltyAway}</div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="text-green-500 border-green-500/30" onClick={() => setPenaltyAway(p => p + 1)}>
+                          ✓ Scored
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-destructive border-destructive/30" onClick={() => setPenaltyAway(p => Math.max(0, p - 1))}>
+                          ✗ Undo
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  {penaltyHome !== penaltyAway && (
+                    <div className="text-center mt-4">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            End Match (Penalties: {penaltyHome} - {penaltyAway})
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>End Match?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Final score: {scores.home} - {scores.away} (Penalties: {penaltyHome} - {penaltyAway}). Winner: {penaltyHome > penaltyAway ? match.home_team?.name : match.away_team?.name}
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleEndMatch}>End Match</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
             {/* Quick Actions */}
             {isLive && (
               <Card className="mb-6">
@@ -783,26 +856,40 @@ export default function LiveMatch() {
                       <Flag className="h-4 w-4 mr-1" />
                       Halftime
                     </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          End Match
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>End Match?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will finalize the score as {scores.home} - {scores.away} and proceed to the match report.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleEndMatch}>End Match</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+
+                    {/* Knockout tie-breaker flow */}
+                    {isKnockoutMatch && isScoreTied && matchPhase === "regular" ? (
+                      <Button className="bg-amber-600 hover:bg-amber-700 text-white" size="sm" onClick={handleGoToExtraTime}>
+                        <Clock className="h-4 w-4 mr-1" />
+                        Go to Extra Time
+                      </Button>
+                    ) : isKnockoutMatch && isScoreTied && matchPhase === "extra_time" ? (
+                      <Button className="bg-amber-600 hover:bg-amber-700 text-white" size="sm" onClick={handleGoToPenalties}>
+                        <Target className="h-4 w-4 mr-1" />
+                        Go to Penalty Shootout
+                      </Button>
+                    ) : matchPhase !== "penalties" ? (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
+                            <CheckCircle className="h-4 w-4 mr-1" />
+                            End Match
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>End Match?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will finalize the score as {scores.home} - {scores.away} and proceed to the match report.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleEndMatch}>End Match</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : null}
                   </div>
                 </CardContent>
               </Card>
