@@ -101,6 +101,11 @@ export default function LiveMatch() {
   const [matchTime, setMatchTime] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
 
+  // Knockout tie-breaker state
+  const [matchPhase, setMatchPhase] = useState<"regular" | "extra_time" | "penalties">("regular");
+  const [penaltyHome, setPenaltyHome] = useState(0);
+  const [penaltyAway, setPenaltyAway] = useState(0);
+
   // Load existing lineups
   useEffect(() => {
     if (lineups.length > 0 && match) {
