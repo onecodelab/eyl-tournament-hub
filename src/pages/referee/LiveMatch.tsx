@@ -285,17 +285,53 @@ export default function LiveMatch() {
     setEventMinute(Math.floor(matchTime / 60) + 1);
   };
 
+  const handleGoToExtraTime = () => {
+    setMatchPhase("extra_time");
+    setMatchTime(0);
+    setIsTimerRunning(true);
+    toast.success("Extra time started!");
+  };
+
+  const handleGoToPenalties = () => {
+    setMatchPhase("penalties");
+    setIsTimerRunning(false);
+    setMatchTime(0);
+    setPenaltyHome(0);
+    setPenaltyAway(0);
+    toast.success("Penalty shootout started!");
+  };
+
   const handleEndMatch = async () => {
     if (!matchId) return;
 
     try {
       setIsTimerRunning(false);
+
+      // Final score includes penalty info if applicable
+      const finalHome = matchPhase === "penalties" ? scores.home : scores.home;
+      const finalAway = matchPhase === "penalties" ? scores.away : scores.away;
+
       await updateStatus.mutateAsync({
         matchId,
         status: "completed",
-        homeScore: scores.home,
-        awayScore: scores.away,
+        homeScore: finalHome,
+        awayScore: finalAway,
       });
+
+      // If penalties were taken, add a penalty_result event
+      if (matchPhase === "penalties") {
+        await addEvent.mutateAsync({
+          match_id: matchId,
+          event_type: "penalty_shootout",
+          minute: 120,
+          details: {
+            home_penalties: penaltyHome,
+            away_penalties: penaltyAway,
+            winner: penaltyHome > penaltyAway ? "home" : "away",
+          },
+        });
+      }
+
       toast.success("Match ended!");
       navigate(`/referee/match/${matchId}/report`);
     } catch (error) {
