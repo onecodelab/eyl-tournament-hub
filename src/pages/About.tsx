@@ -25,27 +25,27 @@ const coreValues = [
   {
     icon: Shield,
     title: "Integrity",
-    description: "Upholding the highest standards of honesty and transparency."
+    description: "Honesty, transparency, and accuracy in every piece of data."
   },
   {
     icon: Users,
     title: "Inclusivity",
-    description: "Every young person deserves a chance to show their talent, regardless of location."
+    description: "Giving equal opportunity to young talents from all regions and backgrounds."
   },
   {
     icon: Star,
     title: "Excellence",
-    description: "Striving for the highest standards in data management and talent identification."
+    description: "Maintaining high standards in technology and service."
   },
   {
     icon: Zap,
     title: "Innovation",
-    description: "Embracing modern technology to maximize football quality and talent discovery."
+    description: "Using modern tools to solve real problems in Ethiopian football."
   },
   {
     icon: Heart,
     title: "Community",
-    description: "Building lasting connections between players, academies, and clubs."
+    description: "Building strong connections between players, academies, coaches, clubs, and fans."
   }
 ];
 
