@@ -159,8 +159,9 @@ export default function About() {
                 <h2 className="text-2xl font-bold">Our Mission</h2>
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                To provide a robust data management system that improves the quality of tournaments, ensures equality 
-                in data access for football governing bodies, and enhances the overall growth of football through reliable data.
+                To digitize Ethiopian youth football tournaments, create verified and reliable match data, give academies 
+                proper credit for talent development, and open real scouting opportunities for young players from every 
+                corner of the country.
               </p>
             </div>
             
