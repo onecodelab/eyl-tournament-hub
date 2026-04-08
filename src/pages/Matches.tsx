@@ -62,7 +62,7 @@ function PenaltyResult({ matchId }: { matchId: string }) {
   );
 }
 
-
+const ageGroups = [
   { name: "U-12", description: "Under 12 years", color: "bg-green-500/10 text-green-500" },
   { name: "U-14", description: "Under 14 years", color: "bg-blue-500/10 text-blue-500" },
   { name: "U-17", description: "Under 17 years", color: "bg-purple-500/10 text-purple-500" },
