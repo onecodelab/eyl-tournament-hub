@@ -39,7 +39,30 @@ const eventFormats = [
   }
 ];
 
-const ageGroups = [
+function PenaltyResult({ matchId }: { matchId: string }) {
+  const { data } = useQuery({
+    queryKey: ["penalty-result", matchId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("match_events")
+        .select("details")
+        .eq("match_id", matchId)
+        .eq("event_type", "penalty_shootout")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.details as { home_penalties?: number; away_penalties?: number } | null;
+    },
+  });
+
+  if (!data) return null;
+  return (
+    <div className="text-[10px] text-muted-foreground font-medium mt-0.5">
+      Pen: {data.home_penalties ?? 0} - {data.away_penalties ?? 0}
+    </div>
+  );
+}
+
+
   { name: "U-12", description: "Under 12 years", color: "bg-green-500/10 text-green-500" },
   { name: "U-14", description: "Under 14 years", color: "bg-blue-500/10 text-blue-500" },
   { name: "U-17", description: "Under 17 years", color: "bg-purple-500/10 text-purple-500" },

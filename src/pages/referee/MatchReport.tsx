@@ -411,6 +411,11 @@ export default function MatchReport() {
                 <div className="text-5xl font-bold">
                   {match.home_score ?? 0} - {match.away_score ?? 0}
                 </div>
+                {penaltyEvent && (
+                  <div className="text-sm font-semibold text-primary mt-1">
+                    Pen: {(penaltyEvent.details as any)?.home_penalties ?? 0} - {(penaltyEvent.details as any)?.away_penalties ?? 0}
+                  </div>
+                )}
                 <div className="text-sm text-muted-foreground mt-2">
                   (HT: {halfTimeHome || "-"} - {halfTimeAway || "-"})
                 </div>
