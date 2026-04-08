@@ -864,10 +864,15 @@ export default function LiveMatch() {
                     </Button>
 
                     {/* Knockout tie-breaker flow */}
-                    {isKnockoutMatch && isScoreTied && matchPhase === "regular" ? (
+                    {isKnockoutMatch && isScoreTied && matchPhase === "regular" && match?.extra_time_option !== "direct_penalty" ? (
                       <Button className="bg-amber-600 hover:bg-amber-700 text-white" size="sm" onClick={handleGoToExtraTime}>
                         <Clock className="h-4 w-4 mr-1" />
                         Go to Extra Time
+                      </Button>
+                    ) : isKnockoutMatch && isScoreTied && matchPhase === "regular" && match?.extra_time_option === "direct_penalty" ? (
+                      <Button className="bg-amber-600 hover:bg-amber-700 text-white" size="sm" onClick={handleGoToPenalties}>
+                        <Target className="h-4 w-4 mr-1" />
+                        Go to Penalty Shootout
                       </Button>
                     ) : isKnockoutMatch && isScoreTied && matchPhase === "extra_time" ? (
                       <Button className="bg-amber-600 hover:bg-amber-700 text-white" size="sm" onClick={handleGoToPenalties}>
