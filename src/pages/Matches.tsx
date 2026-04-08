@@ -2,12 +2,14 @@ import { Layout } from "@/components/layout/Layout";
 import { useMatchWithTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { Calendar, Clock, MapPin, Users, Trophy, Info, MapPinned, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
   SelectContent,
@@ -36,6 +38,29 @@ const eventFormats = [
     details: "Standard format for major tournaments."
   }
 ];
+
+function PenaltyResult({ matchId }: { matchId: string }) {
+  const { data } = useQuery({
+    queryKey: ["penalty-result", matchId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("match_events")
+        .select("details")
+        .eq("match_id", matchId)
+        .eq("event_type", "penalty_shootout")
+        .maybeSingle();
+      if (error) throw error;
+      return data?.details as { home_penalties?: number; away_penalties?: number } | null;
+    },
+  });
+
+  if (!data) return null;
+  return (
+    <div className="text-[10px] text-muted-foreground font-medium mt-0.5">
+      Pen: {data.home_penalties ?? 0} - {data.away_penalties ?? 0}
+    </div>
+  );
+}
 
 const ageGroups = [
   { name: "U-12", description: "Under 12 years", color: "bg-green-500/10 text-green-500" },
@@ -276,9 +301,14 @@ export default function MatchesPage() {
                         {/* Score */}
                         <div className="text-center">
                           {isCompleted || isLive ? (
-                            <div className="match-score">
-                              {match.home_score ?? 0} - {match.away_score ?? 0}
-                            </div>
+                            <>
+                              <div className="match-score">
+                                {match.home_score ?? 0} - {match.away_score ?? 0}
+                              </div>
+                              {isCompleted && match.stage && match.stage !== "group" && match.home_score === match.away_score && (
+                                <PenaltyResult matchId={match.id} />
+                              )}
+                            </>
                           ) : (
                             <span className="text-lg font-bold text-muted-foreground">VS</span>
                           )}
