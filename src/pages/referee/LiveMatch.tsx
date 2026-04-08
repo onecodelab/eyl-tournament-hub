@@ -307,22 +307,12 @@ export default function LiveMatch() {
     try {
       setIsTimerRunning(false);
 
-      // Final score includes penalty info if applicable
-      const finalHome = matchPhase === "penalties" ? scores.home : scores.home;
-      const finalAway = matchPhase === "penalties" ? scores.away : scores.away;
-
-      await updateStatus.mutateAsync({
-        matchId,
-        status: "completed",
-        homeScore: finalHome,
-        awayScore: finalAway,
-      });
-
-      // If penalties were taken, add a penalty_result event
+      // If penalties were taken, add the penalty_result event FIRST (before status change triggers)
       if (matchPhase === "penalties") {
         await addEvent.mutateAsync({
           match_id: matchId,
           event_type: "penalty_shootout",
+          team_id: penaltyHome > penaltyAway ? match?.home_team?.id : match?.away_team?.id,
           minute: 120,
           details: {
             home_penalties: penaltyHome,
@@ -332,10 +322,19 @@ export default function LiveMatch() {
         });
       }
 
+      // Now update match status to completed
+      await updateStatus.mutateAsync({
+        matchId,
+        status: "completed",
+        homeScore: scores.home,
+        awayScore: scores.away,
+      });
+
       toast.success("Match ended!");
       navigate(`/referee/match/${matchId}/report`);
-    } catch (error) {
-      toast.error("Failed to end match");
+    } catch (error: any) {
+      console.error("End match error:", error);
+      toast.error("Failed to end match: " + (error?.message || "Unknown error"));
     }
   };
 

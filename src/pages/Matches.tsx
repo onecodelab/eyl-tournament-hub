@@ -276,9 +276,14 @@ export default function MatchesPage() {
                         {/* Score */}
                         <div className="text-center">
                           {isCompleted || isLive ? (
-                            <div className="match-score">
-                              {match.home_score ?? 0} - {match.away_score ?? 0}
-                            </div>
+                            <>
+                              <div className="match-score">
+                                {match.home_score ?? 0} - {match.away_score ?? 0}
+                              </div>
+                              {isCompleted && match.stage && match.stage !== "group" && match.home_score === match.away_score && (
+                                <PenaltyResult matchId={match.id} />
+                              )}
+                            </>
                           ) : (
                             <span className="text-lg font-bold text-muted-foreground">VS</span>
                           )}
