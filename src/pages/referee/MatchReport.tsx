@@ -146,6 +146,10 @@ export default function MatchReport() {
     return { goals, yellowCards, redCards, substitutions };
   }, [events]);
 
+  const penaltyEvent = useMemo(() => {
+    return events.find((e: any) => e.event_type === "penalty_shootout") || null;
+  }, [events]);
+
   const handleSubmit = async () => {
     if (!matchId) return;
 
