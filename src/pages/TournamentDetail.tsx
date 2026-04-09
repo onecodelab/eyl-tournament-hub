@@ -483,6 +483,7 @@ export default function TournamentDetail() {
                           <div className="text-xl font-bold">
                             {match.home_score ?? 0} - {match.away_score ?? 0}
                           </div>
+                          <PenaltyResult matchId={match.id} />
                           {match.match_date && (
                             <p className="text-xs text-muted-foreground">
                               {format(new Date(match.match_date), "MMM d")}
