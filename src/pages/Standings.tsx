@@ -131,7 +131,7 @@ export default function StandingsPage() {
               Select a tournament to view standings and statistics
             </p>
 
-            {isLoading ? (
+             {isLoading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[...Array(6)].map((_, i) => (
                   <div key={i} className="glass-card h-[110px] animate-pulse" />
@@ -144,70 +144,126 @@ export default function StandingsPage() {
                 <p className="text-xs text-muted-foreground">Check back soon for upcoming competitions.</p>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tournaments.map((tournament) => (
-                  <Link 
-                    key={tournament.id} 
-                    to={`/tournaments/${tournament.id}`}
-                    className="relative glass-card-hover p-4 group min-h-[110px]"
-                  >
-                    {getStatusBadge(tournament.status)}
-                    
-                    <div className="flex items-start gap-3 mb-3">
-                      {tournament.logo_url ? (
-                        <img 
-                          src={tournament.logo_url} 
-                          alt={tournament.name}
-                          className="w-10 h-10 rounded-lg object-cover"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <Trophy className="h-5 w-5 text-primary" strokeWidth={1.5} />
+              <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {Object.entries(
+                  tournaments.reduce((acc, t) => {
+                    // Extract group name by removing age category suffixes (e.g., " u-13", " u15")
+                    const groupName = t.name.replace(/\s+u-?\d+$/i, "").trim();
+                    if (!acc[groupName]) acc[groupName] = [];
+                    acc[groupName].push(t);
+                    return acc;
+                  }, {} as Record<string, typeof tournaments>)
+                ).map(([groupName, groupTournaments]) => {
+                  // If single tournament, render the classic direct-link card
+                  if (groupTournaments.length === 1) {
+                    const tournament = groupTournaments[0];
+                    return (
+                      <Link 
+                        key={tournament.id} 
+                        to={`/tournaments/${tournament.id}`}
+                        className="relative glass-card glass-card-hover p-4 group flex flex-col justify-between min-h-[130px]"
+                      >
+                        {getStatusBadge(tournament.status)}
+                        
+                        <div className="flex items-start gap-3">
+                          {tournament.logo_url ? (
+                            <img 
+                              src={tournament.logo_url} 
+                              alt={tournament.name}
+                              className="w-12 h-12 rounded-lg object-cover border border-white/10"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                              <Trophy className="h-6 w-6 text-primary" strokeWidth={1.5} />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-bold text-[16px] leading-tight group-hover:text-primary transition-colors">
+                              {tournament.name}
+                            </h3>
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              {tournament.age_category && (
+                                <Badge variant="secondary" className="text-[9px] uppercase tracking-wider py-0 px-1.5 h-4">
+                                  {tournament.age_category}
+                                </Badge>
+                              )}
+                              {getFormatBadge(tournament.format)}
+                            </div>
+                          </div>
+                          <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" strokeWidth={1.5} />
                         </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-[15px] leading-tight group-hover:text-primary transition-colors line-clamp-1">
-                          {tournament.name}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-1.5 mt-1">
-                          {tournament.age_category && (
-                            <span className="text-[11px] text-muted-foreground">
-                              {tournament.age_category.toUpperCase()}
+
+                        <div className="flex items-center gap-4 text-[11px] text-muted-foreground pt-4 mt-4 border-t border-white/5">
+                          {tournament.max_teams && (
+                            <span className="flex items-center gap-1.5">
+                              <Users className="h-3 w-3" />
+                              {tournament.max_teams} Teams
                             </span>
                           )}
-                          {tournament.format && (
-                            <>
-                              <span className="text-muted-foreground/50">•</span>
-                              {getFormatBadge(tournament.format)}
-                            </>
+                          {tournament.start_date && (
+                            <span className="flex items-center gap-1.5">
+                              <Calendar className="h-3 w-3" />
+                              {format(new Date(tournament.start_date), "MMM yyyy")}
+                            </span>
                           )}
                         </div>
+                      </Link>
+                    );
+                  }
+
+                  // If multiple tournaments (Bole Style), render a parent group card with quick-links
+                  const representative = groupTournaments[0];
+                  return (
+                    <div key={groupName} className="glass-card p-5 relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                        <Trophy size={80} strokeWidth={1} />
                       </div>
-                      <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" strokeWidth={1.5} />
-                    </div>
+                      
+                      <div className="flex items-start gap-4 mb-5">
+                        <div className="w-14 h-14 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center">
+                          {representative.logo_url ? (
+                            <img src={representative.logo_url} alt={groupName} className="w-full h-full object-cover rounded-xl" />
+                          ) : (
+                            <Trophy className="h-7 w-7 text-primary" />
+                          )}
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-black uppercase italic tracking-tighter leading-none mb-1">
+                            {groupName}
+                          </h3>
+                          <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-[0.1em]">
+                            Multi-Category Championship
+                          </p>
+                        </div>
+                      </div>
 
-                    {tournament.description && (
-                      <p className="text-xs text-muted-foreground line-clamp-1 mb-2">
-                        {tournament.description}
-                      </p>
-                    )}
-
-                    <div className="flex items-center gap-3 text-[11px] text-muted-foreground pt-2 border-t border-border/50">
-                      {tournament.start_date && (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" strokeWidth={1.5} />
-                          {format(new Date(tournament.start_date), "MMM d, yyyy")}
-                        </span>
-                      )}
-                      {tournament.max_teams && (
-                        <span className="flex items-center gap-1">
-                          <Users className="h-3 w-3" strokeWidth={1.5} />
-                          {tournament.max_teams} teams
-                        </span>
-                      )}
+                      <div className="grid grid-cols-1 gap-2">
+                        {groupTournaments.sort((a, b) => (a.age_category || "").localeCompare(b.age_category || "")).map((t) => (
+                          <Link 
+                            key={t.id} 
+                            to={`/tournaments/${t.id}`}
+                            className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-primary/10 border border-white/5 hover:border-primary/20 transition-all group/item"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-[10px] font-bold text-primary">
+                                {t.age_category?.toUpperCase() || "LGE"}
+                              </div>
+                              <div>
+                                <div className="text-xs font-bold text-foreground group-hover/item:text-primary transition-colors">
+                                  {t.name.split(/\s+/).pop()?.toUpperCase()} Division
+                                </div>
+                                <div className="text-[10px] text-muted-foreground">
+                                  {t.max_teams || 0} Teams • {t.status === 'active' ? 'Live Now' : 'Upcoming'}
+                                </div>
+                              </div>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover/item:text-primary translate-x-0 group-hover/item:translate-x-1 transition-all" />
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </Link>
-                ))}
+                  );
+                })}
               </div>
             )}
           </TabsContent>
