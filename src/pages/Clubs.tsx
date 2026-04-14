@@ -27,29 +27,27 @@ export default function Clubs() {
 
   return (
     <Layout>
-      {/* Header */}
-      <section className="relative py-12 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent" />
+      {/* Header — Elite Academy Directory */}
+      <section className="relative py-12 overflow-hidden bg-eyl-navy border-b border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.1),transparent_60%)]" />
         <div className="container mx-auto px-4 relative">
           <div className="flex items-center gap-4 mb-2">
             <EYLLogo size={60} withGlow />
             <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-white">Clubs</h1>
-              <p className="text-muted-foreground text-lg">
-                All participating teams in the Ethiopian Youth League
-              </p>
+              <div className="data-precision-mono text-primary font-bold tracking-widest mb-1">ACADEMY DIRECTORY</div>
+              <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">Clubs</h1>
             </div>
           </div>
         </div>
       </section>
       
       {/* Global Search */}
-      <section className="container mx-auto px-4 mb-8">
+      <section className="container mx-auto px-4 mb-8 mt-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
           <Input 
             placeholder="Search clubs by name or stadium..." 
-            className="pl-10 h-11 bg-card border-border/50 focus:border-primary/50 transition-all rounded-xl"
+            className="pl-10 h-11 bg-white/5 border-white/10 focus:border-primary/50 transition-all rounded-xl text-white placeholder:text-white/30"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -59,27 +57,27 @@ export default function Clubs() {
       {/* Stats Overview */}
       <section className="container mx-auto px-4 mb-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="eyl-card p-4 text-center">
-            <div className="text-3xl font-bold text-primary">{teams?.length || 0}</div>
-            <div className="text-sm text-muted-foreground">Total Clubs</div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-3xl font-black text-primary data-precision italic">{teams?.length || 0}</div>
+            <div className="data-precision-mono text-white/30 tracking-widest mt-1">TOTAL CLUBS</div>
           </div>
-          <div className="eyl-card p-4 text-center">
-            <div className="text-3xl font-bold text-white">
+          <div className="glass-card p-4 text-center">
+            <div className="text-3xl font-black text-white data-precision italic">
               {teams?.reduce((sum, t) => sum + (t.goals_for || 0), 0) || 0}
             </div>
-            <div className="text-sm text-muted-foreground">Total Goals</div>
+            <div className="data-precision-mono text-white/30 tracking-widest mt-1">TOTAL GOALS</div>
           </div>
-          <div className="eyl-card p-4 text-center">
-            <div className="text-3xl font-bold text-white">
+          <div className="glass-card p-4 text-center">
+            <div className="text-3xl font-black text-white data-precision italic">
               {teams?.reduce((sum, t) => sum + (t.wins || 0) + (t.draws || 0) + (t.losses || 0), 0) || 0}
             </div>
-            <div className="text-sm text-muted-foreground">Matches Played</div>
+            <div className="data-precision-mono text-white/30 tracking-widest mt-1">MATCHES PLAYED</div>
           </div>
-          <div className="eyl-card p-4 text-center">
-            <div className="text-3xl font-bold text-green-400">
+          <div className="glass-card p-4 text-center">
+            <div className="text-3xl font-black text-green-400 data-precision italic">
               {sortedTeams[0]?.short_name || sortedTeams[0]?.name?.slice(0, 3) || '-'}
             </div>
-            <div className="text-sm text-muted-foreground">League Leader</div>
+            <div className="data-precision-mono text-white/30 tracking-widest mt-1">LEAGUE LEADER</div>
           </div>
         </div>
       </section>

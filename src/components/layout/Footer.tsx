@@ -33,9 +33,9 @@ export function Footer() {
   const { data: sponsors = [] } = useSponsors("bottom");
 
   return (
-    <footer className="bg-background border-t border-border">
+    <footer className="bg-eyl-navy border-t border-white/5">
       {/* Partners Section */}
-      <div className="border-b border-border">
+      <div className="border-b border-white/5">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
             {sponsors.map((sponsor) => (
@@ -68,7 +68,7 @@ export function Footer() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-sm text-foreground hover:text-primary transition-colors"
+                className="text-xs text-white/40 hover:text-primary transition-colors font-bold uppercase tracking-wider"
               >
                 {link.name}
               </Link>
@@ -81,7 +81,7 @@ export function Footer() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-sm text-foreground hover:text-primary transition-colors"
+                className="text-xs text-white/40 hover:text-primary transition-colors font-bold uppercase tracking-wider"
               >
                 {link.name}
               </Link>
@@ -94,7 +94,7 @@ export function Footer() {
               <Link
                 key={link.name}
                 to={link.href}
-                className="text-sm text-foreground hover:text-primary transition-colors"
+                className="text-xs text-white/40 hover:text-primary transition-colors font-bold uppercase tracking-wider"
               >
                 {link.name}
               </Link>
@@ -127,14 +127,14 @@ export function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-border">
+      <div className="border-t border-white/5">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-            <span>© ETHIOPIAN YOUTH LEAGUE 2026</span>
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
+            <span className="data-precision-mono text-white/20 tracking-widest">© ETHIOPIAN YOUTH LEAGUE 2026</span>
             <nav className="flex items-center gap-4">
               {legalLinks.map((link, index) => (
                 <span key={link.name} className="flex items-center gap-4">
-                  <Link to={link.href} className="hover:text-foreground transition-colors">
+                  <Link to={link.href} className="data-precision-mono text-white/20 hover:text-primary transition-colors tracking-widest uppercase">
                     {link.name}
                   </Link>
                   {index < legalLinks.length - 1 && <span className="text-border">•</span>}

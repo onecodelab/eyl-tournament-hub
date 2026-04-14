@@ -158,186 +158,110 @@ export default function PlayerDetail() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-background to-background" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,hsl(var(--primary)/0.2),transparent_50%)]" />
-        
-        <div className="container mx-auto px-4 py-8 relative">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <Link to="/players" className="hover:text-foreground transition-colors">Players</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-foreground">{player.name}</span>
-          </div>
+      {/* Hero Section - LALIGA "Star Journey" Style */}
+      <section className="relative min-h-[500px] flex items-end pb-12 overflow-hidden bg-eyl-navy">
+        {/* Large Action Photography Background Effect */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-t from-eyl-navy via-eyl-navy/40 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-eyl-navy via-transparent to-eyl-navy z-10" />
+          {player.photo_url ? (
+            <img 
+              src={player.photo_url} 
+              alt="" 
+              className="w-full h-full object-cover object-top opacity-30 grayscale blur-[2px]"
+            />
+          ) : (
+            <div className="w-full h-full bg-primary/5" />
+          )}
+        </div>
 
-          <div className="flex flex-col md:flex-row gap-8">
-            {/* Player Photo */}
-            <div className="flex-shrink-0">
-              <div className="relative w-44 h-52 md:w-52 md:h-64 rounded-2xl overflow-hidden bg-gradient-to-br from-primary/30 to-primary/10 border-2 border-primary/30">
+        <div className="container mx-auto px-4 relative z-20">
+          <div className="flex flex-col lg:flex-row items-end gap-8 lg:gap-16">
+            
+            {/* Main Player Cutout/Photo */}
+            <div className="relative group shrink-0">
+              <div className="relative w-64 h-[380px] md:w-80 md:h-[480px] overflow-hidden rounded-t-3xl border-x-2 border-t-2 border-primary/30 bg-gradient-to-b from-primary/20 to-transparent">
                 {player.photo_url ? (
                   <img 
                     src={player.photo_url} 
                     alt={player.name} 
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <span className="text-6xl font-bold text-primary/50">
+                    <span className="text-8xl font-black text-primary/20">
                       {player.name.split(' ').map(n => n[0]).join('')}
                     </span>
                   </div>
                 )}
                 
-                {/* Jersey Number Badge */}
+                {/* Number Overlay - Bundesliga style */}
                 {player.jersey_number && (
-                  <div className="absolute top-3 right-3 w-10 h-10 rounded-lg bg-background/80 backdrop-blur-sm border border-border flex items-center justify-center">
-                    <span className="text-lg font-bold text-foreground">{player.jersey_number}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Player Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-                  {player.name}
-                </h1>
-                {/* Social Links */}
-                {socialLinks.length > 0 && (
-                  <div className="flex gap-2">
-                    {socialLinks.map((social, i) => (
-                      <a
-                        key={i}
-                        href={social.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-9 h-9 rounded-full bg-card/50 border border-border/50 hover:border-primary/50 hover:bg-card flex items-center justify-center transition-all"
-                      >
-                        <social.icon className="h-4 w-4" />
-                      </a>
-                    ))}
+                  <div className="absolute top-4 left-4">
+                    <span className="text-7xl md:text-8xl font-black text-white/10 italic select-none">
+                      {player.jersey_number}
+                    </span>
                   </div>
                 )}
               </div>
               
-              {/* Club & Position */}
-              <div className="flex items-center gap-3 mb-6">
-                {team && (
-                  <Link 
-                    to={`/clubs/${team.id}`}
-                    className="flex items-center gap-2 hover:text-primary transition-colors"
-                  >
-                    {team.logo_url && (
-                      <img src={team.logo_url} alt={team.name} className="h-5 w-5 object-contain" />
-                    )}
-                    <span className="text-muted-foreground">{team.name}</span>
-                  </Link>
-                )}
-                {player.position && (
-                  <>
-                    <span className="text-muted-foreground">•</span>
-                    <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${getPositionBadgeColor(player.position)}`}>
-                      {player.jersey_number && `${player.jersey_number} `}{player.position}
-                    </span>
-                  </>
-                )}
-              </div>
-
-              {/* Quick Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {extendedPlayer.nationality && (
-                  <div className="p-3 rounded-xl bg-card/50 border border-border/50">
-                    <p className="text-xs text-muted-foreground mb-1">Nationality</p>
-                    <p className="font-semibold text-foreground">{extendedPlayer.nationality}</p>
-                  </div>
-                )}
-                {extendedPlayer.preferred_foot && (
-                  <div className="p-3 rounded-xl bg-card/50 border border-border/50">
-                    <p className="text-xs text-muted-foreground mb-1">Preferred Foot</p>
-                    <p className="font-semibold text-foreground">{extendedPlayer.preferred_foot}</p>
-                  </div>
-                )}
-                {extendedPlayer.date_of_birth && (
-                  <div className="p-3 rounded-xl bg-card/50 border border-border/50">
-                    <p className="text-xs text-muted-foreground mb-1">Date of Birth</p>
-                    <p className="font-semibold text-foreground">
-                      {format(new Date(extendedPlayer.date_of_birth), 'dd/MM/yyyy')}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Performance Stats */}
-              <div className="flex flex-wrap gap-6 mb-4">
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Appearances</p>
-                  <p className="text-3xl font-bold text-foreground">{player.appearances || 0}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Goals</p>
-                  <p className="text-3xl font-bold text-foreground">{player.goals || 0}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Assists</p>
-                  <p className="text-3xl font-bold text-foreground">{player.assists || 0}</p>
+              {/* Position Tag overlay */}
+              <div className="absolute bottom-6 -right-4">
+                <div className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-2xl border border-white/20 backdrop-blur-md ${getPositionBadgeColor(player.position)}`}>
+                  {player.position}
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground mb-6">
-                Stats calculated from official match reports
-              </p>
-
-              {/* Full Bio Button */}
-              <Button 
-                onClick={() => setShowBioModal(true)}
-                className="bg-primary/20 text-primary hover:bg-primary/30 border border-primary/30"
-              >
-                Full Bio
-              </Button>
             </div>
 
-            {/* Team Form */}
-            <div className="w-full md:w-auto">
-              <div className="p-4 rounded-xl bg-card/50 border border-border/50">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-medium text-foreground">Team Form</h3>
-                  {team && (
-                    <div className="flex items-center gap-1.5">
-                      {team.logo_url && (
-                        <img src={team.logo_url} alt="" className="h-4 w-4 object-contain" />
-                      )}
-                      <span className="text-xs text-muted-foreground">{team.short_name || team.name}</span>
-                    </div>
-                  )}
+            {/* Content Section */}
+            <div className="flex-1 pb-4">
+              <div className="flex flex-wrap items-center gap-4 mb-2">
+                <span className="data-precision-mono text-primary font-bold">ETHIOPIAN YOUTH LEAGUE</span>
+                <span className="w-1 h-1 rounded-full bg-white/30" />
+                <span className="data-precision-mono text-white/50">{team?.name || 'Independent'}</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white italic uppercase tracking-tighter mb-8 leading-[0.9]">
+                {player.name.split(' ').map((part, i) => (
+                  <span key={i} className={i === 1 ? "text-primary block" : "block"}>{part}</span>
+                ))}
+              </h1>
+
+              {/* LALIGA "Key Stats" Overlays */}
+              <div className="flex flex-wrap gap-4 md:gap-8 mb-10">
+                <div className="glass-card p-4 min-w-[120px] border-primary/30">
+                  <p className="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Goals</p>
+                  <p className="text-4xl font-black data-precision italic">{player.goals || 0}</p>
                 </div>
+                <div className="glass-card p-4 min-w-[120px] border-white/10">
+                  <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Assists</p>
+                  <p className="text-4xl font-black data-precision italic">{player.assists || 0}</p>
+                </div>
+                <div className="glass-card p-4 min-w-[120px] border-white/10">
+                  <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Apps</p>
+                  <p className="text-4xl font-black data-precision italic">{player.appearances || 0}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <Button 
+                  onClick={() => setShowBioModal(true)}
+                  className="bg-eyl-gradient text-white font-black hover:opacity-90 px-8 h-12 rounded-full shadow-[0_0_20px_hsl(187,100%,50%,0.4)] transition-all scale-100 active:scale-95"
+                >
+                  FULL SCOUTING REPORT
+                </Button>
                 
-                {teamForm.length > 0 ? (
-                  <div className="space-y-2">
-                    {teamForm.map((match, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground w-12">
-                          {match.date ? format(new Date(match.date), 'MMM d') : '—'}
-                        </span>
-                        {match.opponent?.logo_url ? (
-                          <img src={match.opponent.logo_url} alt="" className="h-5 w-5 object-contain" />
-                        ) : (
-                          <div className="h-5 w-5 rounded bg-muted flex items-center justify-center text-[8px]">
-                            {match.opponent?.short_name?.slice(0, 2) || '?'}
-                          </div>
-                        )}
-                        <span className="text-xs text-muted-foreground flex-1">
-                          {match.opponent?.short_name || match.opponent?.name || 'Unknown'} ({match.isHome ? 'H' : 'A'})
-                        </span>
-                        <span className={`px-2 py-0.5 rounded text-xs font-medium text-white ${getResultColor(match.result)}`}>
-                          {match.score}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No recent matches</p>
-                )}
+                {socialLinks.map((social, i) => (
+                  <a
+                    key={i}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-colors"
+                  >
+                    <social.icon className="h-5 w-5 text-white" />
+                  </a>
+                ))}
               </div>
             </div>
           </div>

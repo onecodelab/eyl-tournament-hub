@@ -143,17 +143,17 @@ export default function MatchesPage() {
 
   return (
     <Layout>
-      {/* Hero - Compact */}
-      <section className="relative py-8 overflow-hidden border-b border-border/50">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
+      {/* Hero - Elite Fixtures */}
+      <section className="relative py-12 overflow-hidden bg-eyl-navy border-b border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.1),transparent_60%)]" />
         <div className="container mx-auto px-4 relative">
-          <div className="flex items-center gap-3">
-            <EYLLogo size={40} withGlow />
+          <div className="flex items-center gap-4">
+            <EYLLogo size={48} withGlow />
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">
+              <div className="data-precision-mono text-primary font-bold tracking-widest mb-1">MATCH CENTRE</div>
+              <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
                 Fixtures & <span className="text-primary">Results</span>
               </h1>
-              <p className="text-sm text-muted-foreground">Tournament schedules and live scores</p>
             </div>
           </div>
         </div>

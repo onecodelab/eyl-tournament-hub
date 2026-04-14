@@ -67,19 +67,19 @@ export default function Players() {
 
   return (
     <Layout>
-      {/* Hero Header */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.15),transparent_60%)]" />
-        
-        <div className="container mx-auto px-4 py-12 md:py-16 relative">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-1 w-12 bg-primary rounded-full" />
-            <span className="text-primary text-sm font-medium tracking-wider uppercase">Squad</span>
+      {/* Hero - Elite Player Database */}
+      <section className="relative py-12 overflow-hidden bg-eyl-navy border-b border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.1),transparent_60%)]" />
+        <div className="container mx-auto px-4 relative">
+          <div className="flex items-center gap-4">
+            <EYLLogo size={48} withGlow />
+            <div>
+              <div className="data-precision-mono text-primary font-bold tracking-widest mb-1">SQUAD DATABASE</div>
+              <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
+                Players
+              </h1>
+            </div>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
-            Players
-          </h1>
         </div>
       </section>
 

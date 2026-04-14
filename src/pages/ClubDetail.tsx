@@ -143,340 +143,295 @@ export default function ClubDetail() {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/30 via-background to-background">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,hsl(var(--primary)/0.2),transparent_50%)]" />
-        
-        <div className="container mx-auto px-4 py-8 relative">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-            <Link to="/clubs" className="hover:text-foreground transition-colors">Clubs</Link>
-            <ChevronRight className="h-4 w-4" />
-            <span className="text-foreground">{team.name}</span>
-          </div>
+    <Layout>
+      {/* Hero Section - The Elite Path Style */}
+      <section className="relative min-h-[400px] flex items-end pb-12 overflow-hidden bg-eyl-navy">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-t from-eyl-navy via-eyl-navy/40 to-transparent z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary)/0.15),transparent_70%)] z-10" />
+        </div>
 
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            {/* Club Badge & Info */}
-            <div className="flex-shrink-0">
-              <div className="relative">
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-primary/30 flex items-center justify-center overflow-hidden">
-                  {team.logo_url ? (
-                    <img src={team.logo_url} alt={team.name} className="w-24 h-24 md:w-32 md:h-32 object-contain" />
-                  ) : (
-                    <span className="text-4xl md:text-5xl font-bold text-primary">
-                      {team.short_name || team.name?.slice(0, 3)}
-                    </span>
-                  )}
-                </div>
-                {/* Position Badge */}
-                <div className="absolute -bottom-3 -right-3 w-12 h-12 rounded-full bg-primary flex items-center justify-center border-4 border-background">
-                  <span className="text-lg font-bold text-primary-foreground">{leaguePosition}</span>
-                </div>
+        <div className="container mx-auto px-4 relative z-20">
+          <div className="flex flex-col md:flex-row items-end gap-8 lg:gap-12">
+            {/* Club Badge */}
+            <div className="relative shrink-0">
+              <div className="w-40 h-40 md:w-52 md:h-52 glass-card flex items-center justify-center p-8 border-primary/30 shadow-[0_0_30px_hsl(187,100%,50%,0.1)]">
+                {team.logo_url ? (
+                  <img src={team.logo_url} alt={team.name} className="w-full h-full object-contain filter drop-shadow-2xl" />
+                ) : (
+                  <span className="text-6xl font-black text-primary/50 italic">
+                    {team.short_name || team.name?.slice(0, 3)}
+                  </span>
+                )}
+              </div>
+              <div className="absolute -top-4 -right-4 w-16 h-16 rounded-2xl bg-eyl-gradient flex items-center justify-center border-4 border-eyl-navy shadow-lg">
+                <span className="text-2xl font-black text-white italic">{leaguePosition}</span>
               </div>
             </div>
 
-            <div className="flex-1 min-w-0">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-2">
+            {/* Club Info */}
+            <div className="flex-1 pb-2">
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <span className="data-precision-mono text-primary font-bold tracking-widest uppercase text-xs">OFFICIAL ACADEMY RANKING</span>
+                <span className="w-1 h-1 rounded-full bg-white/20" />
+                <span className="data-precision-mono text-white/50 uppercase text-xs">EST. {team.founded_year || '2025'}</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-black text-white italic uppercase tracking-tighter mb-6 leading-[0.9]">
                 {team.name}
               </h1>
-              
-              <div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-4">
-                {team.founded_year && (
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="h-4 w-4" />
-                    Est. {team.founded_year}
-                  </span>
-                )}
-                {team.stadium && (
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4" />
-                    {team.stadium}
-                  </span>
-                )}
+
+              <div className="flex flex-wrap gap-10">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Manager</span>
+                  <span className="text-xl font-bold text-white uppercase italic">{team.coach || 'Head Scout'}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Base</span>
+                  <span className="text-xl font-bold text-white uppercase italic">{team.stadium || 'Addis Ababa'}</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Squad</span>
+                  <span className="text-xl font-bold text-white italic data-precision">{players?.length || 0}</span>
+                </div>
               </div>
-
-              {team.coach && (
-                <div className="flex items-center gap-2 mb-6">
-                  <span className="text-muted-foreground">Manager:</span>
-                  <span className="text-foreground font-semibold">{team.coach}</span>
-                </div>
-              )}
-
-              {/* Social Links */}
-              {socialLinks.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {socialLinks.map((social, i) => (
-                    <a
-                      key={i}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/50 border border-border/50 hover:border-primary/50 hover:bg-card transition-all text-sm"
-                    >
-                      <social.icon className="h-4 w-4" />
-                      <span className="hidden sm:inline">{social.label}</span>
-                      <ExternalLink className="h-3 w-3 text-muted-foreground" />
-                    </a>
-                  ))}
-                </div>
-              )}
             </div>
 
-            {/* Quick Stats */}
-            <div className="w-full md:w-auto flex md:flex-col gap-3">
-              <div className="flex-1 md:flex-none p-4 rounded-xl bg-card/50 border border-border/50 text-center min-w-[100px]">
-                <div className="text-3xl font-bold text-primary">{team.points || 0}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider">Points</div>
-              </div>
-              <div className="flex-1 md:flex-none p-4 rounded-xl bg-card/50 border border-border/50 text-center min-w-[100px]">
-                <div className="text-2xl font-bold text-foreground">{(team.wins || 0) + (team.draws || 0) + (team.losses || 0)}</div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wider">Played</div>
-              </div>
+            {/* Tactical CTA */}
+            <div className="w-full md:w-auto pb-2">
+              <Button className="w-full md:w-auto bg-white/5 text-white border border-white/20 hover:bg-white/10 px-8 h-14 rounded-full font-black uppercase tracking-widest text-xs transition-all">
+                CLUB MANIFESTO
+              </Button>
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <section className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Stats & Form */}
-          <div className="space-y-6">
-            {/* Season Stats */}
-            <div className="rounded-xl bg-card border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-primary" />
-                Season Stats
+      <section className="container mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left: Tactical Stats - span-4 */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="glass-card p-6 border-primary/20">
+              <h3 className="data-precision-mono text-primary font-bold mb-6 tracking-widest flex items-center justify-between">
+                TACTICAL ENERGY
+                <Trophy className="h-4 w-4" />
               </h3>
               
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="text-center p-3 rounded-lg bg-green-500/10">
-                  <div className="text-2xl font-bold text-green-400">{team.wins || 0}</div>
-                  <div className="text-xs text-muted-foreground">Wins</div>
+              <div className="grid grid-cols-3 gap-3 mb-8">
+                <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-black text-green-400 data-precision italic">{team.wins || 0}</div>
+                  <div className="text-[9px] uppercase font-bold text-white/30 tracking-tighter">Victories</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-yellow-500/10">
-                  <div className="text-2xl font-bold text-yellow-400">{team.draws || 0}</div>
-                  <div className="text-xs text-muted-foreground">Draws</div>
+                <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-black text-yellow-400 data-precision italic">{team.draws || 0}</div>
+                  <div className="text-[9px] uppercase font-bold text-white/30 tracking-tighter">Draws</div>
                 </div>
-                <div className="text-center p-3 rounded-lg bg-red-500/10">
-                  <div className="text-2xl font-bold text-red-400">{team.losses || 0}</div>
-                  <div className="text-xs text-muted-foreground">Losses</div>
+                <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl text-center">
+                  <div className="text-2xl font-black text-red-400 data-precision italic">{team.losses || 0}</div>
+                  <div className="text-[9px] uppercase font-bold text-white/30 tracking-tighter">Defeats</div>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex items-center justify-between py-2 border-b border-border/50">
-                  <span className="text-muted-foreground">Goals For</span>
-                  <span className="font-semibold text-foreground">{team.goals_for || 0}</span>
-                </div>
-                <div className="flex items-center justify-between py-2 border-b border-border/50">
-                  <span className="text-muted-foreground">Goals Against</span>
-                  <span className="font-semibold text-foreground">{team.goals_against || 0}</span>
-                </div>
+              <div className="space-y-4">
                 <div className="flex items-center justify-between py-2">
-                  <span className="text-muted-foreground">Goal Difference</span>
-                  <span className={`font-semibold ${((team.goals_for || 0) - (team.goals_against || 0)) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  <span className="text-xs uppercase font-bold text-white/40 tracking-wider">Net Rating (GD)</span>
+                  <span className={`text-xl font-black data-precision ${((team.goals_for || 0) - (team.goals_against || 0)) >= 0 ? 'text-primary' : 'text-red-400'}`}>
                     {(team.goals_for || 0) - (team.goals_against || 0) >= 0 ? '+' : ''}{(team.goals_for || 0) - (team.goals_against || 0)}
                   </span>
                 </div>
+                <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary shadow-[0_0_10px_hsl(187,100%,50%,0.5)]" 
+                    style={{ width: `${Math.min(100, Math.max(0, (team.points || 0) / 30 * 100))}%` }} 
+                  />
+                </div>
               </div>
             </div>
 
-            {/* Team Form */}
-            <div className="rounded-xl bg-card border border-border p-6">
-              <h3 className="text-lg font-semibold text-foreground mb-4">Team Form</h3>
-              
-              {recentForm.length > 0 ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    {recentForm.map((match, i) => (
-                      <div
-                        key={i}
-                        className={`w-10 h-10 rounded-lg ${getResultColor(match.result)} flex items-center justify-center text-white font-bold`}
-                        title={`${match.isHome ? 'H' : 'A'}: ${match.score} vs ${match.opponent?.short_name || match.opponent?.name}`}
-                      >
-                        {match.result}
-                      </div>
-                    ))}
+            {/* Modern Form Visualizer */}
+            <div className="glass-card p-6 border-white/5">
+              <h3 className="data-precision-mono text-white/50 font-bold mb-6 tracking-widest">ELITE PATH FORM</h3>
+              <div className="flex gap-2">
+                {recentForm.map((match, i) => (
+                  <div
+                    key={i}
+                    className={`flex-1 h-12 rounded-lg ${getResultColor(match.result)} flex items-center justify-center text-white font-black italic transform transition-transform hover:scale-105 cursor-help`}
+                    title={`${match.isHome ? 'H' : 'A'} ${match.score} vs ${match.opponent?.name}`}
+                  >
+                    {match.result}
                   </div>
-                  <div className="space-y-2 mt-4">
-                    {recentForm.map((match, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm">
-                        <span className={`w-6 h-6 rounded ${getResultColor(match.result)} text-white text-xs flex items-center justify-center font-medium`}>
-                          {match.result}
-                        </span>
-                        <span className="text-muted-foreground">{match.isHome ? 'H' : 'A'}</span>
-                        <span className="flex-1 truncate text-foreground">{match.opponent?.name || 'Unknown'}</span>
-                        <span className="font-medium text-foreground">{match.score}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">No recent matches</p>
-              )}
+                ))}
+              </div>
             </div>
 
-            {/* Top Performers */}
+            {/* Performance Overlays */}
             {(topScorer || topAssister) && (
-              <div className="rounded-xl bg-card border border-border p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Top Performers</h3>
-                
-                <div className="space-y-4">
+              <div className="glass-card p-6 border-white/5 overflow-hidden relative">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Users className="h-24 w-24" />
+                </div>
+                <h3 className="data-precision-mono text-white/50 font-bold mb-6 tracking-widest relative z-10">CORE ASSETS</h3>
+                <div className="space-y-4 relative z-10">
                   {topScorer && (topScorer.goals || 0) > 0 && (
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 group">
-                      <Avatar className="h-12 w-12 border-2 border-primary/30">
-                        <AvatarImage src={topScorer.photo_url || undefined} />
-                        <AvatarFallback className="bg-primary/20 text-primary">
-                          {topScorer.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground truncate">{topScorer.name}</p>
-                        <p className="text-xs text-muted-foreground">Top Scorer</p>
+                    <Link to={`/players/${topScorer.id}`} className="flex items-center gap-4 group">
+                      <div className="relative">
+                        <Avatar className="h-14 w-14 border-2 border-primary/30 group-hover:border-primary transition-all">
+                          <AvatarImage src={topScorer.photo_url || undefined} />
+                          <AvatarFallback className="bg-primary/10 text-primary font-black">
+                            {topScorer.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-black text-white italic uppercase group-hover:text-primary transition-colors">{topScorer.name}</p>
+                        <p className="text-[10px] text-white/40 uppercase tracking-widest font-bold">Lethal Finisher</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-2xl font-bold text-primary">{topScorer.goals}</p>
-                        <p className="text-xs text-muted-foreground">Goals</p>
+                        <span className="text-2xl font-black text-primary data-precision italic">{topScorer.goals}</span>
                       </div>
-                    </div>
-                  )}
-                  
-                  {topAssister && (topAssister.assists || 0) > 0 && topAssister.id !== topScorer?.id && (
-                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 group">
-                      <Avatar className="h-12 w-12 border-2 border-primary/30">
-                        <AvatarImage src={topAssister.photo_url || undefined} />
-                        <AvatarFallback className="bg-primary/20 text-primary">
-                          {topAssister.name.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-foreground truncate">{topAssister.name}</p>
-                        <p className="text-xs text-muted-foreground">Top Assists</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-2xl font-bold text-primary">{topAssister.assists}</p>
-                        <p className="text-xs text-muted-foreground">Assists</p>
-                      </div>
-                    </div>
+                    </Link>
                   )}
                 </div>
               </div>
             )}
+          </div>
 
-            {/* Full Schedule */}
-            <div className="rounded-xl bg-card border border-border p-6">
+          {/* Right: Squad + Schedule + Table - span-8 */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* Schedule - Premium Timeline */}
+            <div className="glass-card p-6 border-white/5">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  Full Schedule
+                <h3 className="data-precision-mono text-primary font-bold tracking-widest flex items-center gap-3">
+                  <Calendar className="h-4 w-4" />
+                  FIXTURE TIMELINE
                 </h3>
               </div>
               
               {allTeamMatches.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {allTeamMatches.map((match, i) => {
                     const isCompleted = match.status === 'completed';
+                    const isLive = match.status === 'live';
                     const isHome = match.home_team_id === id;
                     const opponentId = isHome ? match.away_team_id : match.home_team_id;
                     const opponent = teamsMap.get(opponentId || "");
                     
                     return (
-                      <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border/50 bg-muted/10">
-                        <div className="flex flex-col">
-                          <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                            {match.match_date ? format(new Date(match.match_date), 'EEE, MMM d') : 'TBD'}
-                          </span>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs font-medium text-muted-foreground">{isHome ? 'Home' : 'Away'} vs</span>
-                            <span className="text-sm font-semibold text-foreground truncate max-w-[120px]">{opponent?.name || 'Unknown'}</span>
+                      <div key={i} className={`flex items-center justify-between p-4 rounded-xl border transition-all hover:bg-white/5 ${isLive ? 'live-card-pulse border-primary/30' : 'border-white/5'}`}>
+                        <div className="flex items-center gap-4">
+                          <div className="text-center min-w-[60px]">
+                            <span className="data-precision-mono text-[10px] text-white/30 font-bold block">
+                              {match.match_date ? format(new Date(match.match_date), 'MMM d') : 'TBD'}
+                            </span>
+                            <span className="data-precision-mono text-[10px] text-white/20">
+                              {match.match_date ? format(new Date(match.match_date), 'EEE') : ''}
+                            </span>
+                          </div>
+                          <div className="w-px h-8 bg-white/10" />
+                          <div>
+                            <span className="text-xs font-bold text-white/30 uppercase tracking-widest">{isHome ? 'HOME' : 'AWAY'}</span>
+                            <p className="text-sm font-black text-white italic uppercase">{opponent?.name || 'Unknown'}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className={`px-3 py-1 rounded text-xs font-bold ${isCompleted ? 'bg-secondary text-foreground' : 'bg-primary/20 text-primary border border-primary/30'}`}>
-                            {isCompleted ? `${match.home_score}-${match.away_score}` : match.match_date ? format(new Date(match.match_date), 'HH:mm') : 'TBD'}
-                          </div>
+                        <div>
+                          {isLive && (
+                            <span className="live-badge text-[10px]">LIVE</span>
+                          )}
+                          {isCompleted && (
+                            <span className="text-lg font-black data-precision italic text-white">{match.home_score}-{match.away_score}</span>
+                          )}
+                          {!isLive && !isCompleted && (
+                            <span className="data-precision-mono text-primary font-bold text-sm">
+                              {match.match_date ? format(new Date(match.match_date), 'HH:mm') : 'TBD'}
+                            </span>
+                          )}
                         </div>
                       </div>
                     );
                   })}
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground text-center py-4">No matches scheduled yet</p>
+                <p className="text-sm text-white/30 text-center py-8">No fixtures scheduled yet</p>
               )}
             </div>
-          </div>
 
-          {/* Right Column - Squad */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Squad */}
-            <div className="rounded-xl bg-card border border-border p-6">
+            {/* Squad - Premium Grid */}
+            <div className="glass-card p-6 border-white/5">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  <Users className="h-5 w-5 text-primary" />
-                  Squad
+                <h3 className="data-precision-mono text-primary font-bold tracking-widest flex items-center gap-3">
+                  <Users className="h-4 w-4" />
+                  FIRST TEAM SQUAD
                 </h3>
-                <span className="text-sm text-muted-foreground">{players?.length || 0} players</span>
+                <span className="data-precision-mono text-white/30 text-xs">{players?.length || 0} REGISTERED</span>
               </div>
 
               {playersLoading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {[...Array(6)].map((_, i) => (
-                    <Skeleton key={i} className="h-16" />
+                    <Skeleton key={i} className="h-20" />
                   ))}
                 </div>
               ) : players && players.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {players.map((player) => (
-                    <div
+                    <Link
                       key={player.id}
-                      className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-muted/30 group"
+                      to={`/players/${player.id}`}
+                      className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/5 hover:border-primary/30 transition-all group"
                     >
-                      <Avatar className="h-11 w-11 border border-border/50">
+                      <Avatar className="h-12 w-12 border-2 border-white/10 group-hover:border-primary/30 transition-all">
                         <AvatarImage src={player.photo_url || undefined} />
-                        <AvatarFallback className="bg-muted text-muted-foreground text-sm">
+                        <AvatarFallback className="bg-primary/10 text-primary font-black text-xs">
                           {player.name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           {player.jersey_number && (
-                            <span className="text-xs font-medium text-muted-foreground">
+                            <span className="text-xs font-black text-white/20 data-precision italic">
                               {player.jersey_number}
                             </span>
                           )}
-                          <p className="font-medium text-foreground truncate">
+                          <p className="font-bold text-white text-sm truncate group-hover:text-primary transition-colors">
                             {player.name}
                           </p>
                         </div>
                         {player.position && (
-                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getPositionBadgeColor(player.position)}`}>
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mt-1 ${getPositionBadgeColor(player.position)}`}>
                             {player.position}
                           </span>
                         )}
                       </div>
-                    </div>
+                      <ChevronRight className="h-4 w-4 text-white/10 group-hover:text-primary/50 transition-colors" />
+                    </Link>
                   ))}
                 </div>
               ) : (
-                <p className="text-center py-8 text-muted-foreground">No players found</p>
+                <p className="text-center py-8 text-white/30">No players registered</p>
               )}
             </div>
 
-            {/* League Table Position */}
-            <div className="rounded-xl bg-card border border-border p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-foreground">Table</h3>
-                <Link to="/standings" className="text-sm text-primary hover:underline flex items-center gap-1">
-                  See all <ChevronRight className="h-4 w-4" />
+            {/* League Standing */}
+            <div className="glass-card p-6 border-primary/20">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="data-precision-mono text-primary font-bold tracking-widest">LEAGUE STANDING</h3>
+                <Link to="/standings" className="text-[10px] text-white/40 hover:text-white transition-colors flex items-center gap-1">
+                  FULL TABLE <ChevronRight className="h-3 w-3" />
                 </Link>
               </div>
               
-              <div className="flex items-center gap-4 p-4 rounded-lg bg-primary/10 border border-primary/30">
-                <div className="text-4xl font-bold text-primary">{leaguePosition}<sup className="text-lg">{getOrdinalSuffix(leaguePosition)}</sup></div>
+              <div className="flex items-center gap-6 p-6 rounded-2xl bg-primary/5 border border-primary/20">
+                <div className="text-center">
+                  <span className="text-6xl font-black text-primary data-precision italic">{leaguePosition}</span>
+                  <span className="text-lg font-black text-primary/50 align-top">{getOrdinalSuffix(leaguePosition)}</span>
+                </div>
+                <div className="w-px h-16 bg-primary/20" />
                 <div className="flex-1">
-                  <p className="text-sm text-muted-foreground">Current Position</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {team.points} points from {(team.wins || 0) + (team.draws || 0) + (team.losses || 0)} matches
+                  <p className="text-sm font-bold text-white/50 uppercase">Current Position</p>
+                  <p className="text-white/30 text-xs mt-1 data-precision-mono">
+                    {team.points} PTS // {(team.wins || 0) + (team.draws || 0) + (team.losses || 0)} MATCHES PLAYED
                   </p>
                 </div>
               </div>

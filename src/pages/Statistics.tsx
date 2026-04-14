@@ -21,12 +21,18 @@ export default function StatisticsPage() {
 
   return (
     <Layout>
-      {/* Header */}
-      <div className="bg-gradient-to-r from-cyan-900/30 to-background py-8">
-        <div className="container mx-auto px-4">
+      {/* Header — Elite Stats Centre */}
+      <div className="relative py-12 bg-eyl-navy border-b border-white/5 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,hsl(var(--primary)/0.1),transparent_60%)]" />
+        <div className="container mx-auto px-4 relative">
           <div className="flex items-center gap-4">
             <EYLLogo size={60} withGlow />
-            <h1 className="text-4xl font-bold text-primary">Stats Centre</h1>
+            <div>
+              <div className="data-precision-mono text-primary font-bold tracking-widest mb-1">PERFORMANCE INTELLIGENCE</div>
+              <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
+                Stats <span className="text-primary">Centre</span>
+              </h1>
+            </div>
           </div>
         </div>
       </div>
@@ -279,7 +285,7 @@ function LeaderboardCard({ title, data, valueLabel, valueColor = "gold" }: Leade
                 {player.team}
               </p>
             </div>
-            <span className={`text-sm font-bold ${
+            <span className={`text-sm font-bold data-precision ${
               valueColor === "cyan" ? "text-cyan-400" : "text-primary"
             }`}>
               {player.value}
@@ -345,8 +351,8 @@ function TeamLeaderboardCard({ title, data }: TeamLeaderboardCardProps) {
                 {team.shortName}
               </div>
             )}
-            <span className="flex-1 text-sm truncate">{team.name}</span>
-            <span className="text-sm font-bold text-primary">
+            <span className="flex-1 text-sm truncate uppercase tracking-tight">{team.name}</span>
+            <span className="text-sm font-bold text-primary data-precision">
               {team.value.toLocaleString()}
             </span>
           </div>

@@ -125,10 +125,13 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
   const { isTHOAdmin, isSuperAdmin, isLoading: isRoleLoading } = useUserRole();
   const { assignedTournaments, isLoading: isTournamentLoading } = useTournamentAdmin();
   const navigate = useNavigate();
-  const [localTournamentId, setLocalTournamentId] = useState<string | undefined>(selectedTournamentId);
+  const [localTournamentId, setLocalTournamentId] = useState<string | undefined>(
+    () => selectedTournamentId || sessionStorage.getItem('tho_selected_tournament') || undefined
+  );
 
   const handleSignOut = async () => {
     await signOut();
+    sessionStorage.removeItem('tho_selected_tournament');
     navigate("/");
   };
 
@@ -138,17 +141,24 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
     }
   }, [user, loading, navigate]);
 
-  // Set default tournament when tournaments load
+  // Set default tournament when tournaments load or restore from session
   useEffect(() => {
-    if (!localTournamentId && assignedTournaments.length > 0) {
-      const defaultId = (assignedTournaments[0] as any).id;
-      setLocalTournamentId(defaultId);
-      onTournamentChange?.(defaultId);
+    if (assignedTournaments.length > 0) {
+      if (!localTournamentId) {
+        const defaultId = (assignedTournaments[0] as any).id;
+        setLocalTournamentId(defaultId);
+        sessionStorage.setItem('tho_selected_tournament', defaultId);
+        onTournamentChange?.(defaultId);
+      } else if (localTournamentId !== selectedTournamentId) {
+        // Hydrate parent state with our restored local state
+        onTournamentChange?.(localTournamentId);
+      }
     }
-  }, [assignedTournaments, localTournamentId, onTournamentChange]);
+  }, [assignedTournaments, localTournamentId, selectedTournamentId, onTournamentChange]);
 
   const handleTournamentChange = (tournamentId: string) => {
     setLocalTournamentId(tournamentId);
+    sessionStorage.setItem('tho_selected_tournament', tournamentId);
     onTournamentChange?.(tournamentId);
   };
 

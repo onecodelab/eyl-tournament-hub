@@ -40,28 +40,28 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full">
-      {/* Top Bar */}
-      <div className="bg-background/95 backdrop-blur border-b border-border/50">
+      {/* Top Bar - Elite Intelligence Strip */}
+      <div className="bg-background/80 backdrop-blur-xl border-b border-white/5">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-8 text-xs">
+          <div className="flex items-center justify-between h-8">
             <nav className="hidden lg:flex items-center gap-6">
               {topNavLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
-                  className="nav-link hover:text-foreground"
+                  className="data-precision-mono text-[10px] text-muted-foreground hover:text-foreground dark:text-white/40 dark:hover:text-white transition-colors uppercase tracking-widest"
                 >
                   {link.name}
                 </Link>
               ))}
             </nav>
-            <span className="text-muted-foreground">© 2026 EYL</span>
+            <span className="data-precision-mono text-[10px] text-muted-foreground/60 dark:text-white/20 tracking-widest">© 2026 ETHIOPIAN YOUTH LEAGUE</span>
           </div>
         </div>
       </div>
 
-      {/* Main Nav */}
-      <div className="bg-background/95 backdrop-blur border-b border-border/50">
+      {/* Main Nav - Premium Command Bar */}
+      <div className="bg-background/80 backdrop-blur-xl border-b border-white/5 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
         <div className="container mx-auto px-4">
           <div className="flex items-center h-14">
             {/* Left: Hamburger + Logo */}
@@ -80,20 +80,24 @@ export function Navbar() {
             </div>
 
             {/* Center: Main Nav Links */}
-            <nav className="hidden lg:flex items-center justify-center gap-6 flex-1">
+            <nav className="hidden lg:flex items-center justify-center gap-8 flex-1">
               {mainNavLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.href}
-                  className={`text-sm font-medium transition-colors ${
+                  className={`relative text-xs font-black uppercase tracking-widest transition-colors py-1 ${
                     link.highlight
-                      ? "text-primary hover:text-primary/80"
+                      ? "text-primary hover:text-primary/80 flex items-center gap-2"
                       : location.pathname === link.href
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "text-foreground dark:text-white"
+                      : "text-muted-foreground hover:text-foreground dark:text-white/40 dark:hover:text-white"
                   }`}
                 >
+                  {link.highlight && <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />}
                   {link.name}
+                  {location.pathname === link.href && !link.highlight && (
+                    <span className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-primary shadow-[0_0_8px_hsl(187,100%,50%,0.5)]" />
+                  )}
                 </Link>
               ))}
             </nav>
@@ -140,7 +144,7 @@ export function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-background border-b border-border">
+        <div className="lg:hidden bg-background/95 backdrop-blur-xl border-b border-white/5">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-2">
             {mainNavLinks.map((link) => (
               <Link

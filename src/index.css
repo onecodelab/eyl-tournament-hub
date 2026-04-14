@@ -178,12 +178,25 @@
     @apply text-primary;
   }
 
-  /* Live Badge - Cyan Glow */
+  /* Live Badge - Cyan Glow (PL Style) */
   .live-badge {
-    @apply px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider;
+    @apply px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider relative overflow-hidden;
     background-color: hsl(187 100% 50%);
     color: hsl(218 70% 8%);
     box-shadow: 0 0 12px hsl(187 100% 50% / 0.6), 0 0 24px hsl(187 100% 50% / 0.3);
+  }
+
+  .live-badge::after {
+    content: '';
+    @apply absolute inset-0 opacity-50;
+    background: linear-gradient(90deg, transparent, white, transparent);
+    animation: live-shimmer 2s infinite;
+  }
+
+  /* Pulsating Live Card (PL Style) */
+  .live-card-pulse {
+    @apply border-primary/50;
+    animation: live-pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   /* Status Badges - Glassmorphism */
@@ -313,6 +326,38 @@
     @apply sticky top-0 z-10 bg-background/80 backdrop-blur-md py-3;
     border-bottom: 1px solid hsl(0 0% 100% / 0.08);
   }
+
+  /* LALIGA Style Asymmetrical News Grid */
+  .news-grid-laliga {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 1.5rem;
+  }
+
+  .news-item-featured {
+    grid-column: span 8;
+  }
+
+  .news-item-side {
+    grid-column: span 4;
+  }
+
+  @media (max-width: 768px) {
+    .news-item-featured, .news-item-side {
+      grid-column: span 12;
+    }
+  }
+
+  /* Bundesliga Precision Data */
+  .data-precision {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .data-precision-mono {
+    font-family: 'JetBrains Mono', 'Roboto Mono', monospace;
+    @apply text-xs uppercase tracking-tighter;
+  }
 }
 
 @layer utilities {
@@ -389,4 +434,69 @@
   .p-tight { padding: 12px; }
   .p-standard { padding: 16px; }
   .p-section { padding: 24px; }
+
+  /* ═══════════════════════════════════════════════
+     EYL BRAND IDENTITY SYSTEM — DESIGN PRIMITIVES
+     ═══════════════════════════════════════════════ */
+
+  /* EYL Gradient — Primary CTA & accent surfaces */
+  .bg-eyl-gradient {
+    background: linear-gradient(135deg, hsl(187, 100%, 50%), hsl(187, 80%, 35%));
+  }
+
+  /* Bundesliga-Inspired Data Precision — Tabular numbers for stats */
+  .data-precision {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  /* Monospaced stat labels — for timestamps, tracking codes */
+  .data-precision-mono {
+    font-variant-numeric: tabular-nums;
+    font-family: 'Inter', ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Premier League-Inspired Live Card Pulse */
+  .live-card-pulse {
+    animation: live-pulse-border 2s ease-in-out infinite;
+  }
+
+  @keyframes live-pulse-border {
+    0%, 100% {
+      border-color: hsl(187, 100%, 50%, 0.3);
+      box-shadow: 0 0 0 0 hsl(187, 100%, 50%, 0);
+    }
+    50% {
+      border-color: hsl(187, 100%, 50%, 0.6);
+      box-shadow: 0 0 20px 0 hsl(187, 100%, 50%, 0.15);
+    }
+  }
+
+  /* LALIGA-Style Asymmetrical News Grid */
+  .news-grid-laliga {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  @media (min-width: 1024px) {
+    .news-grid-laliga {
+      grid-template-columns: 8fr 4fr;
+    }
+  }
+
+  /* Live Badge with Shimmer */
+  .live-badge {
+    @apply px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest;
+    background: linear-gradient(90deg, hsl(0, 84%, 50%), hsl(0, 84%, 60%));
+    color: white;
+    animation: live-shimmer 2s ease-in-out infinite;
+  }
+
+  @keyframes live-shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+  }
 }

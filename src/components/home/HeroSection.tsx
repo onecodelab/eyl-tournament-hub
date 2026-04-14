@@ -53,10 +53,10 @@ export function HeroSection() {
   const currentHero = heroSlides[currentSlide] || featuredNews;
 
   return (
-    <section>
+    <section className="bg-background">
       {/* Mobile: Full-bleed hero carousel */}
       <div className="lg:hidden">
-        <div className="relative w-full min-h-[75vh] overflow-hidden">
+        <div className="relative w-full min-h-[80vh] overflow-hidden">
           {heroSlides.map((slide, index) => (
             <div
               key={slide.id}
@@ -69,42 +69,43 @@ export function HeroSection() {
                 zIndex: index === currentSlide ? 1 : 0,
               }}
             >
-              {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-transparent to-background" />
+              {/* Premium Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
             </div>
           ))}
 
           {liveMatch && (
-            <div className="absolute top-4 left-4 z-10">
-              <span className="live-badge flex items-center gap-1.5">
+            <div className="absolute top-6 left-6 z-10">
+              <span className="live-badge flex items-center gap-2">
                 <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                LIVE
+                LIVE ACTION
               </span>
             </div>
           )}
 
-          <div className="relative z-10 p-6 pb-8 mt-auto flex flex-col justify-end min-h-[75vh]">
-            <h2 className="text-3xl font-extrabold text-white mb-3 leading-[1.1] tracking-tight uppercase">
+          <div className="relative z-10 p-6 pb-12 mt-auto flex flex-col justify-end min-h-[80vh]">
+            <div className="data-precision-mono text-primary font-bold mb-2 tracking-[0.2em]">TOP STORY</div>
+            <h2 className="text-4xl font-black text-white mb-6 leading-[0.9] tracking-tighter uppercase italic">
               {currentHero?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
             </h2>
-            <div className="flex items-center justify-between">
-              <Link to={currentHero ? `/news/${currentHero.id}` : "/news"}>
-                <Button variant="secondary" size="sm" className="group rounded-full px-6 py-2.5 bg-white/10 backdrop-blur-md text-white border border-white/20 hover:bg-white/20 transition-all">
-                  Read article
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <div className="flex items-center justify-between gap-4">
+              <Link to={currentHero ? `/news/${currentHero.id}` : "/news"} className="flex-1">
+                <Button className="w-full bg-eyl-gradient text-white font-black rounded-full h-12 shadow-[0_0_20px_hsl(187,100%,50%,0.4)] transition-all active:scale-95">
+                  READ ARTICLE
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               {/* Dot indicators */}
               {heroSlides.length > 1 && (
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 shrink-0">
                   {heroSlides.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentSlide(index)}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
+                      className={`h-1 rounded-full transition-all duration-300 ${
                         index === currentSlide
-                          ? "w-6 bg-white"
-                          : "w-1.5 bg-white/40"
+                          ? "w-8 bg-primary"
+                          : "w-2 bg-white/20"
                       }`}
                     />
                   ))}
@@ -114,31 +115,8 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Mobile: News + Match cards below hero */}
-        <div className="container mx-auto px-4 py-4 space-y-4">
-          {/* Latest News */}
-          <div className="glass-card p-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-                <Newspaper className="h-3.5 w-3.5 text-primary" />
-              </div>
-              <h3 className="font-semibold text-foreground">Latest News</h3>
-            </div>
-            <div className="space-y-3">
-              {latestNews.map((item) => (
-                <NewsItem key={item.id} item={item} />
-              ))}
-            </div>
-            <Link 
-              to="/news"
-              className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
-            >
-              View All News
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-
-          {/* Match Center */}
+        {/* Mobile: Match center highlights */}
+        <div className="container mx-auto px-4 py-6 -mt-8 relative z-20">
           <MatchCenterCard 
             todayMatches={todayMatches} 
             tomorrowMatches={tomorrowMatches} 
@@ -147,70 +125,70 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Desktop: Original 3-column layout */}
-      <div className="hidden lg:block container mx-auto px-4 py-6">
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-5">
+      {/* Desktop: Superior LALIGA-style Asymmetrical Layout */}
+      <div className="hidden lg:block container mx-auto px-4 py-8">
+        <div className="grid grid-cols-12 gap-6 items-stretch">
+          
+          {/* Main Hero Story - span-7 (Asymmetrical) */}
+          <div className="col-span-7 flex flex-col">
             <div 
-              className="relative h-full min-h-[400px] rounded-2xl overflow-hidden bg-cover bg-center shadow-2xl shadow-primary/10 border border-white/5"
+              className="relative h-full min-h-[500px] rounded-3xl overflow-hidden bg-cover bg-center border border-white/10 group cursor-pointer"
               style={{ 
                 backgroundImage: featuredNews?.image_url
-                  ? `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('${featuredNews.image_url}')`
-                  : `linear-gradient(to bottom, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.4) 40%, rgba(10, 22, 40, 0.95) 85%), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop')` 
+                  ? `linear-gradient(to top, rgba(14, 27, 49, 1) 0%, rgba(14, 27, 49, 0.2) 50%, rgba(14, 27, 49, 0.1) 100%), url('${featuredNews.image_url}')`
+                  : `linear-gradient(to top, rgba(14, 27, 49, 1) 0%, rgba(14, 27, 49, 0.2) 50%, rgba(14, 27, 49, 0.1) 100%), url('https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=1200&auto=format&fit=crop')` 
               }}
             >
               {liveMatch && (
-                <div className="absolute top-4 left-4">
-                  <span className="live-badge flex items-center gap-1.5">
-                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                    LIVE
+                <div className="absolute top-8 left-8">
+                  <span className="live-badge flex items-center gap-2">
+                    <span className="w-2 h-2 bg-white rounded-full" />
+                    MATCH DAY LIVE
                   </span>
                 </div>
               )}
-              <div className="absolute bottom-0 left-0 right-0 p-6 pb-8">
-                <h2 className="text-3xl font-bold text-white mb-3 leading-tight tracking-tight">
+              
+              <div className="absolute bottom-0 left-0 right-0 p-10">
+                <div className="data-precision-mono text-primary font-bold mb-3 tracking-[0.3em]">HEADLINE STORY</div>
+                <h2 className="text-3xl lg:text-4xl xl:text-5xl font-black text-white mb-6 leading-[1.1] tracking-tighter uppercase italic max-w-2xl transform transition-transform group-hover:-translate-y-1">
                   {featuredNews?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
                 </h2>
-                <p className="text-white/50 text-sm mb-5 font-light">Tonight Under the Lights</p>
-                <Button variant="secondary" size="sm" className="group rounded-full px-5 backdrop-blur-sm bg-white/90 text-background hover:bg-white transition-all">
-                  Read Full Story
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
+                <div className="flex items-center gap-6">
+                  <Link to={featuredNews ? `/news/${featuredNews.id}` : "/news"}>
+                    <Button className="bg-eyl-gradient text-white font-black px-10 h-14 rounded-full shadow-[0_0_30px_hsl(187,100%,50%,0.3)] hover:shadow-[0_0_40px_hsl(187,100%,50%,0.5)] transition-all">
+                      EXPLORE ARTICLE
+                      <ArrowRight className="ml-3 h-5 w-5" />
+                    </Button>
+                  </Link>
+                  <span className="text-white/40 data-precision-mono text-xs">OFFICIAL REPORT // 2026 EDITION</span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Latest News - Middle Column */}
-          <div className="col-span-4">
-            <div className="glass-card h-full p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-6 h-6 rounded-md bg-primary/20 flex items-center justify-center">
-                  <Newspaper className="h-3.5 w-3.5 text-primary" />
-                </div>
-                <h3 className="font-semibold text-foreground">Latest News</h3>
+          {/* Side Intelligence - span-5 (Asymmetrical) */}
+          <div className="col-span-5 flex flex-col gap-6">
+            {/* Match Center - Premier League Style Density */}
+            <div className="flex-1">
+              <MatchCenterCard 
+                todayMatches={todayMatches} 
+                tomorrowMatches={tomorrowMatches} 
+                liveMatch={liveMatch} 
+              />
+            </div>
+
+            {/* Sub-news Feed */}
+            <div className="glass-card p-6 flex flex-col justify-between border-white/5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="data-precision-mono text-primary font-bold">LATEST UPDATES</h3>
+                <Link to="/news" className="text-[10px] text-white/40 hover:text-white transition-colors">SEE ALL NEWS</Link>
               </div>
-              <div className="space-y-3">
-                {latestNews.map((item) => (
+              <div className="space-y-4">
+                {latestNews.slice(1, 4).map((item) => (
                   <NewsItem key={item.id} item={item} />
                 ))}
               </div>
-              <Link 
-                to="/news"
-                className="flex items-center justify-end gap-1 text-muted-foreground hover:text-foreground text-sm mt-3 transition-colors"
-              >
-                View All News
-                <ArrowRight className="h-3 w-3" />
-              </Link>
             </div>
-          </div>
-
-          {/* Match Center - Right Column */}
-          <div className="col-span-3">
-            <MatchCenterCard 
-              todayMatches={todayMatches} 
-              tomorrowMatches={tomorrowMatches} 
-              liveMatch={liveMatch} 
-            />
           </div>
         </div>
       </div>
