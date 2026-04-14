@@ -69,8 +69,8 @@ export function HeroSection() {
                 zIndex: index === currentSlide ? 1 : 0,
               }}
             >
-              {/* Premium Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+              {/* Dark Gradient Overlay for optimal readability on white text */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0e1b31] via-[#0e1b31]/40 to-transparent" />
             </div>
           ))}
 
@@ -85,7 +85,7 @@ export function HeroSection() {
 
           <div className="relative z-10 p-6 pb-12 mt-auto flex flex-col justify-end min-h-[80vh]">
             <div className="data-precision-mono text-primary font-bold mb-2 tracking-[0.2em]">TOP STORY</div>
-            <h2 className="text-4xl font-black text-white mb-6 leading-[0.9] tracking-tighter uppercase italic">
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-6 leading-tight tracking-tight uppercase italic drop-shadow-lg">
               {currentHero?.title || "JAN MEDA SHOWDOWN: ARADA VS ADDIS"}
             </h2>
             <div className="flex items-center justify-between gap-4">
@@ -115,8 +115,8 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Mobile: Match center highlights */}
-        <div className="container mx-auto px-4 py-6 -mt-8 relative z-20">
+        {/* Mobile: Match center highlights — removed problematic overlap */}
+        <div className="container mx-auto px-4 py-6 relative z-20">
           <MatchCenterCard 
             todayMatches={todayMatches} 
             tomorrowMatches={tomorrowMatches} 
