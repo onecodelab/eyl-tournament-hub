@@ -257,7 +257,7 @@ export default function TournamentHistory() {
               <img
                 src={tournament.logo_url}
                 alt={tournament.name}
-                className="h-16 w-16 object-contain"
+                className="h-16 w-16 object-contain scale-125 drop-shadow-md"
               />
             )}
             <div>
@@ -277,7 +277,7 @@ export default function TournamentHistory() {
                       <img
                         src={tournament.winner_team.logo_url}
                         alt={tournament.winner_team.name}
-                        className="h-12 w-12 object-contain"
+                        className="h-12 w-12 object-contain scale-125 drop-shadow-md"
                       />
                     )}
                     <div>
@@ -378,7 +378,7 @@ export default function TournamentHistory() {
                                 <img
                                   src={match.home_team.logo_url}
                                   alt=""
-                                  className="h-6 w-6 object-contain"
+                                  className="h-6 w-6 object-contain scale-125 drop-shadow-sm"
                                 />
                               )}
                               <span className="font-medium">
@@ -396,7 +396,7 @@ export default function TournamentHistory() {
                                 <img
                                   src={match.away_team.logo_url}
                                   alt=""
-                                  className="h-6 w-6 object-contain"
+                                  className="h-6 w-6 object-contain scale-125 drop-shadow-sm"
                                 />
                               )}
                             </div>
@@ -546,7 +546,7 @@ export default function TournamentHistory() {
                           <img
                             src={team.logo_url}
                             alt={team.name}
-                            className="h-10 w-10 object-contain"
+                            className="h-10 w-10 object-contain scale-125 drop-shadow-md"
                           />
                         )}
                         <div>
@@ -714,7 +714,7 @@ export default function TournamentHistory() {
                               <img
                                 src={team.logo_url}
                                 alt=""
-                                className="h-5 w-5 object-contain"
+                                className="h-6 w-6 object-contain scale-125 drop-shadow-sm"
                               />
                             )}
                             {team.name}

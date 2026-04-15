@@ -2,8 +2,6 @@ export const NEWS_CATEGORIES = [
   "All",
   "Breakthrough",
   "Match Report",
-  "Scouting",
-  "Talent Spotlight",
   "League Update",
   "Transfer News",
   "General",

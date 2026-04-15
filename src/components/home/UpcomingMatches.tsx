@@ -47,10 +47,10 @@ export function UpcomingMatches() {
               <Link
                 key={match.id}
                 to={`/matches/${match.id}`}
-                className={`glass-card min-w-[260px] p-4 transition-all flex-shrink-0 border-transparent hover:border-primary/50 group ${isLive ? 'live-card-pulse' : ''}`}
+                className={`glass-card min-w-[260px] p-3 transition-all flex-shrink-0 border-transparent hover:border-primary/50 group ${isLive ? 'live-card-pulse' : ''}`}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-2">
                   <div>
                     {isLive ? (
                       <span className="live-badge flex items-center gap-1.5">
@@ -76,14 +76,20 @@ export function UpcomingMatches() {
                 )}
 
                 {/* Teams & Score - Grid Layout */}
-                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mb-3">
+                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mb-2">
                   {/* Home Team */}
-                  <div className="text-center">
-                    <div className="team-logo-sm bg-primary/20 text-primary mx-auto mb-1">
-                      {match.home_team?.short_name || "HT"}
-                    </div>
-                    <span className="text-[11px] font-medium text-foreground line-clamp-1">{match.home_team?.name || "Home"}</span>
-                  </div>
+                      <div className="flex-shrink-0 text-center">
+                        {match.home_team?.logo_url ? (
+                          <div className="flex items-center justify-center h-16 w-16 mx-auto mb-1">
+                            <img src={match.home_team.logo_url} className="w-16 h-16 object-contain scale-125 drop-shadow-md" alt="Home" />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary mb-1 mx-auto">
+                            {match.home_team?.short_name || 'HT'}
+                          </div>
+                        )}
+                        <p className="text-[10px] uppercase tracking-wider font-bold text-foreground/80 truncate w-20 mx-auto">{match.home_team?.name}</p>
+                      </div>
 
                   {/* Score / VS */}
                   <div className="text-center">
@@ -97,12 +103,18 @@ export function UpcomingMatches() {
                   </div>
 
                   {/* Away Team */}
-                  <div className="text-center">
-                    <div className="team-logo-sm bg-secondary text-muted-foreground mx-auto mb-1">
-                      {match.away_team?.short_name || "AT"}
-                    </div>
-                    <span className="text-[11px] font-medium text-foreground line-clamp-1">{match.away_team?.name || "Away"}</span>
-                  </div>
+                      <div className="flex-shrink-0 text-center">
+                        {match.away_team?.logo_url ? (
+                          <div className="flex items-center justify-center h-16 w-16 mx-auto mb-1">
+                            <img src={match.away_team.logo_url} className="w-16 h-16 object-contain scale-125 drop-shadow-md" alt="Away" />
+                          </div>
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground mb-1 mx-auto">
+                            {match.away_team?.short_name || 'AT'}
+                          </div>
+                        )}
+                        <p className="text-[10px] uppercase tracking-wider font-bold text-foreground/80 truncate w-20 mx-auto">{match.away_team?.name}</p>
+                      </div>
                 </div>
 
                 {/* Date/Time/Venue - Footer */}

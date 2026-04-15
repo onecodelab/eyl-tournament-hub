@@ -125,7 +125,20 @@ export default function AdminTeams() {
                 <TableBody>
                   {teams?.map((team) => (
                     <TableRow key={team.id} className="border-border/20 hover:bg-muted/30 transition-colors">
-                      <TableCell className="font-medium">{team.name}</TableCell>
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-3">
+                        {team.logo_url ? (
+                          <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                            <img src={team.logo_url} className="w-8 h-8 object-contain scale-125 drop-shadow-sm" alt="" />
+                          </div>
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary flex-shrink-0">
+                            {team.short_name?.slice(0, 2) || "HT"}
+                          </div>
+                        )}
+                        {team.name}
+                      </div>
+                    </TableCell>
                       <TableCell className="text-muted-foreground">{team.short_name || "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{team.coach || "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{team.stadium || "—"}</TableCell>

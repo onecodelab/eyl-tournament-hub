@@ -116,13 +116,15 @@ export function HeroSection() {
         </div>
 
         {/* Mobile: Match center highlights — removed problematic overlap */}
-        <div className="container mx-auto px-4 py-6 relative z-20">
-          <MatchCenterCard 
-            todayMatches={todayMatches} 
-            tomorrowMatches={tomorrowMatches} 
-            liveMatch={liveMatch} 
-          />
-        </div>
+        {(todayMatches.length > 0 || tomorrowMatches.length > 0 || liveMatch) && (
+          <div className="container mx-auto px-4 py-6 relative z-20">
+            <MatchCenterCard 
+              todayMatches={todayMatches} 
+              tomorrowMatches={tomorrowMatches} 
+              liveMatch={liveMatch} 
+            />
+          </div>
+        )}
       </div>
 
       {/* Desktop: Superior LALIGA-style Asymmetrical Layout */}
@@ -169,16 +171,18 @@ export function HeroSection() {
           {/* Side Intelligence - span-5 (Asymmetrical) */}
           <div className="col-span-5 flex flex-col gap-6">
             {/* Match Center - Premier League Style Density */}
-            <div className="flex-1">
-              <MatchCenterCard 
-                todayMatches={todayMatches} 
-                tomorrowMatches={tomorrowMatches} 
-                liveMatch={liveMatch} 
-              />
-            </div>
+            {(todayMatches.length > 0 || tomorrowMatches.length > 0 || liveMatch) && (
+              <div className="flex-1">
+                <MatchCenterCard 
+                  todayMatches={todayMatches} 
+                  tomorrowMatches={tomorrowMatches} 
+                  liveMatch={liveMatch} 
+                />
+              </div>
+            )}
 
             {/* Sub-news Feed */}
-            <div className="glass-card p-6 flex flex-col justify-between border-white/5">
+            <div className={`glass-card p-6 flex flex-col justify-between border-white/5 ${(!todayMatches.length && !tomorrowMatches.length && !liveMatch) ? 'flex-1' : ''}`}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="data-precision-mono text-primary font-bold">LATEST UPDATES</h3>
                 <Link to="/news" className="text-[10px] text-white/40 hover:text-white transition-colors">SEE ALL NEWS</Link>
@@ -282,8 +286,8 @@ interface MatchCenterItemProps {
     home_score: number | null;
     away_score: number | null;
     match_date: string | null;
-    home_team?: { name: string; short_name: string | null } | null;
-    away_team?: { name: string; short_name: string | null } | null;
+    home_team?: { name: string; short_name: string | null; logo_url?: string | null } | null;
+    away_team?: { name: string; short_name: string | null; logo_url?: string | null } | null;
   };
 }
 
@@ -295,9 +299,15 @@ function MatchCenterItem({ match }: MatchCenterItemProps) {
     <div className="bg-secondary/50 rounded-lg p-2.5">
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center text-[8px] font-bold text-primary flex-shrink-0">
-            {match.home_team?.short_name?.slice(0, 2) || "HT"}
-          </div>
+          {match.home_team?.logo_url ? (
+            <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+              <img src={match.home_team.logo_url} className="w-4 h-4 object-contain scale-125 drop-shadow-sm" alt="Home" />
+            </div>
+          ) : (
+            <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary flex-shrink-0">
+              {match.home_team?.short_name?.slice(0, 2) || "HT"}
+            </div>
+          )}
           <span className="truncate text-foreground">{match.home_team?.name || "Home Team"}</span>
         </div>
         {isLive && (
@@ -319,9 +329,15 @@ function MatchCenterItem({ match }: MatchCenterItemProps) {
       </div>
       <div className="flex items-center justify-between text-xs mt-1">
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-5 h-5 rounded-full bg-secondary flex items-center justify-center text-[8px] font-bold text-muted-foreground flex-shrink-0">
-            {match.away_team?.short_name?.slice(0, 2) || "AT"}
-          </div>
+          {match.away_team?.logo_url ? (
+            <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+              <img src={match.away_team.logo_url} className="w-4 h-4 object-contain scale-125 drop-shadow-sm" alt="Away" />
+            </div>
+          ) : (
+            <div className="w-5 h-5 rounded-full bg-secondary flex items-center justify-center text-[8px] font-bold text-muted-foreground flex-shrink-0">
+              {match.away_team?.short_name?.slice(0, 2) || "AT"}
+            </div>
+          )}
           <span className="truncate text-foreground">{match.away_team?.name || "Away Team"}</span>
         </div>
         {isCompleted && (

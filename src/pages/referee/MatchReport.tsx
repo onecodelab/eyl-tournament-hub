@@ -402,12 +402,16 @@ export default function MatchReport() {
             <Badge className="mb-4 bg-green-500">Match Completed</Badge>
             <div className="flex items-center justify-center gap-8">
               <div className="text-center">
-                {match.home_team?.logo_url && (
+                {match.home_team?.logo_url ? (
                   <img
                     src={match.home_team.logo_url}
                     alt=""
-                    className="h-16 w-16 mx-auto object-contain mb-2"
+                    className="h-20 w-20 mx-auto object-contain mb-2 scale-125 drop-shadow-lg"
                   />
+                ) : (
+                  <div className="h-20 w-20 mx-auto rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary mb-2">
+                    {match.home_team?.short_name || "HT"}
+                  </div>
                 )}
                 <p className="font-bold text-lg">{match.home_team?.name || "Home"}</p>
               </div>
@@ -425,12 +429,16 @@ export default function MatchReport() {
                 </div>
               </div>
               <div className="text-center">
-                {match.away_team?.logo_url && (
+                {match.away_team?.logo_url ? (
                   <img
                     src={match.away_team.logo_url}
                     alt=""
-                    className="h-16 w-16 mx-auto object-contain mb-2"
+                    className="h-20 w-20 mx-auto object-contain mb-2 scale-125 drop-shadow-lg"
                   />
+                ) : (
+                  <div className="h-20 w-20 mx-auto rounded-full bg-secondary flex items-center justify-center text-xl font-bold text-muted-foreground mb-2">
+                    {match.away_team?.short_name || "AT"}
+                  </div>
                 )}
                 <p className="font-bold text-lg">{match.away_team?.name || "Away"}</p>
               </div>

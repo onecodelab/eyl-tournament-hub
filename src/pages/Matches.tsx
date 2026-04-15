@@ -6,7 +6,6 @@ import { useState, useMemo, useEffect } from "react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -96,11 +95,30 @@ export default function MatchesPage() {
 
   const tournamentsMap = new Map(tournaments.map((t) => [t.id, t]));
 
+  const normalizeTournamentName = (name: string) => {
+    return name.replace(/(?:\b|\s)[uU]\s*-?\s*\d+\b.*$/i, '').trim() || name;
+  };
+
+  const groupedTournaments = useMemo(() => {
+    const groups = new Map<string, { id: string; name: string; ids: string[] }>();
+    tournaments.forEach(t => {
+      const normName = normalizeTournamentName(t.name);
+      if (!groups.has(normName)) {
+        groups.set(normName, { id: normName, name: normName, ids: [] });
+      }
+      groups.get(normName)!.ids.push(t.id);
+    });
+    return Array.from(groups.values());
+  }, [tournaments]);
+
   const filteredMatches = useMemo(() => {
     let result = matches;
     
     if (selectedTournament !== "all") {
-      result = result.filter(m => m.tournament_id === selectedTournament);
+      const selectedGroup = groupedTournaments.find(g => g.id === selectedTournament);
+      if (selectedGroup) {
+        result = result.filter(m => m.tournament_id && selectedGroup.ids.includes(m.tournament_id));
+      }
     }
     
     if (searchQuery) {
@@ -127,7 +145,10 @@ export default function MatchesPage() {
   const counts = useMemo(() => {
     const tournamentMatches = selectedTournament === "all" 
       ? matches 
-      : matches.filter(m => m.tournament_id === selectedTournament);
+      : matches.filter(m => {
+          const selectedGroup = groupedTournaments.find(g => g.id === selectedTournament);
+          return m.tournament_id && selectedGroup?.ids.includes(m.tournament_id);
+        });
     
     return {
       all: tournamentMatches.length,
@@ -135,23 +156,24 @@ export default function MatchesPage() {
       upcoming: tournamentMatches.filter((m) => m.status === "scheduled").length,
       completed: tournamentMatches.filter((m) => m.status === "completed").length,
     };
-  }, [matches, selectedTournament]);
+  }, [matches, selectedTournament, groupedTournaments]);
 
   const selectedTournamentName = selectedTournament === "all" 
     ? "All Tournaments" 
-    : tournaments.find(t => t.id === selectedTournament)?.name || "Tournament";
+    : groupedTournaments.find(g => g.id === selectedTournament)?.name || "Tournament";
 
   return (
     <Layout>
       {/* Hero - Elite Fixtures */}
-      <section className="relative py-12 overflow-hidden bg-eyl-navy border-b border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.1),transparent_60%)]" />
+      <section className="relative py-6 md:py-8 overflow-hidden bg-eyl-navy border-b border-white/5">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.2),transparent_60%)]" />
         <div className="container mx-auto px-4 relative">
-          <div className="flex items-center gap-4">
-            <EYLLogo size={48} withGlow />
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="hidden md:block"><EYLLogo size={48} withGlow /></div>
+            <div className="md:hidden"><EYLLogo size={36} withGlow /></div>
             <div>
-              <div className="data-precision-mono text-primary font-bold tracking-widest mb-1">MATCH CENTRE</div>
-              <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
+              <div className="data-precision-mono text-primary font-bold tracking-widest text-[10px] md:text-xs mb-0.5 md:mb-1">MATCH CENTRE</div>
+              <h1 className="text-2xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
                 Fixtures & <span className="text-primary">Results</span>
               </h1>
             </div>
@@ -160,61 +182,52 @@ export default function MatchesPage() {
       </section>
 
       <div className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="calendar" className="w-full">
-          {/* Horizontal Scroll Tabs */}
-          <div className="scroll-container mb-6">
-            <TabsList className="glass-card p-1 inline-flex gap-1">
-              <TabsTrigger value="calendar" className="gap-2 text-sm">
-                <Calendar className="h-4 w-4" strokeWidth={1.5} />
-                Calendar
-              </TabsTrigger>
-              <TabsTrigger value="formats" className="gap-2 text-sm">
-                <Info className="h-4 w-4" strokeWidth={1.5} />
-                Formats
-              </TabsTrigger>
-              <TabsTrigger value="venues" className="gap-2 text-sm">
-                <MapPinned className="h-4 w-4" strokeWidth={1.5} />
-                Venues
-              </TabsTrigger>
-              <TabsTrigger value="rules" className="gap-2 text-sm">
-                <ClipboardList className="h-4 w-4" strokeWidth={1.5} />
-                Rules
-              </TabsTrigger>
-            </TabsList>
-          </div>
-
-          {/* Match Calendar Tab */}
-          <TabsContent value="calendar">
-            {/* Tournament Filter */}
-            <div className="glass-card p-3 mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <EYLLogo size={24} />
-                <span className="font-medium text-sm">{selectedTournamentName}</span>
+        <div className="w-full">
+            {/* Filter Bar */}
+            <div className="glass-card p-2 sm:p-3 mb-6 flex flex-row items-center justify-between gap-2 overflow-x-auto no-scrollbar">
+              <div className="flex items-center gap-2 flex-shrink-0 min-w-0">
+                <EYLLogo size={24} className="flex-shrink-0" />
+                <span className="font-medium text-xs sm:text-sm whitespace-nowrap truncate">{selectedTournamentName}</span>
               </div>
-              <Select value={selectedTournament} onValueChange={setSelectedTournament}>
-                <SelectTrigger className="w-[200px] h-9 text-sm">
-                  <SelectValue placeholder="Select Tournament" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Tournaments</SelectItem>
-                  {tournaments.map((tournament) => (
-                    <SelectItem key={tournament.id} value={tournament.id}>
-                      {tournament.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Keyword Search */}
-            <div className="relative mb-6">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search games by team, venue or event details..." 
-                className="pl-10 h-11 bg-card border-border/50 focus:border-primary/50 transition-all rounded-xl"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              
+              <div className="flex flex-row items-center justify-end gap-2 w-full md:w-auto">
+                {/* Expandable Search */}
+                <div className={`relative transition-all duration-300 overflow-hidden group border rounded-md flex-shrink-0 ${
+                    searchQuery 
+                      ? 'w-[140px] sm:w-[200px] md:w-[250px] border-border/50 bg-card' 
+                      : 'w-9 border-transparent hover:border-border/50 focus-within:border-primary/50 bg-transparent hover:bg-card focus-within:bg-card'
+                  }`}>
+                  <div className="absolute left-0 top-0 h-9 w-9 flex items-center justify-center pointer-events-none text-muted-foreground group-focus-within:text-primary">
+                    <Search className="h-4 w-4" />
+                  </div>
+                  <Input 
+                    placeholder="Search games by name..." 
+                    className="pl-9 h-9 border-none bg-transparent shadow-none focus-visible:ring-0 w-full placeholder:text-transparent focus-within:placeholder:text-muted-foreground sm:group-hover:placeholder:text-muted-foreground focus:placeholder:opacity-100"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  {/* Invisible active element on desktop that forces expansion on hover via CSS child */}
+                  {!searchQuery && (
+                    <div className="hidden sm:block absolute inset-0 cursor-pointer peer" onClick={(e) => {
+                      const input = e.currentTarget.parentElement?.querySelector('input');
+                      if (input) input.focus();
+                    }}></div>
+                  )}
+                </div>
+                <Select value={selectedTournament} onValueChange={setSelectedTournament}>
+                  <SelectTrigger className="w-[140px] sm:w-[200px] h-9 text-xs sm:text-sm">
+                    <SelectValue placeholder="Tournaments" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Tournaments</SelectItem>
+                    {groupedTournaments.map((group) => (
+                      <SelectItem key={group.id} value={group.id}>
+                        {group.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* Status Filter Pills - Horizontal Scroll */}
@@ -236,16 +249,6 @@ export default function MatchesPage() {
               ))}
             </div>
 
-            {/* Age Groups Pills - Horizontal Scroll */}
-            <div className="scroll-container mb-4">
-              <span className="text-xs text-muted-foreground mr-2 whitespace-nowrap">Age Groups:</span>
-              {ageGroups.map((ag) => (
-                <span key={ag.name} className={`px-2.5 py-1 rounded-full text-[11px] font-medium whitespace-nowrap ${ag.color}`}>
-                  {ag.name}
-                </span>
-              ))}
-            </div>
-
             {/* Matches Grid */}
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -261,9 +264,9 @@ export default function MatchesPage() {
                   const tournament = tournamentsMap.get(match.tournament_id || "");
 
                   return (
-                    <div key={match.id} className="glass-card p-4 hover:border-primary/50 transition-all">
+                    <div key={match.id} className="glass-card p-3 md:p-4 hover:border-primary/50 transition-all">
                       {/* Header */}
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center justify-between mb-2">
                         <span className={`status-badge ${
                           isLive ? "status-live" : isCompleted ? "status-completed" : "status-upcoming"
                         }`}>
@@ -289,14 +292,20 @@ export default function MatchesPage() {
                       )}
 
                       {/* Match Grid Layout */}
-                      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 mb-3">
+                      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 mb-2">
                         {/* Home Team */}
-                        <div className="text-center">
-                          <div className="team-logo-md bg-primary/20 text-primary mx-auto mb-1">
-                            {match.home_team?.short_name || "HT"}
-                          </div>
-                          <p className="text-[13px] font-medium truncate">{match.home_team?.name || "Home"}</p>
-                        </div>
+                        <div className="flex-shrink-0 text-center">
+                          {match.home_team?.logo_url ? (
+                            <div className="flex items-center justify-center h-16 w-16 mx-auto mb-1">
+                              <img src={match.home_team.logo_url} className="w-16 h-16 object-contain scale-125 drop-shadow-md" alt={match.home_team.name} />
+                            </div>
+                          ) : (
+                            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary mx-auto mb-1">
+                              {match.home_team?.short_name || 'HT'}
+                            </div>
+                          )}
+                        <p className="text-[10px] uppercase tracking-wider font-bold text-foreground/80 truncate w-20 mx-auto">{match.home_team?.name}</p>
+                      </div>
 
                         {/* Score */}
                         <div className="text-center">
@@ -315,12 +324,18 @@ export default function MatchesPage() {
                         </div>
 
                         {/* Away Team */}
-                        <div className="text-center">
-                          <div className="team-logo-md bg-secondary text-muted-foreground mx-auto mb-1">
-                            {match.away_team?.short_name || "AT"}
-                          </div>
-                          <p className="text-[13px] font-medium truncate">{match.away_team?.name || "Away"}</p>
-                        </div>
+                        <div className="flex-shrink-0 text-center">
+                          {match.away_team?.logo_url ? (
+                            <div className="flex items-center justify-center h-16 w-16 mx-auto mb-1">
+                              <img src={match.away_team.logo_url} className="w-16 h-16 object-contain scale-125 drop-shadow-md" alt={match.away_team.name} />
+                            </div>
+                          ) : (
+                            <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground mx-auto mb-1">
+                              {match.away_team?.short_name || 'AT'}
+                            </div>
+                          )}
+                        <p className="text-[10px] uppercase tracking-wider font-bold text-foreground/80 truncate w-20 mx-auto">{match.away_team?.name}</p>
+                      </div>
                       </div>
 
                       {/* Footer Info */}
@@ -362,96 +377,7 @@ export default function MatchesPage() {
                 </p>
               </div>
             )}
-          </TabsContent>
-
-          {/* Event Formats Tab */}
-          <TabsContent value="formats">
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              {eventFormats.map((fmt, index) => (
-                <div 
-                  key={fmt.name}
-                  className="glass-card p-4"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
-                    <fmt.icon className="h-5 w-5 text-primary" strokeWidth={1.5} />
-                  </div>
-                  <h3 className="text-sm font-bold mb-1">{fmt.name}</h3>
-                  <p className="text-muted-foreground text-xs mb-2">{fmt.description}</p>
-                  <p className="text-xs text-primary">{fmt.details}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="glass-card p-4">
-              <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
-                <Users className="h-4 w-4 text-primary" strokeWidth={1.5} />
-                Age Groups Served
-              </h3>
-              <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-3">
-                {ageGroups.map((ag) => (
-                  <div key={ag.name} className="p-3 rounded-lg bg-secondary/50 text-center">
-                    <div className={`text-lg font-bold mb-0.5 ${ag.color.split(' ')[1]}`}>{ag.name}</div>
-                    <p className="text-xs text-muted-foreground">{ag.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Venues Tab */}
-          <TabsContent value="venues">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {venues.map((venue, index) => (
-                <div 
-                  key={venue.name}
-                  className="glass-card p-4"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="p-2 rounded-xl bg-primary/10">
-                      <MapPinned className="h-5 w-5 text-primary" strokeWidth={1.5} />
-                    </div>
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary">{venue.type}</span>
-                  </div>
-                  <h3 className="text-sm font-bold mb-0.5">{venue.name}</h3>
-                  <p className="text-muted-foreground text-xs mb-2">{venue.location}</p>
-                  <div className="flex items-center gap-1.5 text-xs">
-                    <Users className="h-3 w-3 text-muted-foreground" strokeWidth={1.5} />
-                    <span className="text-muted-foreground">Capacity: {venue.capacity}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* Rules Tab */}
-          <TabsContent value="rules">
-            <div className="glass-card p-4">
-              <h3 className="text-base font-bold mb-4 flex items-center gap-2">
-                <ClipboardList className="h-4 w-4 text-primary" strokeWidth={1.5} />
-                Tournament Rules
-              </h3>
-              <div className="space-y-2">
-                {tournamentRules.map((rule, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 rounded-lg bg-secondary/30">
-                    <span className="w-6 h-6 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                      {index + 1}
-                    </span>
-                    <p className="text-xs text-muted-foreground pt-1">{rule}</p>
-                  </div>
-                ))}
-              </div>
-              
-              <div className="mt-4 p-3 rounded-lg border border-primary/30 bg-primary/5">
-                <p className="text-xs text-muted-foreground">
-                  <strong className="text-foreground">Full regulations</strong> are available in the official EYL Rulebook. 
-                  Contact the league office for a complete copy.
-                </p>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
+        </div>
       </div>
     </Layout>
   );

@@ -118,17 +118,19 @@ export default function Clubs() {
                   {/* Team Header */}
                   <div className="flex items-center gap-4 mb-6">
                     <div className="relative">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center border border-primary/30 group-hover:border-primary/60 transition-colors">
+                      <div className="w-16 h-16 flex items-center justify-center transition-colors">
                         {team.logo_url ? (
                           <img 
                             src={team.logo_url} 
                             alt={team.name} 
-                            className="w-12 h-12 object-contain"
+                            className="w-full h-full object-contain scale-125 drop-shadow-md"
                           />
                         ) : (
-                          <span className="text-xl font-bold text-primary">
-                            {team.short_name || team.name?.slice(0, 2)}
-                          </span>
+                          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center border border-primary/30">
+                            <span className="text-xl font-bold text-primary">
+                              {team.short_name || team.name?.slice(0, 2)}
+                            </span>
+                          </div>
                         )}
                       </div>
                       {/* Rank Badge with EYL Logo */}

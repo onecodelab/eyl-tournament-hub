@@ -155,9 +155,13 @@ export default function ClubDetail() {
           <div className="flex flex-col md:flex-row items-end gap-8 lg:gap-12">
             {/* Club Badge */}
             <div className="relative shrink-0">
-              <div className="w-40 h-40 md:w-52 md:h-52 glass-card flex items-center justify-center p-8 border-primary/30 shadow-[0_0_30px_hsl(187,100%,50%,0.1)]">
+              <div className="w-40 h-40 md:w-52 md:h-52 flex items-center justify-center transition-all duration-500">
                 {team.logo_url ? (
-                  <img src={team.logo_url} alt={team.name} className="w-full h-full object-contain filter drop-shadow-2xl" />
+                  <img 
+                    src={team.logo_url} 
+                    alt={team.name} 
+                    className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] scale-110" 
+                  />
                 ) : (
                   <span className="text-6xl font-black text-primary/50 italic">
                     {team.short_name || team.name?.slice(0, 3)}

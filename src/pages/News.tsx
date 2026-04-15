@@ -73,21 +73,12 @@ export default function NewsPage() {
   return (
     <Layout>
       {/* Hero */}
-      <section className="relative py-12 md:py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/8 via-primary/3 to-transparent" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] -translate-y-1/2 translate-x-1/4" />
+      <section className="bg-background pt-8 pb-4">
         <div className="container mx-auto px-4 relative">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.5} />
-              <span className="text-xs font-semibold text-primary uppercase tracking-widest">Media Center</span>
-            </div>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-3">
-              Stories & <span className="text-gradient-gold">Highlights</span>
+            <h1 className="text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter leading-none">
+              Stories & <span className="text-primary">Highlights</span>
             </h1>
-            <p className="text-muted-foreground text-sm md:text-base max-w-lg">
-              The latest news, match highlights, and press resources from the Ethiopian Youth League.
-            </p>
           </div>
         </div>
       </section>

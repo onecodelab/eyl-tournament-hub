@@ -390,8 +390,12 @@ export default function LiveMatch() {
           <CardContent className="py-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1">
-                {match.home_team?.logo_url && (
-                  <img src={match.home_team.logo_url} alt="" className="h-12 w-12 object-contain" />
+                {match.home_team?.logo_url ? (
+                  <img src={match.home_team.logo_url} alt="" className="h-14 w-14 object-contain scale-125 drop-shadow-md" />
+                ) : (
+                  <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                    {match.home_team?.short_name || "HT"}
+                  </div>
                 )}
                 <div>
                   <p className="font-bold text-lg">{match.home_team?.name || "Home"}</p>
@@ -424,8 +428,12 @@ export default function LiveMatch() {
                   <p className="font-bold text-lg">{match.away_team?.name || "Away"}</p>
                   <p className="text-xs text-muted-foreground">Away</p>
                 </div>
-                {match.away_team?.logo_url && (
-                  <img src={match.away_team.logo_url} alt="" className="h-12 w-12 object-contain" />
+                {match.away_team?.logo_url ? (
+                  <img src={match.away_team.logo_url} alt="" className="h-14 w-14 object-contain scale-125 drop-shadow-md" />
+                ) : (
+                  <div className="h-14 w-14 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-muted-foreground">
+                    {match.away_team?.short_name || "AT"}
+                  </div>
                 )}
               </div>
             </div>

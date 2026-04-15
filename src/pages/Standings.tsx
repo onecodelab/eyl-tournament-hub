@@ -89,15 +89,15 @@ export default function StandingsPage() {
 
   return (
     <Layout>
-      {/* Hero - Elite Competition Hub */}
-      <section className="relative py-12 overflow-hidden border-b border-white/5 bg-eyl-navy">
+      {/* Hero - Elite Competition Hub - Tightened for better first impression */}
+      <section className="relative py-6 overflow-hidden border-b border-white/5 bg-eyl-navy">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.1),transparent_60%)]" />
         <div className="container mx-auto px-4 relative">
           <div className="flex items-center gap-4">
-            <EYLLogo size={48} withGlow />
+            <EYLLogo size={36} withGlow />
             <div>
-              <div className="data-precision-mono text-primary font-bold tracking-widest mb-1">OFFICIAL COMPETITIONS</div>
-              <h1 className="text-3xl md:text-4xl font-black text-white italic uppercase tracking-tighter">
+              <div className="data-precision-mono text-primary font-bold tracking-widest mb-0.5 text-[10px]">OFFICIAL COMPETITIONS</div>
+              <h1 className="text-2xl md:text-3xl font-black text-white italic uppercase tracking-tighter leading-none">
                 Youth <span className="text-primary">Competitions</span>
               </h1>
             </div>
@@ -170,10 +170,10 @@ export default function StandingsPage() {
                             <img 
                               src={tournament.logo_url} 
                               alt={tournament.name}
-                              className="w-12 h-12 rounded-lg object-cover border border-white/10"
+                              className="w-12 h-12 object-contain scale-125 drop-shadow-sm flex-shrink-0"
                             />
                           ) : (
-                            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                               <Trophy className="h-6 w-6 text-primary" strokeWidth={1.5} />
                             </div>
                           )}
@@ -220,13 +220,15 @@ export default function StandingsPage() {
                       </div>
                       
                       <div className="flex items-start gap-4 mb-5">
-                        <div className="w-14 h-14 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center">
-                          {representative.logo_url ? (
-                            <img src={representative.logo_url} alt={groupName} className="w-full h-full object-cover rounded-xl" />
-                          ) : (
+                        {representative.logo_url ? (
+                          <div className="w-14 h-14 flex items-center justify-center shrink-0">
+                            <img src={representative.logo_url} alt={groupName} className="w-14 h-14 object-contain scale-125 drop-shadow-sm" />
+                          </div>
+                        ) : (
+                          <div className="w-14 h-14 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0">
                             <Trophy className="h-7 w-7 text-primary" />
-                          )}
-                        </div>
+                          </div>
+                        )}
                         <div>
                           <h3 className="text-lg font-black uppercase italic tracking-tighter leading-none mb-1">
                             {groupName}

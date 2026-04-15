@@ -77,7 +77,7 @@ function TeamSlot({
     )}>
       {/* Team Logo */}
       <div className={cn(
-        "relative rounded-full flex items-center justify-center overflow-hidden transition-all duration-500 flex-shrink-0",
+        "relative flex items-center justify-center transition-all duration-500 flex-shrink-0",
         "w-5 h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7",
         hasTrueTeam && isNewlyQualified && "animate-team-appear",
         showGlow && hasTrueTeam && "team-glow"
@@ -86,7 +86,7 @@ function TeamSlot({
           <img 
             src={team.logo_url} 
             alt={team.name}
-            className="w-full h-full object-cover rounded-full"
+            className="w-full h-full object-contain scale-125 drop-shadow-sm"
           />
         ) : hasTrueTeam ? (
           <div className={cn(
@@ -96,7 +96,7 @@ function TeamSlot({
             {team.short_name || team.name.slice(0, 3).toUpperCase()}
           </div>
         ) : (
-          <div className="w-full h-full rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/50">
+          <div className="w-full h-full rounded-full bg-amber-500/20 flex items-center justify-center border border-amber-500/30">
             <HelpCircle className="w-3 h-3 lg:w-3.5 lg:h-3.5 text-amber-500" />
           </div>
         )}

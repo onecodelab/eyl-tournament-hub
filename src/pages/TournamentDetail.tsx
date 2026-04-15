@@ -192,9 +192,15 @@ export default function TournamentDetail() {
                     </td>
                     <td className="p-2 md:p-4">
                       <div className="flex items-center gap-1.5 md:gap-3">
-                        <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary/20 flex items-center justify-center text-[10px] md:text-xs font-bold text-primary flex-shrink-0">
-                          {team.short_name || team.name.slice(0, 2).toUpperCase()}
-                        </div>
+                        {team.logo_url ? (
+                          <div className="flex items-center justify-center w-6 h-6 md:w-8 md:h-8 flex-shrink-0">
+                            <img src={team.logo_url} className="w-6 h-6 md:w-8 md:h-8 object-contain scale-125 drop-shadow-sm" alt={team.name} />
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-[10px] md:text-xs font-bold text-primary flex-shrink-0">
+                            {team.short_name || team.name.slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
                         <span className="font-medium text-xs md:text-sm truncate max-w-[100px] md:max-w-none">{team.name}</span>
                       </div>
                     </td>
@@ -437,16 +443,28 @@ export default function TournamentDetail() {
                         </div>
                         <div className="flex items-center justify-between gap-2">
                           <div className="text-center flex-1">
-                            <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary mx-auto mb-1">
-                              {teamsMap.get(match.home_team_id || '')?.short_name || 'HT'}
-                            </div>
+                            {teamsMap.get(match.home_team_id || '')?.logo_url ? (
+                              <div className="flex items-center justify-center h-14 w-14 mx-auto mb-1">
+                                <img src={teamsMap.get(match.home_team_id || '')!.logo_url!} className="w-12 h-12 object-contain scale-125 drop-shadow-md" alt="Home" />
+                              </div>
+                            ) : (
+                              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary mx-auto mb-1">
+                                {teamsMap.get(match.home_team_id || '')?.short_name || 'HT'}
+                              </div>
+                            )}
                             <p className="text-xs truncate">{teamsMap.get(match.home_team_id || '')?.name}</p>
                           </div>
                           <span className="text-lg font-bold text-primary">VS</span>
                           <div className="text-center flex-1">
-                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xs font-bold mx-auto mb-1">
-                              {teamsMap.get(match.away_team_id || '')?.short_name || 'AT'}
-                            </div>
+                            {teamsMap.get(match.away_team_id || '')?.logo_url ? (
+                              <div className="flex items-center justify-center h-14 w-14 mx-auto mb-1">
+                                <img src={teamsMap.get(match.away_team_id || '')!.logo_url!} className="w-12 h-12 object-contain scale-125 drop-shadow-md" alt="Away" />
+                              </div>
+                            ) : (
+                              <div className="w-14 h-14 rounded-full bg-secondary flex items-center justify-center text-xs font-bold mx-auto mb-1">
+                                {teamsMap.get(match.away_team_id || '')?.short_name || 'AT'}
+                              </div>
+                            )}
                             <p className="text-xs truncate">{teamsMap.get(match.away_team_id || '')?.name}</p>
                           </div>
                         </div>
@@ -474,9 +492,13 @@ export default function TournamentDetail() {
                     {completedMatches.map((match) => (
                       <div key={match.id} className="glass-card p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1">
-                          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
-                            {teamsMap.get(match.home_team_id || '')?.short_name || 'HT'}
-                          </div>
+                          {teamsMap.get(match.home_team_id || '')?.logo_url ? (
+                            <img src={teamsMap.get(match.home_team_id || '')!.logo_url!} className="w-10 h-10 object-contain scale-125 drop-shadow-md" alt="Home" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                              {teamsMap.get(match.home_team_id || '')?.short_name || 'HT'}
+                            </div>
+                          )}
                           <span className="font-medium text-sm">{teamsMap.get(match.home_team_id || '')?.name}</span>
                         </div>
                         <div className="text-center px-4">
@@ -492,9 +514,13 @@ export default function TournamentDetail() {
                         </div>
                         <div className="flex items-center gap-3 flex-1 justify-end">
                           <span className="font-medium text-sm">{teamsMap.get(match.away_team_id || '')?.name}</span>
-                          <div className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">
-                            {teamsMap.get(match.away_team_id || '')?.short_name || 'AT'}
-                          </div>
+                          {teamsMap.get(match.away_team_id || '')?.logo_url ? (
+                            <img src={teamsMap.get(match.away_team_id || '')!.logo_url!} className="w-10 h-10 object-contain scale-125 drop-shadow-md" alt="Away" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-xs font-bold">
+                              {teamsMap.get(match.away_team_id || '')?.short_name || 'AT'}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ))}

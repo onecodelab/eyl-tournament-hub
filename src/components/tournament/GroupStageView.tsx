@@ -181,13 +181,11 @@ export function GroupStageView({
                         <td className="p-2 md:p-3">
                           <div className="flex items-center gap-1.5 md:gap-2">
                             {team.logo_url ? (
-                              <img 
-                                src={team.logo_url} 
-                                alt={team.name}
-                                className="w-5 h-5 md:w-6 md:h-6 rounded-full object-cover flex-shrink-0"
-                              />
+                              <div className="w-5 h-5 md:w-6 md:h-6 flex items-center justify-center flex-shrink-0">
+                                <img src={team.logo_url} alt={team.name} className="w-5 h-5 md:w-6 md:h-6 object-contain scale-125 drop-shadow-sm" />
+                              </div>
                             ) : (
-                              <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary/20 flex items-center justify-center text-[8px] md:text-[10px] font-bold text-primary flex-shrink-0">
+                              <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-primary/10 flex items-center justify-center text-[8px] md:text-[10px] font-bold text-primary flex-shrink-0">
                                 {team.short_name || team.name.slice(0, 2).toUpperCase()}
                               </div>
                             )}

@@ -174,7 +174,9 @@ export default function THOTeams() {
           <TableRow key={team.id}>
             <TableCell>
               {team.logo_url ? (
-                <img src={team.logo_url} alt={team.name} className="h-8 w-8 object-contain" />
+                <div className="flex items-center justify-center h-8 w-8">
+                  <img src={team.logo_url} alt={team.name} className="h-8 w-8 object-contain scale-125 drop-shadow-sm" />
+                </div>
               ) : (
                 <div className="h-8 w-8 bg-muted rounded flex items-center justify-center">
                   <Users className="h-4 w-4 text-muted-foreground" />

@@ -239,7 +239,7 @@ export default function Players() {
                           <img 
                             src={team.logo_url} 
                             alt={team.name} 
-                            className="h-6 w-6 object-contain"
+                            className="h-6 w-6 object-contain scale-125 drop-shadow-sm flex-shrink-0"
                           />
                         ) : (
                           <div className="h-6 w-6 rounded-full bg-muted flex items-center justify-center">

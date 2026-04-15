@@ -280,7 +280,7 @@ function LeaderboardCard({ title, data, valueLabel, valueColor = "gold" }: Leade
               <p className="text-sm font-medium truncate">{player.name}</p>
               <p className="text-[10px] text-muted-foreground truncate flex items-center gap-1">
                 {player.teamLogo && (
-                  <img src={player.teamLogo} alt="" className="w-3 h-3 object-contain" />
+                  <img src={player.teamLogo} alt="" className="w-3 h-3 object-contain scale-125 drop-shadow-sm ml-1" />
                 )}
                 {player.team}
               </p>
@@ -340,7 +340,7 @@ function TeamLeaderboardCard({ title, data }: TeamLeaderboardCardProps) {
               <img 
                 src={team.logoUrl} 
                 alt={team.name}
-                className="w-7 h-7 object-contain"
+                className="w-7 h-7 object-contain scale-125 drop-shadow-sm"
               />
             ) : (
               <div className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold ${
