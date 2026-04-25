@@ -9,12 +9,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "bg-transparent text-primary-foreground rounded-full shadow-[rgba(255,255,255,0.1)_0px_1px_0px_0px_inset,rgba(255,255,255,0.25)_0px_0px_0px_1px,rgba(0,0,0,0.2)_0px_-1px_0px_0px_inset] hover:opacity-60 transition-opacity",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full shadow-[rgba(255,255,255,0.1)_0px_1px_0px_0px_inset,rgba(255,255,255,0.25)_0px_0px_0px_1px,rgba(0,0,0,0.2)_0px_-1px_0px_0px_inset]",
+        outline: "border border-white/10 bg-transparent shadow-[0_7px_3px_rgba(0,0,0,0.03)] hover:opacity-60 transition-opacity rounded-[6px]",
+        secondary: "bg-transparent border border-white/10 text-white rounded-[6px] shadow-[0_7px_3px_rgba(0,0,0,0.03)] hover:opacity-60 transition-opacity",
+        ghost: "hover:opacity-60 transition-opacity text-[#6a6b6c] hover:text-white rounded-full",
         link: "text-primary underline-offset-4 hover:underline",
+        cta: "bg-white/80 text-[#18191a] hover:bg-white rounded-full transition-colors font-semibold",
       },
       size: {
         default: "h-10 px-4 py-2",

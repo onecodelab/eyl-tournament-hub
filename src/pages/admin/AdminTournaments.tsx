@@ -6,6 +6,8 @@ import { useCreateTournament, useUpdateTournament, useDeleteTournament } from "@
 import { useTHOAdminUsers, useTournamentAdmins } from "@/hooks/useTHOAdminUsers";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,7 +46,7 @@ export default function AdminTournaments() {
   
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingTournament, setEditingTournament] = useState<Tournament | null>(null);
-  const [selectedAdminId, setSelectedAdminId] = useState<string>("");
+  const [selectedAdminIds, setSelectedAdminIds] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -67,12 +69,14 @@ export default function AdminTournaments() {
     teams_qualifying_per_group: 2,
   });
 
-  // Fetch current assigned admin when editing
+  // Fetch current assigned admins when editing
   const { data: currentAdmins } = useTournamentAdmins(editingTournament?.id);
   
   useEffect(() => {
-    if (currentAdmins?.length) {
-      setSelectedAdminId(currentAdmins[0]);
+    if (currentAdmins) {
+      setSelectedAdminIds(currentAdmins);
+    } else {
+      setSelectedAdminIds([]);
     }
   }, [currentAdmins]);
 
@@ -97,7 +101,7 @@ export default function AdminTournaments() {
       teams_qualifying_per_group: 2,
     });
     setEditingTournament(null);
-    setSelectedAdminId("");
+    setSelectedAdminIds([]);
   };
 
   const handleEdit = (tournament: Tournament) => {
@@ -157,26 +161,39 @@ export default function AdminTournaments() {
       if (editingTournament) {
         await updateTournament.mutateAsync({ id: editingTournament.id, ...tournamentData } as any);
         
-        // Update tournament admin assignment
-        if (selectedAdminId) {
+        // Update tournament admin assignments
+        if (selectedAdminIds.length >= 0) {
+          // Always clear and re-add for simplicity in a many-to-many relationship
           await supabase
             .from("tournament_admins")
             .delete()
             .eq("tournament_id", editingTournament.id);
           
-          await supabase
-            .from("tournament_admins")
-            .insert({ tournament_id: editingTournament.id, user_id: selectedAdminId });
+          if (selectedAdminIds.length > 0) {
+            const adminInserts = selectedAdminIds.map(userId => ({
+              tournament_id: editingTournament.id,
+              user_id: userId
+            }));
+            
+            await supabase
+              .from("tournament_admins")
+              .insert(adminInserts);
+          }
         }
         
         toast({ title: "Success", description: "Tournament updated successfully" });
       } else {
         const result = await createTournament.mutateAsync(tournamentData as any);
         
-        if (selectedAdminId && result?.id) {
+        if (selectedAdminIds.length > 0 && result?.id) {
+          const adminInserts = selectedAdminIds.map(userId => ({
+            tournament_id: result.id,
+            user_id: userId
+          }));
+          
           await supabase
             .from("tournament_admins")
-            .insert({ tournament_id: result.id, user_id: selectedAdminId });
+            .insert(adminInserts);
         }
         
         toast({ title: "Success", description: "Tournament created successfully" });
@@ -268,27 +285,49 @@ export default function AdminTournaments() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label className="flex items-center gap-2">
                       <UserCog className="h-4 w-4" />
-                      Assign THO Admin
+                      Assign THO Admins (Multiple)
                     </Label>
-                    <Select value={selectedAdminId || "none"} onValueChange={(val) => setSelectedAdminId(val === "none" ? "" : val)}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a THO Admin" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No Admin Assigned</SelectItem>
-                        {thoAdminUsers?.map((admin) => (
-                          <SelectItem key={admin.user_id} value={admin.user_id}>
-                            {admin.display_name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {thoAdminUsers?.length === 0 && (
-                      <p className="text-xs text-muted-foreground">
-                        No THO Admin users found. Create one in User Roles first.
+                    <Card className="bg-muted/30 border-dashed">
+                      <CardContent className="p-3">
+                        <ScrollArea className="h-[120px] pr-4">
+                          <div className="space-y-2">
+                            {thoAdminUsers?.length === 0 ? (
+                              <p className="text-xs text-muted-foreground text-center py-4">
+                                No THO Admin users found. Create one in User Roles first.
+                              </p>
+                            ) : (
+                              thoAdminUsers?.map((admin) => (
+                                <div key={admin.user_id} className="flex items-center space-x-2 p-1.5 rounded-md hover:bg-muted/50 transition-colors">
+                                  <Checkbox 
+                                    id={`admin-${admin.user_id}`}
+                                    checked={selectedAdminIds.includes(admin.user_id)}
+                                    onCheckedChange={(checked) => {
+                                      if (checked) {
+                                        setSelectedAdminIds([...selectedAdminIds, admin.user_id]);
+                                      } else {
+                                        setSelectedAdminIds(selectedAdminIds.filter(id => id !== admin.user_id));
+                                      }
+                                    }}
+                                  />
+                                  <label 
+                                    htmlFor={`admin-${admin.user_id}`}
+                                    className="text-sm font-medium leading-none cursor-pointer flex-1"
+                                  >
+                                    {admin.display_name}
+                                  </label>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </ScrollArea>
+                      </CardContent>
+                    </Card>
+                    {selectedAdminIds.length > 0 && (
+                      <p className="text-[10px] text-primary font-medium">
+                        {selectedAdminIds.length} admin(s) selected
                       </p>
                     )}
                   </div>

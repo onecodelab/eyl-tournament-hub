@@ -113,131 +113,142 @@ const communityInitiatives = [
 export default function About() {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-background" />
-        <div className="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+      {/* Hero Section — Cinematic Professionalism */}
+      <section className="relative py-24 md:py-32 overflow-hidden bg-background">
+        {/* Radical Glow Background (Brand Principle #4) */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsl(var(--primary)/0.15),transparent_60%)]" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4" />
         
-        <div className="container mx-auto px-4 relative">
-          <div className="flex flex-col lg:flex-row items-center gap-12">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-                <Trophy className="h-4 w-4" />
-                Digital Tournament Management
+              <div className="inline-flex items-center gap-3 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 mb-8">
+                <Trophy className="h-4 w-4 text-primary" />
+                <span className="data-precision-mono text-primary font-bold">OFFICIAL TOURNAMENT MANAGEMENT</span>
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-                About the <span className="text-primary">Ethiopian Youth League</span> (EYL)
+              
+              <h1 className="text-4xl md:text-6xl lg:text-8xl font-black mb-8 text-white uppercase italic tracking-tighter leading-[0.95]">
+                About the <br />
+                <span className="text-primary drop-shadow-[0_0_30px_hsl(var(--primary)/0.4)]">Ethiopian Youth League</span>
               </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl">
-                The Ethiopian Youth League (EYL) is a modern digital tournament management platform developed by Ramiyone. 
-                It is designed to fully digitize youth football tournaments across Ethiopia, from announcement and fixture 
-                creation to live match reporting, results and referee documentation.
-              </p>
-              <p className="text-lg text-muted-foreground max-w-2xl mt-4">
-                EYL provides tournament hosts with powerful, easy-to-use tools while delivering real-time visibility 
-                to fans, players, and academies through a responsive website and mobile app.
-              </p>
+              
+              <div className="space-y-6 max-w-2xl">
+                <p className="text-lg md:text-xl text-white/70 leading-relaxed font-medium">
+                  The Ethiopian Youth League (EYL) is a high-performance digital tournament management platform developed by <span className="text-white font-bold italic">Ramiyone</span>.
+                </p>
+                <p className="text-lg text-white/50 leading-relaxed">
+                  We digitize youth football from the ground up — providing elite-level match reporting, verified data documentation, and professional-grade visibility for the next generation of African talent.
+                </p>
+              </div>
             </div>
-            <div className="relative">
-              <div className="w-64 h-64 lg:w-80 lg:h-80 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                <EYLLogo size={180} withGlow />
+            
+            <div className="relative group">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-[80px] group-hover:bg-primary/30 transition-all duration-700" />
+              <div className="relative w-72 h-72 lg:w-[450px] lg:h-[450px] rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-3xl flex items-center justify-center shadow-2xl">
+                <EYLLogo size={280} withGlow />
+                {/* Orbital detail */}
+                <div className="absolute inset-0 rounded-full border border-primary/20 animate-[spin_20s_linear_infinite]" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Mission & Vision */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="glass-card p-8 border-l-4 border-l-primary">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-primary/10">
-                  <Target className="h-6 w-6 text-primary" />
-                </div>
-                <h2 className="text-2xl font-bold">Our Mission</h2>
+      {/* Mission & Vision — Analytical Precision */}
+      <section className="py-24 bg-secondary/10 relative">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="glass-card p-10 border-l-4 border-l-primary relative overflow-hidden group hover:bg-white/[0.04] transition-all">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Target size={120} />
               </div>
-              <p className="text-muted-foreground leading-relaxed">
-                To digitize Ethiopian youth football tournaments, create verified and reliable match data, give academies 
-                proper credit for talent development, and open real scouting opportunities for young players from every 
-                corner of the country.
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-4 rounded-2xl bg-primary/10 text-primary border border-primary/20">
+                  <Target className="h-8 w-8" />
+                </div>
+                <div>
+                  <span className="data-precision-mono text-primary text-[10px] block mb-1">STRATEGIC GOAL</span>
+                  <h2 className="text-3xl font-black uppercase italic tracking-tight text-white">Our Mission</h2>
+                </div>
+              </div>
+              <p className="text-xl text-white/60 leading-relaxed font-light">
+                To digitize Ethiopian youth football, create <span className="text-white font-medium">verified match data</span>, and open real scouting opportunities for young players from every corner of the country.
               </p>
             </div>
             
-            <div className="glass-card p-8 border-l-4 border-l-cyan-400">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 rounded-xl bg-cyan-400/10">
-                  <Eye className="h-6 w-6 text-cyan-400" />
-                </div>
-                <h2 className="text-2xl font-bold">Our Vision</h2>
+            <div className="glass-card p-10 border-l-4 border-l-primary/50 relative overflow-hidden group hover:bg-white/[0.04] transition-all">
+              <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <Eye size={120} />
               </div>
-              <p className="text-muted-foreground leading-relaxed mb-4">
-                To become the trusted digital backbone of Ethiopian youth football — ensuring every talented player, 
-                regardless of location, gets recorded, recognized, and connected to bigger opportunities.
-              </p>
-              <p className="text-muted-foreground leading-relaxed">
-                In the long term, we aim to grow into one of Africa's leading youth football data and talent 
-                identification platforms.
+              <div className="flex items-center gap-4 mb-6">
+                <div className="p-4 rounded-2xl bg-primary/10 text-primary border border-primary/20">
+                  <Eye className="h-8 w-8" />
+                </div>
+                <div>
+                  <span className="data-precision-mono text-primary text-[10px] block mb-1">FUTURE HORIZON</span>
+                  <h2 className="text-3xl font-black uppercase italic tracking-tight text-white">Our Vision</h2>
+                </div>
+              </div>
+              <p className="text-xl text-white/60 leading-relaxed font-light">
+                To become the <span className="text-white font-medium">trusted digital backbone</span> of Ethiopian youth football — ensuring every talented player gets recognized and connected to bigger opportunities.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Core Values */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Our Core Values</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              These principles guide everything we do at EYL.
-            </p>
+      {/* Core Values — Matrix Density */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,hsl(var(--primary)/0.05),transparent_70%)]" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <span className="data-precision-mono text-primary tracking-[0.4em] font-bold">DNA // PRINCIPLES</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mt-4">Our Core Values</h2>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
             {coreValues.map((value, index) => (
               <div 
                 key={value.title}
-                className="glass-card p-6 text-center hover:border-primary/50 transition-all group"
+                className="glass-card p-8 text-center hover:border-primary/50 hover:bg-primary/5 transition-all group border-white/5"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <value.icon className="h-7 w-7 text-primary" />
+                <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary text-primary group-hover:text-primary-foreground transition-all duration-500 group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.5)]">
+                  <value.icon className="h-8 w-8" />
                 </div>
-                <h3 className="font-bold mb-2">{value.title}</h3>
-                <p className="text-sm text-muted-foreground">{value.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-tight">{value.title}</h3>
+                <p className="text-sm text-white/40 leading-relaxed group-hover:text-white/70 transition-colors">{value.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Our Story */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Our Story</h2>
-              <p className="text-muted-foreground">
-                The journey of Ethiopian Youth League
-              </p>
+      {/* Our Story — Editorial Quality */}
+      <section className="py-24 bg-secondary/5 relative">
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <span className="data-precision-mono text-primary tracking-[0.3em] font-bold">THE JOURNEY</span>
+              <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mt-4">Our Story</h2>
             </div>
             
-            <div className="glass-card p-8 md:p-12">
-              <div className="prose prose-invert max-w-none">
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  Founded in 2023 by <strong className="text-foreground">Yonatan Dawit</strong> and <strong className="text-foreground">Ramin Naser</strong>, 
+            <div className="glass-card p-10 md:p-16 border-white/5 shadow-2xl relative overflow-hidden group">
+              <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-primary/5 rounded-full blur-[100px] group-hover:bg-primary/10 transition-all duration-1000" />
+              <div className="relative z-10 prose prose-invert prose-lg max-w-none prose-p:text-white/60 prose-strong:text-white prose-p:leading-relaxed">
+                <p>
+                  Founded in 2023 by <strong className="font-black italic">Yonatan Dawit</strong> and <strong className="font-black italic">Ramin Naser</strong>, 
                   Ramiyone was born from a simple observation: Ethiopia has immense football talent, but many young players 
                   lack proper records and opportunities, especially outside major cities.
                 </p>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  Starting with the vision to professionalize youth tournaments, we built the Ethiopian Youth League (EYL), 
-                  an easy-to-use digital platform. EYL works seamlessly with our Digital Scouting System (DSS) to turn 
+                <p>
+                  Starting with the vision to professionalize youth tournaments, we built the <span className="text-primary font-bold">Ethiopian Youth League (EYL)</span>, 
+                  an elite digital platform. EYL works seamlessly with our Digital Scouting System (DSS) to turn 
                   match data into permanent, verified player profiles.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
-                  Today, EYL helps tournament organizers run their events more efficiently while creating lasting value: 
+                <p>
+                  Today, EYL helps tournament organizers run their events with <span className="italic">clinical precision</span> while creating lasting value: 
                   academies receive digital credit, players build verifiable career records, and the entire ecosystem 
                   contributes to Ethiopia's national youth development goals.
                 </p>
@@ -247,14 +258,14 @@ export default function About() {
         </div>
       </section>
 
-      {/* Digital Scouting System */}
-      <section className="py-16">
+      {/* Digital Scouting System — High Tech Integration */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Digital Scouting System (DSS)</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              A platform for talent identification that works side by side with EYL. Discover our talent identification 
-              platform and join DSS in different roles. Be part of the future of Ethiopian football.
+          <div className="text-center mb-20">
+            <span className="data-precision-mono text-primary tracking-[0.3em] font-bold">ECOSYSTEM // DSS</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mt-4">Digital Scouting System</h2>
+            <p className="text-white/50 max-w-2xl mx-auto mt-6 text-lg">
+              A high-density talent identification platform working in perfect synchronization with EYL match data.
             </p>
           </div>
           
@@ -262,98 +273,73 @@ export default function About() {
             {dssFeatures.map((feature, index) => (
               <div 
                 key={feature.title}
-                className="glass-card p-6 hover:border-primary/50 transition-all group"
+                className="glass-card p-8 hover:border-primary/50 hover:bg-white/[0.03] transition-all group border-white/5"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="h-6 w-6 text-primary" />
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-all border border-primary/20">
+                  <feature.icon className="h-7 w-7 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-tight">{feature.title}</h3>
+                <p className="text-sm text-white/40 leading-relaxed group-hover:text-white/60 transition-colors">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Registration Process */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Registration Process</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              For Teams and Players
-            </p>
+      {/* Registration Process — Stepped Progression */}
+      <section className="py-24 bg-secondary/5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,hsl(var(--primary)/0.05),transparent_70%)]" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-20">
+            <span className="data-precision-mono text-primary tracking-[0.3em] font-bold">ONBOARDING // WORKFLOW</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mt-4">Registration Process</h2>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {registrationSteps.map((step, index) => (
               <div 
                 key={step.title}
-                className="glass-card p-6 hover:border-primary/50 transition-all group relative"
+                className="glass-card p-8 hover:border-primary/50 hover:bg-white/[0.03] transition-all group relative border-white/5"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="absolute -top-3 -left-3 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                  {index + 1}
+                <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-black text-sm shadow-[0_0_20px_hsl(var(--primary)/0.4)]">
+                  0{index + 1}
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <step.icon className="h-6 w-6 text-primary" />
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-6 border border-primary/20">
+                  <step.icon className="h-7 w-7 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.description}</p>
+                <h3 className="text-xl font-bold mb-3 text-white uppercase tracking-tight">{step.title}</h3>
+                <p className="text-sm text-white/40 leading-relaxed">{step.description}</p>
               </div>
             ))}
           </div>
           
-          <div className="glass-card p-6 max-w-3xl mx-auto text-center">
-            <p className="text-muted-foreground">
-              <strong className="text-foreground">Ramiyone agents</strong> facilitate the entire registration process — from guiding academies, 
-              coaches, and players through forms to organizing photo sessions and issuing digital IDs.
+          <div className="glass-card p-8 max-w-3xl mx-auto text-center border-primary/20 bg-primary/5 shadow-[0_0_50px_rgba(0,0,0,0.2)]">
+            <p className="text-white/70 text-lg">
+              <strong className="text-primary font-black italic">Ramiyone agents</strong> facilitate the entire registration process — from guidance and sessions to issuing <span className="text-white font-bold">Digital IDs</span> that link directly to live player profiles.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Community Initiatives */}
-      <section className="py-16">
+      {/* Integration — Performance Synced */}
+      <section className="py-24">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Community Initiatives</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Building the future of Ethiopian football together
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            {communityInitiatives.map((initiative, index) => (
-              <div 
-                key={initiative.title}
-                className="glass-card p-6 text-center hover:border-primary/50 transition-all"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <h3 className="font-bold mb-2 text-primary">{initiative.title}</h3>
-                <p className="text-sm text-muted-foreground">{initiative.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Integration with EYL */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4">
-          <div className="glass-card p-8 md:p-12 border-primary/30 max-w-4xl mx-auto">
-            <div className="flex flex-col md:flex-row items-center gap-8">
+          <div className="glass-card p-10 md:p-16 border-primary/30 max-w-4xl mx-auto relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-full h-full bg-gradient-to-r from-transparent to-primary/5 pointer-events-none" />
+            <div className="flex flex-col md:flex-row items-center gap-12 relative z-10">
               <div className="shrink-0">
-                <div className="w-24 h-24 rounded-2xl bg-primary/10 flex items-center justify-center">
-                  <Handshake className="h-12 w-12 text-primary" />
+                <div className="w-32 h-32 rounded-3xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-[0_0_40px_hsl(var(--primary)/0.2)] group-hover:shadow-[0_0_60px_hsl(var(--primary)/0.3)] transition-all duration-500">
+                  <Handshake className="h-16 w-16 text-primary" />
                 </div>
               </div>
               <div className="flex-1 text-center md:text-left">
-                <h2 className="text-2xl font-bold mb-4">Integration with EYL</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  All academy and player profiles are linked with the Ethiopian Youth League (EYL). Tournament stats 
-                  update automatically, ensuring seamless synchronization between DSS and EYL.
+                <span className="data-precision-mono text-primary text-[10px] block mb-2 font-black tracking-widest">REAL-TIME DATA SYNC</span>
+                <h2 className="text-3xl md:text-4xl font-black text-white uppercase italic tracking-tighter mb-6">Seamless Integration</h2>
+                <p className="text-xl text-white/50 leading-relaxed font-light">
+                  All academy and player profiles are linked directly with the <span className="text-white font-medium">EYL Tournament Engine</span>. Match stats update automatically, ensuring absolute synchronization across our ecosystem.
                 </p>
               </div>
             </div>
@@ -361,68 +347,71 @@ export default function About() {
         </div>
       </section>
 
-      {/* Contact Information */}
-      <section className="py-16">
+      {/* Contact & Support */}
+      <section className="py-24 bg-secondary/5">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
-            <p className="text-muted-foreground">Get in touch with the EYL team</p>
+          <div className="text-center mb-16">
+            <span className="data-precision-mono text-primary tracking-[0.3em] font-bold">CONNECT // INQUIRIES</span>
+            <h2 className="text-4xl md:text-5xl font-black text-white uppercase italic tracking-tighter mt-4">Contact Us</h2>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <a 
               href="mailto:info@ethiopianyouthleague.com"
-              className="glass-card p-6 text-center hover:border-primary/50 transition-all group"
+              className="glass-card p-10 text-center hover:border-primary/50 hover:bg-white/[0.04] transition-all group border-white/5"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                <Mail className="h-7 w-7 text-primary" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]">
+                <Mail className="h-8 w-8" />
               </div>
-              <h3 className="font-bold mb-2">Email</h3>
-              <p className="text-sm text-muted-foreground">info@ethiopianyouthleague.com</p>
+              <h3 className="text-xl font-bold mb-2 text-white uppercase tracking-tight">Email</h3>
+              <p className="text-sm text-white/40">info@ethiopianyouthleague.com</p>
             </a>
             
             <a 
               href="tel:+251911234567"
-              className="glass-card p-6 text-center hover:border-primary/50 transition-all group"
+              className="glass-card p-10 text-center hover:border-primary/50 hover:bg-white/[0.04] transition-all group border-white/5"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                <Phone className="h-7 w-7 text-primary" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]">
+                <Phone className="h-8 w-8" />
               </div>
-              <h3 className="font-bold mb-2">Phone</h3>
-              <p className="text-sm text-muted-foreground">+251 911 234 567</p>
+              <h3 className="text-xl font-bold mb-2 text-white uppercase tracking-tight">Phone</h3>
+              <p className="text-sm text-white/40">+251 911 234 567</p>
             </a>
             
-            <div className="glass-card p-6 text-center hover:border-primary/50 transition-all group">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                <MapPin className="h-7 w-7 text-primary" />
+            <div className="glass-card p-10 text-center hover:border-primary/50 hover:bg-white/[0.04] transition-all group border-white/5">
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 group-hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)]">
+                <MapPin className="h-8 w-8" />
               </div>
-              <h3 className="font-bold mb-2">Location</h3>
-              <p className="text-sm text-muted-foreground">Addis Ababa, Ethiopia</p>
+              <h3 className="text-xl font-bold mb-2 text-white uppercase tracking-tight">Location</h3>
+              <p className="text-sm text-white/40">Addis Ababa, Ethiopia</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 bg-secondary/30">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Join the Movement?</h2>
-          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Whether you're a player, coach, club, or scout, there's a place for you in the EYL family.
+      {/* CTA — Command Center Entry */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_70%)]" />
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-5xl md:text-7xl font-black text-white uppercase italic tracking-tighter mb-8 leading-none">
+            Ready to Join the <br /> <span className="text-primary">Movement?</span>
+          </h2>
+          <p className="text-white/60 mb-12 max-w-2xl mx-auto text-xl font-light">
+            Whether you're a player, coach, club, or scout, there's a place for you in the elite EYL ecosystem.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-6">
             <Link 
               to="/community" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-full bg-eyl-gradient text-white font-black uppercase tracking-widest shadow-[0_0_40px_hsl(var(--primary)/0.4)] hover:shadow-[0_0_60px_hsl(var(--primary)/0.6)] hover:scale-105 transition-all duration-300"
             >
-              <Users className="h-5 w-5" />
+              <Users className="h-6 w-6" />
               Join Our Community
             </Link>
             <Link 
               to="/matches" 
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border hover:bg-secondary transition-colors"
+              className="inline-flex items-center gap-3 px-10 py-5 rounded-full border-2 border-white/10 text-white font-black uppercase tracking-widest hover:bg-white/5 transition-all duration-300"
             >
-              <Calendar className="h-5 w-5" />
+              <Calendar className="h-6 w-6" />
               View Events
             </Link>
           </div>

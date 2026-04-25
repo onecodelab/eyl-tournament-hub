@@ -1,14 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { format, isToday, isFuture, isPast, parseISO } from "date-fns";
-import { Calendar, MapPin, Clock, Play, Eye, Shield, Key } from "lucide-react";
+import { Calendar, MapPin, Clock, Play, Eye, Shield } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useRefereeMatches } from "@/hooks/useRefereeMatches";
-import { useAuth } from "@/contexts/AuthContext";
-import { useCurrentUserRole } from "@/hooks/useReferees";
-import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 
 type MatchWithTeams = {
   id: string;
@@ -24,36 +21,7 @@ type MatchWithTeams = {
 
 export default function RefereeDashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const { data: roles } = useCurrentUserRole();
   const { data: matches = [], isLoading } = useRefereeMatches();
-
-  const isReferee = roles?.includes("referee") || roles?.includes("admin");
-
-  if (!user) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <Shield className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Authentication Required</h1>
-          <p className="text-muted-foreground mb-4">Please log in to access the referee dashboard.</p>
-          <Button onClick={() => navigate("/auth")}>Sign In</Button>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (!isReferee) {
-    return (
-      <Layout>
-        <div className="container mx-auto px-4 py-16 text-center">
-          <Shield className="h-16 w-16 mx-auto text-destructive mb-4" />
-          <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
-          <p className="text-muted-foreground">You don't have referee permissions.</p>
-        </div>
-      </Layout>
-    );
-  }
 
   const categorizeMatches = (matches: MatchWithTeams[]) => {
     const today: MatchWithTeams[] = [];
@@ -212,16 +180,8 @@ export default function RefereeDashboard() {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">Referee Dashboard</h1>
-            <p className="text-muted-foreground">Manage your assigned matches</p>
+            <p className="text-muted-foreground">Manage match data and reports</p>
           </div>
-          <ChangePasswordDialog
-            trigger={
-              <Button variant="outline" size="sm" className="gap-2">
-                <Key className="h-4 w-4" />
-                Change Password
-              </Button>
-            }
-          />
         </div>
 
         {isLoading ? (

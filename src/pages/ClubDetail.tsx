@@ -142,13 +142,11 @@ export default function ClubDetail() {
 
   return (
     <Layout>
-      {/* Hero Section */}
-    <Layout>
       {/* Hero Section - The Elite Path Style */}
-      <section className="relative min-h-[400px] flex items-end pb-12 overflow-hidden bg-eyl-navy">
+      <section className="relative min-h-[400px] flex items-end pb-12 overflow-hidden bg-background">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-eyl-navy via-eyl-navy/40 to-transparent z-10" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary)/0.15),transparent_70%)] z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,hsl(var(--primary)/0.05),transparent_70%)] z-10" />
         </div>
 
         <div className="container mx-auto px-4 relative z-20">
@@ -160,7 +158,7 @@ export default function ClubDetail() {
                   <img 
                     src={team.logo_url} 
                     alt={team.name} 
-                    className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] scale-110" 
+                    className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(0,0,0,0.5)] scale-110" 
                   />
                 ) : (
                   <span className="text-6xl font-black text-primary/50 italic">
@@ -168,7 +166,7 @@ export default function ClubDetail() {
                   </span>
                 )}
               </div>
-              <div className="absolute -top-4 -right-4 w-16 h-16 rounded-2xl bg-eyl-gradient flex items-center justify-center border-4 border-eyl-navy shadow-lg">
+              <div className="absolute -top-4 -right-4 w-16 h-16 rounded-2xl bg-primary flex items-center justify-center border-4 border-background shadow-lg">
                 <span className="text-2xl font-black text-white italic">{leaguePosition}</span>
               </div>
             </div>
@@ -176,34 +174,34 @@ export default function ClubDetail() {
             {/* Club Info */}
             <div className="flex-1 pb-2">
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <span className="data-precision-mono text-primary font-bold tracking-widest uppercase text-xs">OFFICIAL ACADEMY RANKING</span>
+                <span className="text-[12px] text-primary font-bold tracking-widest uppercase">OFFICIAL ACADEMY RANKING</span>
                 <span className="w-1 h-1 rounded-full bg-white/20" />
-                <span className="data-precision-mono text-white/50 uppercase text-xs">EST. {team.founded_year || '2025'}</span>
+                <span className="text-[12px] text-[#9c9c9d] uppercase">EST. {team.founded_year || '2025'}</span>
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-black text-white italic uppercase tracking-tighter mb-6 leading-[0.9]">
+              <h1 className="text-5xl md:text-7xl font-black text-[#f9f9f9] italic uppercase tracking-tighter mb-6 leading-[0.9]">
                 {team.name}
               </h1>
 
               <div className="flex flex-wrap gap-10">
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Manager</span>
-                  <span className="text-xl font-bold text-white uppercase italic">{team.coach || 'Head Scout'}</span>
+                  <span className="text-[10px] font-bold text-[#9c9c9d] uppercase tracking-widest mb-1">Manager</span>
+                  <span className="text-xl font-bold text-[#f9f9f9] uppercase italic">{team.coach || 'Head Scout'}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Base</span>
-                  <span className="text-xl font-bold text-white uppercase italic">{team.stadium || 'Addis Ababa'}</span>
+                  <span className="text-[10px] font-bold text-[#9c9c9d] uppercase tracking-widest mb-1">Base</span>
+                  <span className="text-xl font-bold text-[#f9f9f9] uppercase italic">{team.stadium || 'Addis Ababa'}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Squad</span>
-                  <span className="text-xl font-bold text-white italic data-precision">{players?.length || 0}</span>
+                  <span className="text-[10px] font-bold text-[#9c9c9d] uppercase tracking-widest mb-1">Squad</span>
+                  <span className="text-xl font-bold text-[#f9f9f9] italic data-precision">{players?.length || 0}</span>
                 </div>
               </div>
             </div>
 
             {/* Tactical CTA */}
             <div className="w-full md:w-auto pb-2">
-              <Button className="w-full md:w-auto bg-white/5 text-white border border-white/20 hover:bg-white/10 px-8 h-14 rounded-full font-black uppercase tracking-widest text-xs transition-all">
+              <Button variant="cta" className="w-full md:w-auto px-8 h-14 tracking-widest uppercase">
                 CLUB MANIFESTO
               </Button>
             </div>
@@ -217,7 +215,7 @@ export default function ClubDetail() {
           
           {/* Left: Tactical Stats - span-4 */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="glass-card p-6 border-primary/20">
+            <div className="glass-card p-6">
               <h3 className="data-precision-mono text-primary font-bold mb-6 tracking-widest flex items-center justify-between">
                 TACTICAL ENERGY
                 <Trophy className="h-4 w-4" />
@@ -255,7 +253,7 @@ export default function ClubDetail() {
             </div>
 
             {/* Modern Form Visualizer */}
-            <div className="glass-card p-6 border-white/5">
+            <div className="glass-card p-6">
               <h3 className="data-precision-mono text-white/50 font-bold mb-6 tracking-widest">ELITE PATH FORM</h3>
               <div className="flex gap-2">
                 {recentForm.map((match, i) => (
@@ -272,7 +270,7 @@ export default function ClubDetail() {
 
             {/* Performance Overlays */}
             {(topScorer || topAssister) && (
-              <div className="glass-card p-6 border-white/5 overflow-hidden relative">
+              <div className="glass-card p-6 overflow-hidden relative">
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                   <Users className="h-24 w-24" />
                 </div>
@@ -305,7 +303,7 @@ export default function ClubDetail() {
           {/* Right: Squad + Schedule + Table - span-8 */}
           <div className="lg:col-span-8 space-y-8">
             {/* Schedule - Premium Timeline */}
-            <div className="glass-card p-6 border-white/5">
+            <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="data-precision-mono text-primary font-bold tracking-widest flex items-center gap-3">
                   <Calendar className="h-4 w-4" />
@@ -362,7 +360,7 @@ export default function ClubDetail() {
             </div>
 
             {/* Squad - Premium Grid */}
-            <div className="glass-card p-6 border-white/5">
+            <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="data-precision-mono text-primary font-bold tracking-widest flex items-center gap-3">
                   <Users className="h-4 w-4" />
@@ -418,7 +416,7 @@ export default function ClubDetail() {
             </div>
 
             {/* League Standing */}
-            <div className="glass-card p-6 border-primary/20">
+            <div className="glass-card p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="data-precision-mono text-primary font-bold tracking-widest">LEAGUE STANDING</h3>
                 <Link to="/standings" className="text-[10px] text-white/40 hover:text-white transition-colors flex items-center gap-1">

@@ -1,8 +1,5 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useUserRole } from "@/hooks/useUserRole";
-import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { 
   LayoutDashboard, 
   Trophy, 
@@ -12,14 +9,10 @@ import {
   Newspaper,
   Video,
   Handshake,
-  LogOut,
-  Menu,
-  Shield,
-  ShieldX,
-  Key,
-  FileText,
   Database,
-  ChevronRight
+  ChevronRight,
+  Menu,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -48,7 +41,6 @@ const adminNavItems = [
   { title: "News", url: "/admin/news", icon: Newspaper },
   { title: "Videos", url: "/admin/videos", icon: Video },
   { title: "Sponsors", url: "/admin/sponsors", icon: Handshake },
-  { title: "User Roles", url: "/admin/roles", icon: Shield },
 ];
 
 function AdminSidebarContent() {
@@ -110,51 +102,7 @@ function AdminSidebarContent() {
 }
 
 export function AdminLayout({ children }: { children: ReactNode }) {
-  const { user, loading, signOut } = useAuth();
-  const { isAdmin, isLoading: isRoleLoading } = useUserRole();
   const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
-  };
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
-
-  if (loading || isRoleLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <EYLLogo size={60} withGlow />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) return null;
-
-  if (!isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 text-center p-8">
-          <ShieldX className="h-16 w-16 text-destructive" />
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground max-w-md">
-            You don't have permission to access the admin panel. This area is restricted to administrators only.
-          </p>
-          <div className="flex gap-3 mt-4">
-            <Button variant="outline" onClick={() => navigate("/")}>Go Home</Button>
-            <Button variant="outline" onClick={handleSignOut}>Sign Out</Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <SidebarProvider>
@@ -173,22 +121,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 <span>Admin</span>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground hidden sm:inline px-3 py-1.5 rounded-full bg-muted/50 font-mono">
-                {user.email}
-              </span>
-              <ChangePasswordDialog
-                trigger={
-                  <Button variant="ghost" size="icon" className="h-8 w-8" title="Change Password">
-                    <Key className="h-3.5 w-3.5" />
-                  </Button>
-                }
-              />
-              <Button variant="ghost" size="sm" onClick={handleSignOut} className="gap-2 h-8 text-xs">
-                <LogOut className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </Button>
-            </div>
+            {/* Action Bar Removed */}
           </header>
           
           {/* Main Content */}

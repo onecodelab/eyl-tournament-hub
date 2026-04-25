@@ -53,7 +53,6 @@ import {
   useTeamPlayers,
   useSubmitMatchReport,
 } from "@/hooks/useRefereeMatches";
-import { useAuth } from "@/contexts/AuthContext";
 
 const WEATHER_OPTIONS = [
   { value: "sunny", label: "Sunny", icon: Sun },
@@ -65,7 +64,6 @@ const WEATHER_OPTIONS = [
 export default function MatchReport() {
   const { id: matchId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const { data: match, isLoading: matchLoading } = useMatchById(matchId || "");
   const { data: events = [] } = useMatchEvents(matchId || "");
@@ -249,7 +247,7 @@ export default function MatchReport() {
           halfTimeHome: halfTimeHome ? parseInt(halfTimeHome) : null,
           halfTimeAway: halfTimeAway ? parseInt(halfTimeAway) : null,
         },
-        refereeEmail: refereeName || user?.email || undefined,
+        refereeEmail: refereeName || "Referee",
         lineups: {
           home_goalkeeper: homeGK,
           away_goalkeeper: awayGK,
@@ -319,7 +317,7 @@ export default function MatchReport() {
           halfTimeHome: halfTimeHome ? parseInt(halfTimeHome) : null,
           halfTimeAway: halfTimeAway ? parseInt(halfTimeAway) : null,
         },
-        refereeEmail: refereeName || user?.email || undefined,
+        refereeEmail: refereeName || "Referee",
         lineups: {
           home_goalkeeper: homeGK,
           away_goalkeeper: awayGK,

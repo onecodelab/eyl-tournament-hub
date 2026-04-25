@@ -1,9 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { useUserRole } from "@/hooks/useUserRole";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
-import { ChangePasswordDialog } from "@/components/ChangePasswordDialog";
 import { 
   LayoutDashboard, 
   Users, 
@@ -11,11 +8,8 @@ import {
   Calendar, 
   Newspaper,
   Video,
-  LogOut,
   Menu,
-  ShieldX,
   Trophy,
-  Key,
   FileText,
   Handshake
 } from "lucide-react";
@@ -121,25 +115,11 @@ function THOSidebarContent({
 }
 
 export function THOAdminLayout({ children, selectedTournamentId, onTournamentChange }: THOAdminLayoutProps) {
-  const { user, loading, signOut } = useAuth();
-  const { isTHOAdmin, isSuperAdmin, isLoading: isRoleLoading } = useUserRole();
   const { assignedTournaments, isLoading: isTournamentLoading } = useTournamentAdmin();
   const navigate = useNavigate();
   const [localTournamentId, setLocalTournamentId] = useState<string | undefined>(
     () => selectedTournamentId || sessionStorage.getItem('tho_selected_tournament') || undefined
   );
-
-  const handleSignOut = async () => {
-    await signOut();
-    sessionStorage.removeItem('tho_selected_tournament');
-    navigate("/");
-  };
-
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate("/auth");
-    }
-  }, [user, loading, navigate]);
 
   // Set default tournament when tournaments load or restore from session
   useEffect(() => {
@@ -162,72 +142,9 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
     onTournamentChange?.(tournamentId);
   };
 
-  if (loading || isRoleLoading || isTournamentLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse flex flex-col items-center gap-4">
-          <EYLLogo size={60} withGlow />
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) return null;
-
-  // Super admins should use the admin panel instead
-  if (isSuperAdmin) {
-    navigate("/admin");
-    return null;
-  }
-
-  // Show access denied for non-THO admin users
-  if (!isTHOAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 text-center p-8">
-          <ShieldX className="h-16 w-16 text-destructive" />
-          <h1 className="text-2xl font-bold">Access Denied</h1>
-          <p className="text-muted-foreground max-w-md">
-            You don't have permission to access the Tournament Host Organization admin panel.
-          </p>
-          <div className="flex gap-3 mt-4">
-            <Button variant="outline" onClick={() => navigate("/")}>
-              Go Home
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show message if no tournaments assigned
-  if (assignedTournaments.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4 text-center p-8">
-          <Trophy className="h-16 w-16 text-muted-foreground" />
-          <h1 className="text-2xl font-bold">No Tournaments Assigned</h1>
-          <p className="text-muted-foreground max-w-md">
-            You haven't been assigned to manage any tournaments yet. Please contact the super admin to get access.
-          </p>
-          <div className="flex gap-3 mt-4">
-            <Button variant="outline" onClick={() => navigate("/")}>
-              Go Home
-            </Button>
-            <Button variant="outline" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
+  if (isTournamentLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }  return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <THOSidebarContent 
@@ -245,22 +162,7 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
                 Tournament Host Organization Admin
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground hidden sm:inline">
-                {user.email}
-              </span>
-              <ChangePasswordDialog
-                trigger={
-                  <Button variant="ghost" size="icon" title="Change Password">
-                    <Key className="h-4 w-4" />
-                  </Button>
-                }
-              />
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </Button>
-            </div>
+            {/* Header Actions Removed */}
           </header>
           
           {/* Main Content */}

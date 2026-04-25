@@ -3,7 +3,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "next-themes";
 import Index from "./pages/Index";
@@ -13,7 +12,6 @@ import Matches from "./pages/Matches";
 import Standings from "./pages/Standings";
 import News from "./pages/News";
 import TournamentDetail from "./pages/TournamentDetail";
-import Auth from "./pages/Auth";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTournaments from "./pages/admin/AdminTournaments";
 import AdminTeams from "./pages/admin/AdminTeams";
@@ -22,7 +20,6 @@ import AdminMatches from "./pages/admin/AdminMatches";
 import AdminNews from "./pages/admin/AdminNews";
 import AdminVideos from "./pages/admin/AdminVideos";
 import AdminSponsors from "./pages/admin/AdminSponsors";
-import AdminRoles from "./pages/admin/AdminRoles";
 import AdminMatchReports from "./pages/admin/AdminMatchReports";
 import AdminDataCenter from "./pages/admin/AdminDataCenter";
 import RefereeDashboard from "./pages/referee/RefereeDashboard";
@@ -45,7 +42,6 @@ const queryClient = new QueryClient();
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -60,7 +56,6 @@ const App = () => (
             <Route path="/tournaments/:id" element={<TournamentDetail />} />
             <Route path="/news" element={<News />} />
             <Route path="/news/:id" element={<NewsDetail />} />
-            <Route path="/auth" element={<Auth />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/tournaments" element={<AdminTournaments />} />
             <Route path="/admin/teams" element={<AdminTeams />} />
@@ -69,7 +64,6 @@ const App = () => (
             <Route path="/admin/news" element={<AdminNews />} />
             <Route path="/admin/videos" element={<AdminVideos />} />
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
-            <Route path="/admin/roles" element={<AdminRoles />} />
             <Route path="/admin/match-reports" element={<AdminMatchReports />} />
             <Route path="/admin/data-center" element={<AdminDataCenter />} />
             <Route path="/tho-admin" element={<THODashboard />} />
@@ -88,7 +82,6 @@ const App = () => (
           </Routes>
         </BrowserRouter>
         </TooltipProvider>
-      </AuthProvider>
     </QueryClientProvider>
   </ThemeProvider>
 );

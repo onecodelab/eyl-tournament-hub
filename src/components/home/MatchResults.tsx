@@ -3,34 +3,34 @@ import { ArrowRight, Calendar, Clock, MapPin } from "lucide-react";
 import { useMatchWithTeams, useTournaments } from "@/hooks/useSupabaseData";
 import { format } from "date-fns";
 
-export function UpcomingMatches() {
+export function MatchResults() {
   const { data: matches = [], isLoading } = useMatchWithTeams();
   const { data: tournaments = [] } = useTournaments();
 
   const tournamentsMap = new Map(tournaments.map((t) => [t.id, t]));
-
-  // Filter for non-completed matches (upcoming and live)
-  const upcomingMatches = matches
-    .filter(match => match.status !== "completed")
+  
+  // Filter for completed matches
+  const completedMatches = matches
+    .filter(match => match.status === "completed")
     .sort((a, b) => {
       const dateA = a.match_date ? new Date(a.match_date).getTime() : 0;
       const dateB = b.match_date ? new Date(b.match_date).getTime() : 0;
-      return dateA - dateB; // Soonest first for upcoming
+      return dateB - dateA; // Most recent first for results
     });
 
-  if (!isLoading && upcomingMatches.length === 0) return null;
+  if (!isLoading && completedMatches.length === 0) return null;
 
   return (
     <section className="container mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="section-title">
-          Upcoming <span className="section-title-accent">Matches</span>
+          Match <span className="section-title-accent">Results</span>
         </h2>
         <Link 
           to="/matches"
           className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1 transition-colors touch-target"
         >
-          Full Schedule
+          View All
           <ArrowRight className="h-3 w-3" strokeWidth={1.5} />
         </Link>
       </div>
@@ -49,27 +49,19 @@ export function UpcomingMatches() {
             </div>
           ))
         ) : (
-          upcomingMatches.slice(0, 6).map((match) => {
-            const isLive = match.status === "live";
+          completedMatches.slice(0, 6).map((match) => {
             const tournament = tournamentsMap.get(match.tournament_id || "");
 
             return (
               <Link
                 key={match.id}
                 to={`/matches/${match.id}`}
-                className={`glass-card min-w-[260px] p-3 transition-all flex-shrink-0 border-transparent hover:border-primary/50 group ${isLive ? 'live-card-pulse' : ''}`}
+                className={`glass-card min-w-[260px] p-3 transition-all flex-shrink-0 border-transparent hover:border-primary/50 group`}
               >
                 {/* Header */}
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    {isLive ? (
-                      <span className="live-badge flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 bg-white rounded-full" />
-                        LIVE
-                      </span>
-                    ) : (
-                      <span className="status-badge status-upcoming">UPCOMING</span>
-                    )}
+                    <span className="status-badge status-completed">FINISHED</span>
                   </div>
                   <span className="text-[11px] text-muted-foreground truncate max-w-[80px]">
                     {tournament?.name || "Tournament"}
@@ -101,15 +93,11 @@ export function UpcomingMatches() {
                     <p className="text-[10px] uppercase tracking-wider font-bold text-foreground/80 truncate w-20 mx-auto">{match.home_team?.name}</p>
                   </div>
 
-                  {/* Score / VS */}
+                  {/* Score */}
                   <div className="text-center">
-                    {isLive ? (
-                      <div className="match-score text-lg">
-                        {match.home_score ?? 0} - {match.away_score ?? 0}
-                      </div>
-                    ) : (
-                      <span className="text-sm font-bold text-muted-foreground">VS</span>
-                    )}
+                    <div className="match-score text-lg">
+                      {match.home_score ?? 0} - {match.away_score ?? 0}
+                    </div>
                   </div>
 
                   {/* Away Team */}
@@ -135,14 +123,10 @@ export function UpcomingMatches() {
                         <Calendar className="h-2.5 w-2.5" strokeWidth={1.5} />
                         {format(new Date(match.match_date), "MMM d")}
                       </span>
-                      <span className="flex items-center gap-0.5">
-                        <Clock className="h-2.5 w-2.5" strokeWidth={1.5} />
-                        {format(new Date(match.match_date), "HH:mm")}
-                      </span>
                     </div>
                   )}
                   {match.venue && (
-                    <span className="flex items-center gap-0.5 truncate max-w-[70px]">
+                    <span className="flex items-center gap-0.5 truncate max-w-[120px]">
                       <MapPin className="h-2.5 w-2.5" strokeWidth={1.5} />
                       {match.venue}
                     </span>

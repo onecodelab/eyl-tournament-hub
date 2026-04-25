@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { FeaturedTournaments } from "@/components/home/FeaturedTournaments";
 import { UpcomingMatches } from "@/components/home/UpcomingMatches";
+import { MatchResults } from "@/components/home/MatchResults";
 import { SeasonHighlights } from "@/components/home/SeasonHighlights";
 import { LatestNewsSection } from "@/components/home/LatestNewsSection";
 
@@ -13,6 +14,7 @@ const Index = () => {
       <PartnersSection />
       <FeaturedTournaments />
       <UpcomingMatches />
+      <MatchResults />
       <SeasonHighlights />
       <LatestNewsSection />
     </Layout>

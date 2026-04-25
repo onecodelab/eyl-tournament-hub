@@ -19,11 +19,19 @@ export function useTHOAdminUsers() {
       if (error) throw error;
       if (!userRoles?.length) return [];
 
-      // Return user IDs with a truncated display name
-      return userRoles.map((ur) => ({
-        user_id: ur.user_id,
-        display_name: `THO Admin (${ur.user_id.substring(0, 8)}...)`,
-      }));
+      // Fetch emails for each user
+      const usersWithEmail = await Promise.all(
+        userRoles.map(async (ur) => {
+          const { data: email } = await supabase
+            .rpc("get_user_email", { _user_id: ur.user_id });
+          return {
+            user_id: ur.user_id,
+            display_name: email || ur.user_id,
+          };
+        })
+      );
+
+      return usersWithEmail;
     },
   });
 }

@@ -70,66 +70,66 @@
   }
 
   .dark {
-    /* Primary Background - Deep Navy */
-    --background: 218 70% 8%;
-    --foreground: 0 0% 100%;
+    /* Primary Background - EYL Deep Navy (#0e1b31) */
+    --background: 218 55% 12%;
+    --foreground: 210 20% 98%;
 
-    /* Card - Glass Effect */
-    --card: 218 60% 10%;
-    --card-foreground: 0 0% 100%;
+    /* Card - Slightly lighter navy with glassmorphism */
+    --card: 218 55% 15%;
+    --card-foreground: 210 20% 98%;
 
     /* Popover */
-    --popover: 218 60% 9%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 218 55% 15%;
+    --popover-foreground: 210 20% 98%;
 
-    /* Primary - EYL Cyan (Logo Color) */
-    --primary: 187 100% 50%;
-    --primary-foreground: 218 70% 8%;
+    /* Primary - EYL Neon Cyan (#00e5ff) */
+    --primary: 186 100% 50%;
+    --primary-foreground: 218 55% 8%;
 
     /* Secondary */
-    --secondary: 218 50% 14%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 218 40% 20%;
+    --secondary-foreground: 210 20% 98%;
 
     /* Muted */
-    --muted: 218 45% 18%;
-    --muted-foreground: 215 25% 60%;
+    --muted: 218 30% 25%;
+    --muted-foreground: 218 20% 65%;
 
-    /* Accent - Cyan */
-    --accent: 187 100% 50%;
-    --accent-foreground: 218 70% 8%;
+    /* Accent - Cyan Glow */
+    --accent: 186 100% 50%;
+    --accent-foreground: 218 55% 8%;
 
     /* Destructive */
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 20% 98%;
 
-    /* Border - Subtle */
-    --border: 0 0% 100% / 0.08;
-    --input: 218 40% 18%;
-    --ring: 187 100% 50%;
+    /* Border - Ghost Border */
+    --border: 218 50% 20%;
+    --input: 218 50% 20%;
+    --ring: 186 100% 50%;
 
-    /* Custom EYL Colors */
-    --eyl-navy: 218 70% 8%;
-    --eyl-navy-light: 218 60% 12%;
-    --eyl-gold: 187 100% 50%;
-    --eyl-gold-dark: 187 80% 40%;
-    --eyl-success: 142 70% 45%;
-    --eyl-live: 187 100% 50%;
-    --eyl-cyan: 187 100% 50%;
+    /* Custom EYL Colors - Brand Alignment */
+    --eyl-navy: 218 55% 12%;
+    --eyl-navy-light: 218 45% 18%;
+    --eyl-gold: 186 100% 50%; /* Brand uses Cyan as primary accent */
+    --eyl-gold-dark: 186 100% 35%;
+    --eyl-success: 142 70% 50%;
+    --eyl-live: 186 100% 50%;
+    --eyl-cyan: 186 100% 50%;
 
     /* Sidebar */
-    --sidebar-background: 218 70% 6%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 187 100% 50%;
-    --sidebar-primary-foreground: 218 70% 8%;
-    --sidebar-accent: 218 50% 14%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 100% / 0.08;
-    --sidebar-ring: 187 100% 50%;
+    --sidebar-background: 218 55% 10%;
+    --sidebar-foreground: 210 20% 98%;
+    --sidebar-primary: 186 100% 50%;
+    --sidebar-primary-foreground: 218 55% 8%;
+    --sidebar-accent: 218 40% 18%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 218 50% 18%;
+    --sidebar-ring: 186 100% 50%;
 
     /* Glass Surface */
-    --glass-surface: 0 0% 100% / 0.03;
-    --glass-border: 0 0% 100% / 0.08;
-    --glass-blur: 10px;
+    --glass-surface: 0 0% 100% / 0.05;
+    --glass-border: 0 0% 100% / 0.1;
+    --glass-blur: 16px;
   }
 }
 
@@ -143,34 +143,45 @@
     font-family: 'Inter', system-ui, sans-serif;
     padding-bottom: env(safe-area-inset-bottom);
     padding-top: env(safe-area-inset-top);
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    font-feature-settings: "calt", "kern", "liga", "ss03";
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold;
-    letter-spacing: -0.01em;
+    letter-spacing: 0.2px;
+    font-weight: 500;
+  }
+
+  h1 {
+    font-weight: 600;
+    letter-spacing: 0px;
+    font-feature-settings: "liga" 0, "ss02", "ss08";
   }
 }
 
 @layer components {
-  /* Premium Glass Card */
+  /* Premium Glass Card -> Raycast Card */
   .glass-card {
     @apply rounded-xl;
-    background: linear-gradient(135deg, hsl(0 0% 100% / 0.05) 0%, hsl(0 0% 100% / 0.02) 100%);
-    border: 1px solid hsl(0 0% 100% / 0.08);
-    backdrop-filter: blur(var(--glass-blur));
+    background-color: hsl(210 5% 7%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 1px rgb(27, 28, 30), 0 0 0 1px rgb(7, 8, 10) inset;
+    transition: all 0.2s ease;
   }
 
   .glass-card-hover {
-    @apply glass-card transition-all duration-200;
+    @apply glass-card;
   }
 
   .glass-card-hover:hover {
-    border-color: hsl(0 0% 100% / 0.18);
-    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 1px rgb(40, 40, 42), 0 0 0 1px rgb(7, 8, 10) inset, 0 4px 12px rgba(0,0,0,0.2);
   }
 
   .glass-card-hover:active {
-    transform: scale(0.98);
+    transform: scale(0.99);
   }
 
   /* Cyan Text */
@@ -259,18 +270,23 @@
     -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
   }
 
-  /* Pill Tabs */
+  /* Pill Tabs -> Raycast Style */
   .pill-tab {
-    @apply px-4 py-2 rounded-full text-sm font-semibold transition-all whitespace-nowrap;
+    @apply px-4 py-2 text-sm transition-all whitespace-nowrap;
+    border-radius: 86px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
     min-height: 32px;
   }
 
   .pill-tab-active {
-    @apply pill-tab bg-primary text-primary-foreground;
+    @apply pill-tab text-primary-foreground;
+    background-color: transparent;
+    box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 0px 0px inset, rgba(255, 255, 255, 0.25) 0px 0px 0px 1px, rgba(0, 0, 0, 0.2) 0px -1px 0px 0px inset;
   }
 
   .pill-tab-inactive {
-    @apply pill-tab text-foreground/60 hover:text-foreground hover:bg-secondary/50;
+    @apply pill-tab text-muted-foreground hover:opacity-60;
   }
 
   /* Compact Match Card */
@@ -323,8 +339,8 @@
 
   /* Sticky Header */
   .sticky-header {
-    @apply sticky top-0 z-10 bg-background/80 backdrop-blur-md py-3;
-    border-bottom: 1px solid hsl(0 0% 100% / 0.08);
+    @apply sticky top-0 z-10 bg-[#07080a] py-3;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 
   /* LALIGA Style Asymmetrical News Grid */

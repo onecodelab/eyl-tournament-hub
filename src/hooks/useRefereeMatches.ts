@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
 
 export interface MatchEvent {
   id: string;
@@ -46,13 +45,9 @@ export interface MatchReport {
 }
 
 export function useRefereeMatches() {
-  const { user } = useAuth();
-
   return useQuery({
-    queryKey: ["referee-matches", user?.id],
+    queryKey: ["referee-matches"],
     queryFn: async () => {
-      if (!user?.id) return [];
-      
       const { data, error } = await supabase
         .from("matches")
         .select(`
@@ -61,13 +56,11 @@ export function useRefereeMatches() {
           away_team:teams!matches_away_team_id_fkey(id, name, short_name, logo_url, coach),
           tournament:tournaments(id, name)
         `)
-        .eq("referee_id", user.id)
         .order("match_date", { ascending: true });
       
       if (error) throw error;
       return data;
     },
-    enabled: !!user?.id,
   });
 }
 
@@ -294,8 +287,6 @@ export function useSubmitMatchReport() {
       half_time_home?: number;
       half_time_away?: number;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
       // Check if report already exists
       const { data: existingReport } = await supabase
         .from("match_reports")
@@ -337,7 +328,6 @@ export function useSubmitMatchReport() {
           .from("match_reports")
           .insert({
             match_id: report.match_id,
-            referee_id: user?.id,
             ...reportData,
           })
           .select()
