@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, Search, X, LogIn, LogOut, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import eylLogo from "@/assets/eyl-logo.png";
 
 const topNavLinks = [
@@ -23,6 +31,13 @@ const mainNavLinks = [
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -94,6 +109,43 @@ export function Navbar() {
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
               </Button>
+
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <User className="h-5 w-5" />
+                      <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-primary rounded-full border-2 border-background" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <div className="px-3 py-2">
+                      <p className="text-sm font-medium truncate">{user.email}</p>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">Signed In</p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="gap-2 cursor-pointer">
+                      <Shield className="h-4 w-4" />
+                      Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                      <LogOut className="h-4 w-4" />
+                      Sign Out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+                  onClick={() => navigate("/login")}
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -120,6 +172,30 @@ export function Navbar() {
               </Link>
             ))}
             <div className="border-t border-border my-2" />
+            {user ? (
+              <>
+                <div className="px-3 py-2 text-xs text-muted-foreground truncate">{user.email}</div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start gap-2 text-destructive"
+                  onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="justify-start gap-2"
+                onClick={() => { navigate("/login"); setMobileMenuOpen(false); }}
+              >
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            )}
           </nav>
         </div>
       )}

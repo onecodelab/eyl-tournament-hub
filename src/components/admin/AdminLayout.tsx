@@ -12,10 +12,12 @@ import {
   Database,
   ChevronRight,
   Menu,
-  FileText
+  FileText,
+  LogOut
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
   SidebarContent,
@@ -103,6 +105,7 @@ function AdminSidebarContent() {
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
 
   return (
     <SidebarProvider>
@@ -121,7 +124,22 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 <span>Admin</span>
               </div>
             </div>
-            {/* Action Bar Removed */}
+            <div className="flex items-center gap-3">
+              {user && (
+                <span className="hidden md:block text-xs text-muted-foreground truncate max-w-[200px]">
+                  {user.email}
+                </span>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 text-xs text-muted-foreground hover:text-destructive"
+                onClick={async () => { await signOut(); navigate("/login"); }}
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Sign Out</span>
+              </Button>
+            </div>
           </header>
           
           {/* Main Content */}
