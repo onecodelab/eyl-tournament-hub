@@ -7,52 +7,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { LogIn, Mail, Lock, Loader2 } from "lucide-react";
+import { UserPlus, Mail, Lock, Loader2, ArrowRight } from "lucide-react";
 import eylLogo from "@/assets/eyl-logo.png";
 
-export default function Login() {
+export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast({ title: "Error", description: "Please enter email and password", variant: "destructive" });
       return;
     }
 
+    if (password.length < 6) {
+      toast({ title: "Error", description: "Password must be at least 6 characters long", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signUp({ email, password });
       if (error) throw error;
 
-      // Check user role to redirect
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: roles } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id);
-
-        const userRole = roles?.[0]?.role;
-
-        if (userRole === "admin") {
-          navigate("/admin");
-        } else if (userRole === "tho_admin") {
-          navigate("/tho-admin");
-        } else if (userRole === "referee") {
-          navigate("/referee");
-        } else {
-          navigate("/");
-        }
-
-        toast({ title: "Welcome back!", description: `Signed in as ${user.email}` });
-      }
+      toast({ 
+        title: "Registration successful!", 
+        description: "Please check your email for a confirmation link, then you can sign in." 
+      });
+      navigate("/login");
     } catch (error: any) {
-      toast({ title: "Login failed", description: error.message, variant: "destructive" });
+      toast({ title: "Registration failed", description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -67,12 +55,12 @@ export default function Login() {
               <img src={eylLogo} alt="EYL" className="h-16 w-auto drop-shadow-[0_0_12px_hsl(187,100%,50%,0.4)]" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold tracking-tight">Sign In</CardTitle>
-              <p className="text-sm text-muted-foreground mt-1">Access your EYL dashboard</p>
+              <CardTitle className="text-2xl font-bold tracking-tight">Create Account</CardTitle>
+              <p className="text-sm text-muted-foreground mt-1">Join the Ethiopian Youth League platform</p>
             </div>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-5">
+          <CardContent className="space-y-6">
+            <form onSubmit={handleSignUp} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2 text-sm">
                   <Mail className="h-3.5 w-3.5 text-muted-foreground" />
@@ -84,8 +72,7 @@ export default function Login() {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-11"
-                  autoComplete="email"
+                  className="h-11 border-white/10"
                 />
               </div>
               <div className="space-y-2">
@@ -99,21 +86,20 @@ export default function Login() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-11"
-                  autoComplete="current-password"
+                  className="h-11 border-white/10"
                 />
               </div>
-              <Button type="submit" className="w-full h-11 gap-2 text-sm font-semibold" disabled={loading}>
+              <Button type="submit" className="w-full h-11 gap-2 text-sm font-semibold shadow-lg shadow-primary/20" disabled={loading}>
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
-                  <LogIn className="h-4 w-4" />
+                  <UserPlus className="h-4 w-4" />
                 )}
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? "Creating account..." : "Sign Up"}
               </Button>
             </form>
 
-            <div className="relative mt-6">
+            <div className="relative">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border/50" />
               </div>
@@ -122,11 +108,11 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="text-center text-sm mt-6">
+            <div className="text-center text-sm">
               <p className="text-muted-foreground">
-                Don't have an account?{" "}
-                <Link to="/signup" className="text-primary font-semibold hover:underline">
-                  Sign Up
+                Already have an account?{" "}
+                <Link to="/login" className="text-primary font-semibold hover:underline inline-flex items-center gap-1">
+                  Sign In <ArrowRight className="h-3 w-3" />
                 </Link>
               </p>
             </div>
