@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Menu,
   FileText,
-  LogOut
+  LogOut,
+  Shield
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
@@ -43,6 +44,7 @@ const adminNavItems = [
   { title: "News", url: "/admin/news", icon: Newspaper },
   { title: "Videos", url: "/admin/videos", icon: Video },
   { title: "Sponsors", url: "/admin/sponsors", icon: Handshake },
+  { title: "User Roles", url: "/admin/roles", icon: Shield },
 ];
 
 function AdminSidebarContent() {

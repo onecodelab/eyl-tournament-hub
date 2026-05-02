@@ -24,6 +24,7 @@ import AdminVideos from "./pages/admin/AdminVideos";
 import AdminSponsors from "./pages/admin/AdminSponsors";
 import AdminMatchReports from "./pages/admin/AdminMatchReports";
 import AdminDataCenter from "./pages/admin/AdminDataCenter";
+import AdminRoles from "./pages/admin/AdminRoles";
 import RefereeDashboard from "./pages/referee/RefereeDashboard";
 import LiveMatch from "./pages/referee/LiveMatch";
 import MatchReport from "./pages/referee/MatchReport";
@@ -70,6 +71,7 @@ const App = () => (
             <Route path="/admin/sponsors" element={<AdminSponsors />} />
             <Route path="/admin/match-reports" element={<AdminMatchReports />} />
             <Route path="/admin/data-center" element={<AdminDataCenter />} />
+            <Route path="/admin/roles" element={<AdminRoles />} />
             <Route path="/tho-admin" element={<THODashboard />} />
             <Route path="/tho-admin/teams" element={<THOTeams />} />
             <Route path="/tho-admin/players" element={<THOPlayers />} />
