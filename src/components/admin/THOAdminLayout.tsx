@@ -127,7 +127,9 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
   // Set default tournament when tournaments load or restore from session
   useEffect(() => {
     if (assignedTournaments.length > 0) {
-      if (!localTournamentId) {
+      const isAssigned = assignedTournaments.some((t: any) => t.id === localTournamentId);
+      
+      if (!localTournamentId || !isAssigned) {
         const defaultId = (assignedTournaments[0] as any).id;
         setLocalTournamentId(defaultId);
         sessionStorage.setItem('tho_selected_tournament', defaultId);
