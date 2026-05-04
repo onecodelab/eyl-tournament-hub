@@ -93,30 +93,6 @@ export default function AdminRoles() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="p-3 rounded-lg bg-primary/5 border border-primary/10 space-y-2">
-                <h4 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2">
-                  <Shield className="h-3 w-3 text-primary" />
-                  How to add new users
-                </h4>
-                <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  New users must first create an account on the <strong>Sign Up</strong> page. 
-                  Once they register, they can provide you with their <strong>User ID (UUID)</strong> 
-                  from their profile, which you can then enter below to assign them a role.
-                </p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full h-8 text-[10px] gap-2 mt-1 border-primary/20 hover:bg-primary/5"
-                  onClick={() => {
-                    const url = window.location.origin + "/signup";
-                    navigator.clipboard.writeText(url);
-                    toast({ title: "Link Copied", description: "Sign up link copied to clipboard" });
-                  }}
-                >
-                  Copy Sign Up Link
-                </Button>
-              </div>
-
               <form onSubmit={handleAddRole} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="userId" className="text-xs uppercase tracking-widest font-semibold text-muted-foreground/70">
