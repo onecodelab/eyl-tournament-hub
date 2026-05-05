@@ -10,34 +10,10 @@ export function useTournamentAdmin() {
     queryFn: async () => {
       if (!user) return [];
 
-      console.log("Fetching tournaments for user:", user.email, "ID:", user.id);
+      console.log("Fetching assigned tournaments for user:", user.email);
 
-      // Check user role
-      const { data: roles, error: roleError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id);
-      
-      if (roleError) {
-        console.error("Error fetching roles:", roleError);
-        return [];
-      }
-
-      const isSuperAdmin = roles?.some(r => r.role === "admin");
-      console.log("User roles:", roles, "isSuperAdmin:", isSuperAdmin);
-
-      if (isSuperAdmin) {
-        // Super admins see everything
-        const { data, error } = await supabase
-          .from("tournaments")
-          .select("id, name, logo_url, status")
-          .order("name", { ascending: true });
-        
-        if (error) throw error;
-        return data || [];
-      }
-
-      // THO Admins only see specifically assigned tournaments
+      // We strictly ONLY fetch tournaments assigned in the tournament_admins table.
+      // Even Super Admins must be assigned to a tournament to see it here.
       const { data, error } = await supabase
         .from("tournament_admins")
         .select(`
