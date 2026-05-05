@@ -33,16 +33,33 @@ export function useReferees() {
   });
 }
 
-// New hook that fetches referees with their emails using the RPC function
+// Hook that fetches referees with their emails reliably
 export function useRefereesWithEmail() {
   return useQuery({
     queryKey: ["referees-with-email"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .rpc("get_referees_with_email");
+      // 1. Get all user IDs with the 'referee' role
+      const { data: roles, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("*")
+        .eq("role", "referee");
       
-      if (error) throw error;
-      return data as RefereeWithEmail[];
+      if (rolesError) throw rolesError;
+      
+      // 2. Resolve emails for each referee
+      const refereesWithEmail = await Promise.all(
+        (roles || []).map(async (role) => {
+          try {
+            const { data: email } = await supabase
+              .rpc("get_user_email", { _user_id: role.user_id });
+            return { ...role, email: email || "Unknown Referee" };
+          } catch (e) {
+            return { ...role, email: "Unknown Referee" };
+          }
+        })
+      );
+      
+      return refereesWithEmail as RefereeWithEmail[];
     },
   });
 }

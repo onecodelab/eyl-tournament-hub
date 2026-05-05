@@ -40,7 +40,7 @@ export default function THOMatches() {
   const { data: allTeams = [] } = useTeams();
   const { data: allMatches = [], isLoading } = useMatches();
   const { data: tournaments = [] } = useTournaments();
-  const { data: referees = [] } = useRefereesWithEmail();
+  const { data: referees = [], isLoading: isLoadingReferees } = useRefereesWithEmail();
   const { assignedTournaments } = useTournamentAdmin();
   const createMatch = useCreateMatch();
   const updateMatch = useUpdateMatch();
@@ -478,6 +478,11 @@ export default function THOMatches() {
                             onChange={(e) => setRefereeSearch(e.target.value)}
                             className="pl-9"
                           />
+                          {isLoadingReferees && (
+                            <div className="absolute right-3 top-2.5">
+                              <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          )}
                         </div>
                         {refereeSearch && (
                           <div className="border rounded-md max-h-40 overflow-y-auto bg-background shadow-sm">

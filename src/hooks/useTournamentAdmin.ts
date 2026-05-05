@@ -10,6 +10,8 @@ export function useTournamentAdmin() {
     queryFn: async () => {
       if (!user) return [];
 
+      console.log("DEBUG: Checking tournament_admins for user ID:", user.id);
+
       // We strictly ONLY fetch tournaments assigned in the tournament_admins table.
       const { data, error } = await supabase
         .from("tournament_admins")
@@ -25,6 +27,7 @@ export function useTournamentAdmin() {
         .eq("user_id", user.id);
 
       if (error) {
+        console.error("DEBUG: Supabase error:", error);
         throw error;
       }
       
@@ -32,6 +35,7 @@ export function useTournamentAdmin() {
         .map((item: any) => item.tournaments)
         .filter(Boolean);
       
+      console.log("DEBUG: Found assigned tournaments:", flattened.length);
       return flattened;
     },
     enabled: !!user,
