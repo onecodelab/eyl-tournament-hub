@@ -229,14 +229,14 @@ export default function THOTeams() {
             <Users className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-2xl font-bold">Teams Management</h1>
-              <p className="text-muted-foreground">
+              <div className="text-muted-foreground text-sm">
                 {selectedTournament ? `Managing teams for ${(selectedTournament as any).name}` : "Select a tournament"}
                 {tournamentDetails && (
                   <span className="ml-2">
                     <Badge variant="secondary">{tournamentDetails.format?.replace("_", " + ").toUpperCase()}</Badge>
                   </span>
                 )}
-              </p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">

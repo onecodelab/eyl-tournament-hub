@@ -149,6 +149,7 @@ export default function THOMatches() {
       stage: formData.stage,
       extra_time_option: isKnockoutStage ? formData.extra_time_option : null,
       tournament_id: selectedTournamentId,
+      extra_time_duration_minutes: formData.extra_time_enabled ? formData.extra_time_duration : null,
     };
 
     try {
@@ -265,14 +266,14 @@ export default function THOMatches() {
             <Calendar className="h-8 w-8 text-primary" />
             <div>
               <h1 className="text-2xl font-bold">Matches Management</h1>
-              <p className="text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
                 {selectedTournament ? `Managing matches for ${(selectedTournament as any).name}` : "Select a tournament"}
                 {tournamentDetails && (
                   <span className="ml-2">
                     <Badge variant="secondary">{tournamentDetails.format?.replace("_", " + ").toUpperCase()}</Badge>
                   </span>
                 )}
-              </p>
+              </div>
             </div>
           </div>
           <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>

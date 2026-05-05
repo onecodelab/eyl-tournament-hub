@@ -10,10 +10,7 @@ export function useTournamentAdmin() {
     queryFn: async () => {
       if (!user) return [];
 
-      console.log("Fetching assigned tournaments for user:", user.email);
-
       // We strictly ONLY fetch tournaments assigned in the tournament_admins table.
-      // Even Super Admins must be assigned to a tournament to see it here.
       const { data, error } = await supabase
         .from("tournament_admins")
         .select(`
@@ -28,7 +25,6 @@ export function useTournamentAdmin() {
         .eq("user_id", user.id);
 
       if (error) {
-        console.error("Error fetching assigned tournaments:", error);
         throw error;
       }
       
@@ -36,7 +32,6 @@ export function useTournamentAdmin() {
         .map((item: any) => item.tournaments)
         .filter(Boolean);
       
-      console.log("Assigned tournaments found:", flattened.length);
       return flattened;
     },
     enabled: !!user,

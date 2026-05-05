@@ -76,7 +76,7 @@ function THOSidebarContent({
         </Link>
         
         {!collapsed && assignedTournaments.length > 0 && onTournamentChange && (
-          <Select value={selectedTournamentId} onValueChange={onTournamentChange}>
+          <Select value={selectedTournamentId || ""} onValueChange={onTournamentChange}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Select Tournament" />
             </SelectTrigger>
