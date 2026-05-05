@@ -16,7 +16,7 @@ import { useRefereesWithEmail } from "@/hooks/useReferees";
 import { useCreateMatch, useUpdateMatch, useDeleteMatch } from "@/hooks/useAdminMutations";
 import { useTournamentAdmin } from "@/hooks/useTournamentAdmin";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar, Plus, Edit, Trash2, Clock } from "lucide-react";
+import { Calendar, Plus, Edit, Trash2, Clock, Search, UserCheck, X } from "lucide-react";
 
 const MATCH_STAGES = [
   { value: "group", label: "Group Stage" },
@@ -48,6 +48,7 @@ export default function THOMatches() {
   const { toast } = useToast();
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [refereeSearch, setRefereeSearch] = useState("");
   const [editingMatch, setEditingMatch] = useState<any>(null);
   const [formData, setFormData] = useState({
     home_team_id: "",
@@ -61,6 +62,11 @@ export default function THOMatches() {
     extra_time_duration: 30,
     extra_time_option: "extra_time",
   });
+
+  // Filter referees by search query
+  const filteredReferees = (referees as any[]).filter((ref) =>
+    ref.email?.toLowerCase().includes(refereeSearch.toLowerCase())
+  );
 
   // Filter teams and matches by selected tournament
   const teams = allTeams.filter((t: any) => t.tournament_id === selectedTournamentId);
@@ -109,6 +115,7 @@ export default function THOMatches() {
       extra_time_option: "extra_time",
     });
     setEditingMatch(null);
+    setRefereeSearch("");
   };
 
   const handleEdit = (match: any) => {
@@ -438,19 +445,64 @@ export default function THOMatches() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <Label>Referee</Label>
-                    <Select value={formData.referee_id} onValueChange={(val) => setFormData({ ...formData, referee_id: val })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Assign referee (optional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {referees.map((ref: any) => (
-                          <SelectItem key={ref.user_id} value={ref.user_id}>
-                            {ref.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Label className="flex items-center gap-2">
+                      <UserCheck className="h-4 w-4" />
+                      Assign Referee
+                    </Label>
+
+                    {/* Show currently selected referee */}
+                    {formData.referee_id && (() => {
+                      const sel = (referees as any[]).find((r) => r.user_id === formData.referee_id);
+                      return sel ? (
+                        <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-md px-3 py-2">
+                          <span className="text-sm font-medium">{sel.email}</span>
+                          <button
+                            type="button"
+                            onClick={() => { setFormData({ ...formData, referee_id: "" }); setRefereeSearch(""); }}
+                            className="text-muted-foreground hover:text-destructive ml-2"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ) : null;
+                    })()}
+
+                    {/* Search box */}
+                    {!formData.referee_id && (
+                      <div className="space-y-1">
+                        <div className="relative">
+                          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Search referee by email..."
+                            value={refereeSearch}
+                            onChange={(e) => setRefereeSearch(e.target.value)}
+                            className="pl-9"
+                          />
+                        </div>
+                        {refereeSearch && (
+                          <div className="border rounded-md max-h-40 overflow-y-auto bg-background shadow-sm">
+                            {filteredReferees.length === 0 ? (
+                              <p className="text-xs text-muted-foreground text-center py-3">No referees found</p>
+                            ) : (
+                              filteredReferees.map((ref: any) => (
+                                <button
+                                  key={ref.user_id}
+                                  type="button"
+                                  className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors flex items-center gap-2"
+                                  onClick={() => {
+                                    setFormData({ ...formData, referee_id: ref.user_id });
+                                    setRefereeSearch("");
+                                  }}
+                                >
+                                  <UserCheck className="h-3.5 w-3.5 text-primary shrink-0" />
+                                  {ref.email}
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                   </div>
                 </form>

@@ -48,6 +48,11 @@ export function useRefereeMatches() {
   return useQuery({
     queryKey: ["referee-matches"],
     queryFn: async () => {
+      // Get the current logged-in user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      // Only fetch matches where THIS referee is assigned (referee_id = user.id)
       const { data, error } = await supabase
         .from("matches")
         .select(`
@@ -56,6 +61,7 @@ export function useRefereeMatches() {
           away_team:teams!matches_away_team_id_fkey(id, name, short_name, logo_url, coach),
           tournament:tournaments(id, name)
         `)
+        .eq("referee_id", user.id)
         .order("match_date", { ascending: true });
       
       if (error) throw error;
