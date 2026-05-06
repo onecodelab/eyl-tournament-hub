@@ -40,7 +40,11 @@ export default function THOMatches() {
   const { data: allTeams = [] } = useTeams();
   const { data: allMatches = [], isLoading } = useMatches();
   const { data: tournaments = [] } = useTournaments();
-  const { data: referees = [], isLoading: isLoadingReferees } = useRefereesWithEmail();
+  const { data: referees = [], isLoading: isLoadingReferees, error: refereeError } = useRefereesWithEmail();
+  
+  if (refereeError) {
+    console.error("Referee fetch error:", refereeError);
+  }
   const { assignedTournaments } = useTournamentAdmin();
   const createMatch = useCreateMatch();
   const updateMatch = useUpdateMatch();
@@ -272,7 +276,7 @@ export default function THOMatches() {
           <div className="flex items-center gap-3">
             <Calendar className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold">Matches Management</h1>
+              <h1 className="text-2xl font-bold">Matches Management (v2)</h1>
             <div className="text-muted-foreground text-sm">
                 {selectedTournament ? `Managing matches for ${(selectedTournament as any).name}` : "Select a tournament"}
                 {tournamentDetails && (
@@ -290,16 +294,16 @@ export default function THOMatches() {
                 Add Match
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md max-h-[90vh] flex flex-col overflow-hidden">
-              <DialogHeader>
+            <DialogContent className="max-w-md max-h-[90vh] flex flex-col p-0">
+              <DialogHeader className="p-6 pb-0">
                 <DialogTitle>{editingMatch ? "Edit Match" : "Add New Match"}</DialogTitle>
                 <DialogDescription>
                   {editingMatch ? "Update match details" : "Schedule a new match"}
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex-1 overflow-y-auto max-h-[60vh] pr-2">
-                <form onSubmit={handleSubmit} id="match-form">
-                  <div className="space-y-4 py-4">
+
+              <ScrollArea className="flex-1 px-6">
+                <form onSubmit={handleSubmit} id="match-form" className="space-y-4 py-4">
                   {/* Match Stage Selection */}
                   <div className="space-y-2">
                     <Label>Match Stage *</Label>
@@ -451,25 +455,30 @@ export default function THOMatches() {
                     </Label>
 
                     {/* Show currently selected referee */}
-                    {formData.referee_id && (() => {
+                    {formData.referee_id ? (() => {
                       const sel = (referees as any[]).find((r) => r.user_id === formData.referee_id);
-                      return sel ? (
-                        <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-md px-3 py-2">
-                          <span className="text-sm font-medium">{sel.email}</span>
-                          <button
+                      return (
+                        <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-md px-3 py-2 mb-2">
+                          <div className="flex flex-col">
+                            <span className="text-sm font-medium">
+                              {sel ? sel.email : "Assigned Referee"}
+                            </span>
+                            {!sel && <span className="text-[10px] text-muted-foreground">ID: {formData.referee_id.slice(0, 8)}...</span>}
+                          </div>
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="sm"
                             onClick={() => { setFormData({ ...formData, referee_id: "" }); setRefereeSearch(""); }}
-                            className="text-muted-foreground hover:text-destructive ml-2"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
                           >
                             <X className="h-4 w-4" />
-                          </button>
+                          </Button>
                         </div>
-                      ) : null;
-                    })()}
-
-                    {/* Search box */}
-                    {!formData.referee_id && (
-                      <div className="space-y-1">
+                      );
+                    })() : (
+                      /* Search box */
+                      <div className="space-y-2">
                         <div className="relative">
                           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
@@ -484,10 +493,17 @@ export default function THOMatches() {
                             </div>
                           )}
                         </div>
+                        
+                        {!isLoadingReferees && referees.length === 0 && (
+                          <p className="text-xs text-orange-500 bg-orange-500/10 p-2 rounded border border-orange-500/20">
+                            No users with the 'referee' role were found in the system.
+                          </p>
+                        )}
+
                         {refereeSearch && (
                           <div className="border rounded-md max-h-40 overflow-y-auto bg-background shadow-sm">
                             {filteredReferees.length === 0 ? (
-                              <p className="text-xs text-muted-foreground text-center py-3">No referees found</p>
+                              <p className="text-xs text-muted-foreground text-center py-3">No matching referees found</p>
                             ) : (
                               filteredReferees.map((ref: any) => (
                                 <button
@@ -509,10 +525,9 @@ export default function THOMatches() {
                       </div>
                     )}
                   </div>
-                  </div>
                 </form>
-              </div>
-              <DialogFooter>
+              </ScrollArea>
+              <DialogFooter className="p-6 pt-2">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancel
                 </Button>
