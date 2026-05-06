@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
-import { useTournaments } from "@/hooks/useSupabaseData";
+import { useTournaments, useTournamentHubs } from "@/hooks/useSupabaseData";
 import { useCreateTournament, useUpdateTournament, useDeleteTournament } from "@/hooks/useAdminMutations";
 import { useTHOAdminUsers, useTournamentAdmins } from "@/hooks/useTHOAdminUsers";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Trophy, UserCog, Settings, Clock, Users } from "lucide-react";
+import { Plus, Pencil, Trash2, Trophy, UserCog, Settings, Clock, Users, Shield } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { useQueryClient } from "@tanstack/react-query";
@@ -37,6 +37,7 @@ const TOURNAMENT_FORMATS = [
 
 export default function AdminTournaments() {
   const { data: tournaments, isLoading } = useTournaments();
+  const { data: hubs } = useTournamentHubs();
   const { data: thoAdminUsers } = useTHOAdminUsers();
   const createTournament = useCreateTournament();
   const updateTournament = useUpdateTournament();
@@ -54,6 +55,8 @@ export default function AdminTournaments() {
     end_date: "",
     status: "upcoming",
     logo_url: "",
+    hub_id: "",
+    new_hub_name: "", // To support creating on the fly
     // Tournament configuration fields
     age_category: "",
     format: "league",
@@ -99,6 +102,8 @@ export default function AdminTournaments() {
       num_groups: 2,
       teams_per_group: 4,
       teams_qualifying_per_group: 2,
+      hub_id: "",
+      new_hub_name: "",
     });
     setEditingTournament(null);
     setSelectedAdminIds([]);
@@ -125,6 +130,8 @@ export default function AdminTournaments() {
       num_groups: tournamentData.num_groups || 2,
       teams_per_group: tournamentData.teams_per_group || 4,
       teams_qualifying_per_group: tournamentData.teams_qualifying_per_group || 2,
+      hub_id: (tournament as any).hub_id || "",
+      new_hub_name: "",
     });
     setDialogOpen(true);
   };
@@ -135,6 +142,38 @@ export default function AdminTournaments() {
       return;
     }
     
+    let finalHubId = formData.hub_id || null;
+
+    // Handle new hub creation if requested
+    if (formData.new_hub_name.trim()) {
+      try {
+        const { data: newHub, error: hubError } = await supabase
+          .from("tournament_hubs")
+          .insert({ name: formData.new_hub_name.trim() })
+          .select()
+          .single();
+        
+        if (hubError) {
+          // If it already exists, try to fetch it
+          if (hubError.code === "23505") {
+            const { data: existingHub } = await supabase
+              .from("tournament_hubs")
+              .select("id")
+              .eq("name", formData.new_hub_name.trim())
+              .single();
+            if (existingHub) finalHubId = existingHub.id;
+          } else {
+            throw hubError;
+          }
+        } else if (newHub) {
+          finalHubId = newHub.id;
+        }
+      } catch (err: any) {
+        toast({ title: "Error creating hub", description: err.message, variant: "destructive" });
+        return;
+      }
+    }
+
     // Prepare data with new fields
     const tournamentData = {
       name: formData.name,
@@ -151,6 +190,8 @@ export default function AdminTournaments() {
       max_substitutions: formData.max_substitutions,
       extra_time_duration_minutes: formData.format !== "league" ? formData.extra_time_duration_minutes : null,
       penalty_shootout: formData.format !== "league" ? formData.penalty_shootout : null,
+      // Hub linkage
+      hub_id: finalHubId,
       // Group+Knockout specific fields
       num_groups: formData.format === "group_knockout" ? formData.num_groups : null,
       teams_per_group: formData.format === "group_knockout" ? formData.teams_per_group : null,
@@ -284,6 +325,40 @@ export default function AdminTournaments() {
                         <SelectItem value="completed">Completed</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  
+                  <div className="space-y-4 p-3 bg-secondary/20 rounded-lg border border-border/50">
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Tournament Hub (Parent Group)
+                      </Label>
+                      <Select 
+                        value={formData.hub_id || "none"} 
+                        onValueChange={(value) => setFormData({ ...formData, hub_id: value === "none" ? "" : value })}
+                      >
+                        <SelectTrigger><SelectValue placeholder="Select existing Hub" /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No Hub (Stand-alone)</SelectItem>
+                          {hubs?.map((hub) => (
+                            <SelectItem key={hub.id} value={hub.id}>{hub.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-[10px] text-muted-foreground uppercase">Or create a new Hub</Label>
+                      <Input 
+                        value={formData.new_hub_name} 
+                        onChange={(e) => setFormData({ ...formData, new_hub_name: e.target.value })} 
+                        placeholder="e.g. Addis Ababa" 
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                    <p className="text-[10px] text-muted-foreground italic">
+                      Link tournaments like "u-17" and "u-20" together by assigning them to the same Hub.
+                    </p>
                   </div>
                   <div className="space-y-3">
                     <Label className="flex items-center gap-2">
