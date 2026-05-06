@@ -272,6 +272,10 @@ export default function THOMatches() {
       onTournamentChange={setSelectedTournamentId}
     >
       <div className="space-y-6">
+        {/* GIANT DEBUG BANNER */}
+        <div className="bg-red-600 text-white p-4 text-center font-bold text-2xl animate-pulse rounded-lg shadow-xl">
+          !!! DEBUG VERSION V4 LOADED !!!
+        </div>
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -303,8 +307,8 @@ export default function THOMatches() {
                 </DialogDescription>
               </DialogHeader>
 
-              <ScrollArea className="flex-1 px-6">
-                <form onSubmit={handleSubmit} id="match-form" className="space-y-4 py-4">
+              <div className="flex-1 overflow-y-auto p-6 max-h-[60vh] border-y border-border/50">
+                <form onSubmit={handleSubmit} id="match-form" className="space-y-4">
                   {/* Match Stage Selection */}
                   <div className="space-y-2">
                     <Label>Match Stage *</Label>
@@ -450,7 +454,6 @@ export default function THOMatches() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <UserCheck className="h-4 w-4" />
                       Assign Referee
@@ -532,7 +535,7 @@ export default function THOMatches() {
                     )}
                   </div>
                 </form>
-              </ScrollArea>
+              </div>
               <DialogFooter className="p-6 pt-2">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancel
