@@ -846,13 +846,25 @@ export default function MatchReport() {
                 Match Report Preview
               </DialogTitle>
             </DialogHeader>
-            <div className="flex-1 min-h-0">
+            <div className="flex-1 min-h-0 flex flex-col">
               {previewUrl && (
-                <iframe
-                  src={previewUrl}
-                  className="w-full h-[calc(90vh-100px)] border rounded-lg"
-                  title="PDF Preview"
-                />
+                <>
+                  <embed
+                    src={`${previewUrl}#toolbar=0&navpanes=0`}
+                    type="application/pdf"
+                    className="w-full flex-1 border rounded-lg bg-muted/20"
+                  />
+                  <div className="mt-4 flex justify-center">
+                    <Button 
+                      variant="link" 
+                      onClick={() => window.open(previewUrl, '_blank')}
+                      className="text-primary hover:text-primary/80"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      Open preview in new tab if it's not loading
+                    </Button>
+                  </div>
+                </>
               )}
             </div>
           </DialogContent>
