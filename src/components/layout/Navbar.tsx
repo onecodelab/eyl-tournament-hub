@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, Search, X, LogIn, LogOut, User, Shield } from "lucide-react";
+import { Menu, Search, X, LogIn, LogOut, User, Shield, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,7 @@ export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const { t, i18n } = useTranslation();
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,15 +48,18 @@ export function Navbar() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-8">
             <nav className="hidden lg:flex items-center gap-6">
-              {topNavLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className="text-[12px] font-medium text-[#9c9c9d] hover:text-white transition-colors tracking-wide"
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {topNavLinks.map((link) => {
+                const translationKey = link.name.replace(/\s+/g, '');
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className="text-[12px] font-medium text-[#9c9c9d] hover:text-white transition-colors tracking-wide"
+                  >
+                    {t(`nav.${translationKey.charAt(0).toLowerCase() + translationKey.slice(1)}`, link.name)}
+                  </Link>
+                );
+              })}
             </nav>
             <span className="text-[12px] text-[#6a6b6c] tracking-wide font-medium">© 2026 ETHIOPIAN YOUTH LEAGUE</span>
           </div>
@@ -82,29 +87,48 @@ export function Navbar() {
 
             {/* Center: Main Nav Links */}
             <nav className="hidden lg:flex items-center justify-center gap-8 flex-1">
-              {mainNavLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.href}
-                  className={`relative text-[16px] font-medium tracking-[0.3px] transition-colors py-1 ${
-                    link.highlight
-                      ? "text-primary hover:text-primary/80 flex items-center gap-2"
-                      : location.pathname === link.href
-                      ? "text-white"
-                      : "text-[#9c9c9d] hover:text-white"
-                  }`}
-                >
-                  {link.highlight && <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
-                  {link.name}
-                  {location.pathname === link.href && !link.highlight && (
-                    <span className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-white/20" />
-                  )}
-                </Link>
-              ))}
+              {mainNavLinks.map((link) => {
+                const translationKey = link.name.replace(/\s+/g, '');
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.href}
+                    className={`relative text-[16px] font-medium tracking-[0.3px] transition-colors py-1 ${
+                      link.highlight
+                        ? "text-primary hover:text-primary/80 flex items-center gap-2"
+                        : location.pathname === link.href
+                        ? "text-white"
+                        : "text-[#9c9c9d] hover:text-white"
+                    }`}
+                  >
+                    {link.highlight && <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
+                    {t(`nav.${translationKey.charAt(0).toLowerCase() + translationKey.slice(1)}`, link.name)}
+                    {location.pathname === link.href && !link.highlight && (
+                      <span className="absolute -bottom-[17px] left-0 right-0 h-[2px] bg-white/20" />
+                    )}
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* Right: Theme Toggle + Search + Auth */}
             <div className="flex items-center gap-2 shrink-0">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative" title="Change Language">
+                    <Globe className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-40">
+                  <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className={`cursor-pointer ${i18n.language === 'en' ? 'bg-primary/20' : ''}`}>
+                    English
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => i18n.changeLanguage('am')} className={`cursor-pointer ${i18n.language === 'am' ? 'bg-primary/20' : ''}`}>
+                    አማርኛ
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               <ThemeToggle />
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
