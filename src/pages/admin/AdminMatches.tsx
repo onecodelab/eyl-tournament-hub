@@ -97,7 +97,7 @@ export default function AdminMatches() {
                   </div>
                   <div className="space-y-2"><Label>Tagline</Label><Textarea value={formData.tagline} onChange={(e) => setFormData({ ...formData, tagline: e.target.value })} placeholder="Match description" /></div>
                   <div className="space-y-2"><Label className="flex items-center gap-2"><User className="h-4 w-4" /> Assign Referee</Label>
-                    <Select value={formData.referee_id} onValueChange={(value) => setFormData({ ...formData, referee_id: value })}><SelectTrigger><SelectValue placeholder="Select referee" /></SelectTrigger><SelectContent>{referees?.length === 0 && (<p className="text-sm text-muted-foreground p-2">No referees available.</p>)}{referees?.map((r) => (<SelectItem key={r.id} value={r.user_id}>{r.email}</SelectItem>))}</SelectContent></Select>
+                    <Select value={formData.referee_id} onValueChange={(value) => setFormData({ ...formData, referee_id: value })}><SelectTrigger><SelectValue placeholder="Select referee" /></SelectTrigger><SelectContent>{referees?.length === 0 && (<p className="text-sm text-muted-foreground p-2">No referees available. Create referee users in User Roles first.</p>)}{referees?.map((r) => (<SelectItem key={r.id} value={r.user_id}>{r.email}</SelectItem>))}</SelectContent></Select>
                   </div>
                   <Button onClick={handleSubmit} className="w-full" disabled={createMatch.isPending || updateMatch.isPending}>{editingMatch ? "Update" : "Create"} Match</Button>
                 </div>
