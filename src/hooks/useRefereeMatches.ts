@@ -329,11 +329,16 @@ export function useSubmitMatchReport() {
         data = result.data;
         error = result.error;
       } else {
+        // Get the current logged-in user
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("User not authenticated");
+
         // Insert new report
         const result = await supabase
           .from("match_reports")
           .insert({
             match_id: report.match_id,
+            referee_id: user.id,
             ...reportData,
           })
           .select()

@@ -7,8 +7,11 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+<<<<<<< HEAD
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+=======
+>>>>>>> pr-5
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Login from "./pages/Login";
@@ -60,6 +63,7 @@ const queryClient = new QueryClient({
 });
 
 const App = () => (
+<<<<<<< HEAD
   <ErrorBoundary>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
@@ -218,6 +222,59 @@ const App = () => (
       </QueryClientProvider>
     </ThemeProvider>
   </ErrorBoundary>
+=======
+  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            
+            <Route path="/matches" element={<Matches />} />
+            <Route path="/standings" element={<Standings />} />
+            <Route path="/tournaments/:id" element={<TournamentDetail />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/tournaments" element={<AdminTournaments />} />
+            <Route path="/admin/teams" element={<AdminTeams />} />
+            <Route path="/admin/players" element={<AdminPlayers />} />
+            <Route path="/admin/matches" element={<AdminMatches />} />
+            <Route path="/admin/news" element={<AdminNews />} />
+            <Route path="/admin/videos" element={<AdminVideos />} />
+            <Route path="/admin/sponsors" element={<AdminSponsors />} />
+            <Route path="/admin/match-reports" element={<AdminMatchReports />} />
+            <Route path="/admin/data-center" element={<AdminDataCenter />} />
+            <Route path="/admin/roles" element={<AdminRoles />} />
+            <Route path="/tho-admin" element={<THODashboard />} />
+            <Route path="/tho-admin/teams" element={<THOTeams />} />
+            <Route path="/tho-admin/players" element={<THOPlayers />} />
+            <Route path="/tho-admin/matches" element={<THOMatches />} />
+            <Route path="/tho-admin/news" element={<THONews />} />
+            <Route path="/tho-admin/videos" element={<THOVideos />} />
+            <Route path="/tho-admin/match-reports" element={<THOMatchReports />} />
+            <Route path="/tho-admin/sponsors" element={<THOSponsors />} />
+            <Route path="/referee" element={<RefereeDashboard />} />
+            <Route path="/referee/match/:id" element={<LiveMatch />} />
+            <Route path="/referee/match/:id/report" element={<MatchReport />} />
+            <Route path="/tournaments/:id/history" element={<TournamentHistory />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
+>>>>>>> pr-5
 );
 
 export default App;

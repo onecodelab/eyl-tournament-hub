@@ -172,6 +172,7 @@ export default function MatchReport() {
       setIsEditing(false);
       toast.success("Match report submitted successfully!");
     } catch (error) {
+      console.error("Submission error:", error);
       toast.error("Failed to submit report");
     }
   };
