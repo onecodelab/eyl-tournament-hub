@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Users, Calendar } from "lucide-react";
-import { useTournaments } from "@/hooks/useSupabaseData";
+import { useTournaments, useTournamentHubs } from "@/hooks/useSupabaseData";
 import { EYLLogo } from "@/components/EYLLogo";
+import { Trophy } from "lucide-react";
 
 const statusConfig = {
   ongoing: { label: "LIVE", className: "status-live" },
@@ -10,7 +11,10 @@ const statusConfig = {
 };
 
 export function FeaturedTournaments() {
-  const { data: tournaments = [], isLoading } = useTournaments();
+  const { data: tournaments = [], isLoading: isLoadingTournaments } = useTournaments();
+  const { data: hubs = [], isLoading: isLoadingHubs } = useTournamentHubs();
+  
+  const isLoading = isLoadingTournaments || isLoadingHubs;
 
   return (
     <section className="container mx-auto px-4 py-6">
@@ -54,7 +58,23 @@ export function FeaturedTournaments() {
                 </span>
 
                 <div className="flex items-start gap-3 mb-2">
-                  <EYLLogo size={28} className="opacity-60 group-hover:opacity-100 transition-opacity" />
+                  {tournament.logo_url ? (
+                    <img 
+                      src={tournament.logo_url} 
+                      alt={tournament.name}
+                      className="w-8 h-8 object-contain scale-125 drop-shadow-sm flex-shrink-0"
+                    />
+                  ) : (tournament as any).hub_id && hubs.find(h => h.id === (tournament as any).hub_id)?.logo_url ? (
+                     <img 
+                      src={hubs.find(h => h.id === (tournament as any).hub_id)?.logo_url} 
+                      alt={tournament.name}
+                      className="w-8 h-8 object-contain scale-125 drop-shadow-sm flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Trophy className="h-4 w-4 text-primary" strokeWidth={1.5} />
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0 pr-12">
                     <h3 className="font-semibold text-[15px] leading-tight text-foreground group-hover:text-foreground transition-colors line-clamp-1">
                       {tournament.name}

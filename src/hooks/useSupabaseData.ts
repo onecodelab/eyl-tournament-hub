@@ -35,6 +35,20 @@ export function useTournaments() {
   });
 }
 
+export function useTournamentHubs() {
+  return useQuery({
+    queryKey: ["tournament-hubs"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("tournament_hubs")
+        .select("*")
+        .order("name", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useTeams(tournamentId?: string) {
   return useQuery({
     queryKey: ["teams", tournamentId],

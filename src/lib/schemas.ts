@@ -20,6 +20,7 @@ export const tournamentSchema = z.object({
   max_substitutions: z.number().int().min(0).max(12).optional().nullable(),
   age_category: z.string().max(50).optional().nullable(),
   format: z.enum(['league', 'knockout', 'group_knockout']).optional().nullable(),
+  hub_id: z.string().uuid().optional().nullable(),
 }).refine(
   (data) => {
     if (!data.start_date || !data.end_date) return true;

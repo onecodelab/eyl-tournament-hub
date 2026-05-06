@@ -546,6 +546,33 @@ export type Database = {
           },
         ]
       }
+      tournament_hubs: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tournament_sponsors: {
         Row: {
           created_at: string
@@ -599,6 +626,7 @@ export type Database = {
           extra_time_duration_minutes: number | null
           format: string | null
           half_time_duration_minutes: number | null
+          hub_id: string | null
           id: string
           logo_url: string | null
           match_duration_minutes: number | null
@@ -622,6 +650,7 @@ export type Database = {
           extra_time_duration_minutes?: number | null
           format?: string | null
           half_time_duration_minutes?: number | null
+          hub_id?: string | null
           id?: string
           logo_url?: string | null
           match_duration_minutes?: number | null
@@ -645,6 +674,7 @@ export type Database = {
           extra_time_duration_minutes?: number | null
           format?: string | null
           half_time_duration_minutes?: number | null
+          hub_id?: string | null
           id?: string
           logo_url?: string | null
           match_duration_minutes?: number | null
@@ -661,6 +691,13 @@ export type Database = {
           winner_team_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "tournaments_hub_id_fkey"
+            columns: ["hub_id"]
+            isOneToOne: false
+            referencedRelation: "tournament_hubs"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tournaments_winner_team_id_fkey"
             columns: ["winner_team_id"]

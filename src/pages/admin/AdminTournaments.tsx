@@ -142,7 +142,10 @@ export default function AdminTournaments() {
       return;
     }
     
-    let finalHubId = formData.hub_id || null;
+    let finalHubId: string | null = null;
+    if (formData.hub_id && formData.hub_id !== "none" && formData.hub_id !== "") {
+      finalHubId = formData.hub_id;
+    }
 
     // Handle new hub creation if requested
     if (formData.new_hub_name.trim()) {
@@ -240,6 +243,7 @@ export default function AdminTournaments() {
         toast({ title: "Success", description: "Tournament created successfully" });
       }
       queryClient.invalidateQueries({ queryKey: ["tournament-admins"] });
+      queryClient.invalidateQueries({ queryKey: ["tournament-hubs"] });
       setDialogOpen(false);
       resetForm();
     } catch (error: any) {
@@ -614,7 +618,18 @@ export default function AdminTournaments() {
                     const t = tournament as any;
                     return (
                       <TableRow key={tournament.id} className="border-border/20 hover:bg-muted/30 transition-colors">
-                        <TableCell className="font-medium">{tournament.name}</TableCell>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-3">
+                            {tournament.logo_url ? (
+                              <img src={tournament.logo_url} alt={tournament.name} className="w-8 h-8 object-contain rounded border border-border/50" />
+                            ) : (
+                              <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+                                <Trophy className="h-4 w-4 text-muted-foreground/50" />
+                              </div>
+                            )}
+                            {tournament.name}
+                          </div>
+                        </TableCell>
                         <TableCell>
                           {t.age_category ? (
                             <Badge variant="secondary">{t.age_category.toUpperCase()}</Badge>

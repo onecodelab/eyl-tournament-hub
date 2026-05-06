@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
-import { useTournaments } from "@/hooks/useSupabaseData";
+import { useTournaments, useTournamentHubs } from "@/hooks/useSupabaseData";
 import { Trophy, Calendar, Users, ArrowRight, Info, FileText, ChevronDown, ChevronUp, ArrowUpDown } from "lucide-react";
 import { EYLLogo } from "@/components/EYLLogo";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -47,7 +47,10 @@ const tournamentFormats = [
 
 export default function StandingsPage() {
   const [expandedRule, setExpandedRule] = useState<number | null>(null);
-  const { data: tournaments = [], isLoading } = useTournaments();
+  const { data: tournaments = [], isLoading: isLoadingTournaments } = useTournaments();
+  const { data: hubs = [], isLoading: isLoadingHubs } = useTournamentHubs();
+  
+  const isLoading = isLoadingTournaments || isLoadingHubs;
 
   const getStatusBadge = (status: string | null) => {
     switch (status) {
@@ -147,13 +150,34 @@ export default function StandingsPage() {
               <div className="grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {Object.entries(
                   tournaments.reduce((acc, t) => {
-                    // Extract group name by removing age category suffixes (e.g., " u-13", " u15")
-                    const groupName = t.name.replace(/\s+u-?\d+$/i, "").trim();
-                    if (!acc[groupName]) acc[groupName] = [];
-                    acc[groupName].push(t);
+                    let groupName: string;
+                    let groupLogo: string | null = null;
+                    let groupId: string;
+
+                    if ((t as any).hub_id) {
+                      const hub = hubs.find(h => h.id === (t as any).hub_id);
+                      groupName = hub?.name || t.name;
+                      groupLogo = hub?.logo_url || null;
+                      groupId = (t as any).hub_id;
+                    } else {
+                      // Extract group name by removing age category suffixes (e.g., " u-13", " u15")
+                      groupName = t.name.replace(/\s+u-?\d+$/i, "").trim();
+                      groupId = `name-${groupName}`;
+                    }
+                    
+                    if (!acc[groupId]) {
+                      acc[groupId] = {
+                        name: groupName,
+                        logo_url: groupLogo,
+                        tournaments: []
+                      };
+                    }
+                    acc[groupId].tournaments.push(t);
                     return acc;
-                  }, {} as Record<string, typeof tournaments>)
-                ).map(([groupName, groupTournaments]) => {
+                  }, {} as Record<string, { name: string; logo_url: string | null; tournaments: typeof tournaments }>)
+                ).map(([groupId, group]) => {
+                  const { name: groupName, logo_url: groupLogo, tournaments: groupTournaments } = group;
+                  
                   // If single tournament, render the classic direct-link card
                   if (groupTournaments.length === 1) {
                     const tournament = groupTournaments[0];
@@ -166,7 +190,13 @@ export default function StandingsPage() {
                         {getStatusBadge(tournament.status)}
                         
                         <div className="flex items-start gap-3">
-                          {tournament.logo_url ? (
+                          {groupLogo ? (
+                            <img 
+                              src={groupLogo} 
+                              alt={groupName}
+                              className="w-12 h-12 object-contain scale-125 drop-shadow-sm flex-shrink-0"
+                            />
+                          ) : tournament.logo_url ? (
                             <img 
                               src={tournament.logo_url} 
                               alt={tournament.name}
@@ -220,7 +250,11 @@ export default function StandingsPage() {
                       </div>
                       
                       <div className="flex items-start gap-4 mb-5">
-                        {representative.logo_url ? (
+                        {groupLogo ? (
+                          <div className="w-14 h-14 flex items-center justify-center shrink-0">
+                            <img src={groupLogo} alt={groupName} className="w-14 h-14 object-contain scale-125 drop-shadow-sm" />
+                          </div>
+                        ) : representative.logo_url ? (
                           <div className="w-14 h-14 flex items-center justify-center shrink-0">
                             <img src={representative.logo_url} alt={groupName} className="w-14 h-14 object-contain scale-125 drop-shadow-sm" />
                           </div>
