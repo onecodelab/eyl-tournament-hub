@@ -277,7 +277,7 @@ export default function THOMatches() {
           <div className="flex items-center gap-3">
             <Calendar className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold">Matches Management (v2)</h1>
+              <h1 className="text-2xl font-bold bg-yellow-500 text-black px-2">Matches Management (DEBUG V3)</h1>
             <div className="text-muted-foreground text-sm">
                 {selectedTournament ? `Managing matches for ${(selectedTournament as any).name}` : "Select a tournament"}
                 {tournamentDetails && (
@@ -450,16 +450,21 @@ export default function THOMatches() {
                     </p>
                   </div>
                   <div className="space-y-2">
+                <div className="space-y-2">
                     <Label className="flex items-center gap-2">
                       <UserCheck className="h-4 w-4" />
                       Assign Referee
                     </Label>
 
+                    <div className="p-2 bg-blue-500/10 border border-blue-500 rounded text-[10px] mb-2">
+                      DEBUG: Referees loaded: {referees.length} | Loading: {isLoadingReferees ? "YES" : "NO"} | Error: {refereeError ? "YES" : "NO"}
+                    </div>
+
                     {/* Show currently selected referee */}
                     {formData.referee_id ? (() => {
                       const sel = (referees as any[]).find((r) => r.user_id === formData.referee_id);
                       return (
-                        <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-md px-3 py-2 mb-2">
+                        <div className="flex items-center justify-between bg-primary/10 border-2 border-green-500 rounded-md px-3 py-2 mb-2">
                           <div className="flex flex-col">
                             <span className="text-sm font-medium">
                               {sel ? sel.email : "Assigned Referee"}
@@ -479,7 +484,7 @@ export default function THOMatches() {
                       );
                     })() : (
                       /* Search box */
-                      <div className="space-y-2">
+                      <div className="space-y-2 border-2 border-dashed border-primary p-2 rounded-md">
                         <div className="relative">
                           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
@@ -497,7 +502,7 @@ export default function THOMatches() {
                         
                         {!isLoadingReferees && referees.length === 0 && (
                           <p className="text-xs text-orange-500 bg-orange-500/10 p-2 rounded border border-orange-500/20">
-                            No referee accounts are available yet. A super admin must create referee users first; tournament admins can only assign existing referees.
+                            No users with the 'referee' role were found in the system.
                           </p>
                         )}
 
