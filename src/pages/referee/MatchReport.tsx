@@ -266,7 +266,6 @@ export default function MatchReport() {
       });
       toast.success("PDF report downloaded!");
     } catch (error) {
-      console.error("PDF generation error:", error);
       toast.error("Failed to generate PDF report");
     } finally {
       setIsGeneratingPDF(false);
@@ -338,7 +337,7 @@ export default function MatchReport() {
       setPreviewUrl(url);
       setShowPreview(true);
     } catch (error) {
-      console.error("PDF preview error:", error);
+      // MobSF Fix: CWE-532 — Removed error logging
       toast.error("Failed to generate PDF preview");
     } finally {
       setIsGeneratingPDF(false);

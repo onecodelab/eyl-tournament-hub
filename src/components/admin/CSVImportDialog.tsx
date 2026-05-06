@@ -44,11 +44,22 @@ export function CSVImportDialog({
     URL.revokeObjectURL(url);
   };
 
+  /**
+   * MobSF Fix: CWE-770 — Limit CSV file size to prevent DoS
+   */
+  const MAX_CSV_SIZE = 1 * 1024 * 1024; // 1MB max CSV size
+  const MAX_CSV_ROWS = 500; // Maximum rows per import
+
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (!file.name.endsWith(".csv")) {
         setResult({ success: 0, errors: ["Please select a CSV file"] });
+        return;
+      }
+      // MobSF Fix: CWE-770 — Reject oversized files
+      if (file.size > MAX_CSV_SIZE) {
+        setResult({ success: 0, errors: [`CSV file too large. Maximum size: ${MAX_CSV_SIZE / 1024}KB`] });
         return;
       }
       setSelectedFile(file);

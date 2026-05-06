@@ -246,7 +246,7 @@ export default function THOMatchReports() {
 
       toast.success("PDF downloaded successfully");
     } catch (error) {
-      console.error("PDF download error:", error);
+      // MobSF Fix: CWE-532 — Removed error logging
       toast.error("Failed to download PDF");
     } finally {
       setIsGeneratingPDF(false);

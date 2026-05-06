@@ -45,12 +45,24 @@ export default function AdminRoles() {
     }
   };
 
-  const handleRemoveRole = async (id: string) => {
+  const handleRemoveRole = async (roleId: string, targetUserId: string, roleName: string) => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Prevent self-demotion of admins to avoid system lockout
+      if (user?.id === targetUserId && roleName === "admin") {
+        toast({ 
+          title: "Action Denied", 
+          description: "You cannot remove your own admin role. Another administrator must do this for you.", 
+          variant: "destructive" 
+        });
+        return;
+      }
+
       const { error } = await supabase
         .from("user_roles")
         .delete()
-        .eq("id", id);
+        .eq("id", roleId);
 
       if (error) throw error;
 
@@ -174,7 +186,7 @@ export default function AdminRoles() {
                               variant="ghost"
                               size="icon"
                               className="text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
-                              onClick={() => handleRemoveRole(role.id)}
+                              onClick={() => handleRemoveRole(role.id, role.user_id, role.role)}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

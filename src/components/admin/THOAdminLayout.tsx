@@ -150,7 +150,15 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
 
   if (isTournamentLoading) {
     return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }  return (
+  }
+
+  // Defense-in-depth: Secondary auth check at layout level
+  if (!user) {
+    navigate("/login", { replace: true });
+    return null;
+  }
+
+  return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
         <THOSidebarContent 

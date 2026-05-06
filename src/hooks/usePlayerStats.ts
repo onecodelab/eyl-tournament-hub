@@ -18,7 +18,7 @@ export function usePlayerStats(playerId: string | undefined) {
         .rpc("get_player_stats", { p_player_id: playerId });
 
       if (error) {
-        console.error("Error fetching player stats:", error);
+        // MobSF Fix: CWE-532 — Don't log errors in production
         return { goals: 0, assists: 0, appearances: 0 };
       }
 

@@ -10,7 +10,7 @@ export function useTournamentAdmin() {
     queryFn: async () => {
       if (!user) return [];
 
-      console.log("DEBUG: Checking tournament_admins for user ID:", user.id);
+      // MobSF Fix: CWE-532 — Removed debug logging that exposed user IDs
 
       // We strictly ONLY fetch tournaments assigned in the tournament_admins table.
       const { data, error } = await supabase
@@ -26,16 +26,12 @@ export function useTournamentAdmin() {
         `)
         .eq("user_id", user.id);
 
-      if (error) {
-        console.error("DEBUG: Supabase error:", error);
-        throw error;
-      }
+      if (error) throw error;
       
       const flattened = (data || [])
         .map((item: any) => item.tournaments)
         .filter(Boolean);
       
-      console.log("DEBUG: Found assigned tournaments:", flattened.length);
       return flattened;
     },
     enabled: !!user,
@@ -48,3 +44,4 @@ export function useTournamentAdmin() {
     hasTournaments: assignedTournaments.length > 0,
   };
 }
+

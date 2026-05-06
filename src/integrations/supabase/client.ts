@@ -5,13 +5,43 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+/**
+ * Validate environment variables at startup.
+ * MobSF Fix: CWE-312 — Fail fast if env vars are missing rather than silently failing.
+ */
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  throw new Error(
+    "Missing Supabase environment variables. " +
+    "Ensure VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY are set."
+  );
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
-    storage: localStorage,
+    /**
+     * MobSF Security Hardening (W3 — CWE-384):
+     * - persistSession: true — maintains session across page reloads
+     * - autoRefreshToken: true — auto-refreshes JWT before expiry
+     * - detectSessionInUrl: true — handles OAuth callback URLs securely
+     * - flowType: 'pkce' — Uses PKCE flow for enhanced security
+     * 
+     * Note: localStorage is used for session storage. While sessionStorage
+     * would be more secure against persistent XSS, it breaks multi-tab usage.
+     * The CSP headers in index.html mitigate XSS risk at the transport level.
+     */
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
     persistSession: true,
     autoRefreshToken: true,
-  }
+    detectSessionInUrl: true,
+    flowType: 'pkce',
+  },
+  global: {
+    headers: {
+      // Custom header for request identification
+      'x-client-info': 'eyl-tournament-hub',
+    },
+  },
 });

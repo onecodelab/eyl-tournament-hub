@@ -5,7 +5,8 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    // MobSF Fix: CWE-532 — Removed route logging that could leak navigation patterns
+    // In production, 404s should be tracked via server-side analytics, not client console
   }, [location.pathname]);
 
   return (

@@ -44,7 +44,7 @@ export default function THOMatches() {
   const { data: referees = [], isLoading: isLoadingReferees, error: refereeError } = useRefereesWithEmail();
   
   if (refereeError) {
-    console.error("Referee fetch error:", refereeError);
+    // MobSF Fix: CWE-532 — Removed error logging to prevent information leakage
   }
   const { assignedTournaments } = useTournamentAdmin();
   const createMatch = useCreateMatch();

@@ -333,7 +333,7 @@ export default function LiveMatch() {
       toast.success("Match ended!");
       navigate(`/referee/match/${matchId}/report`);
     } catch (error: any) {
-      console.error("End match error:", error);
+      // MobSF Fix: CWE-532 — Removed error logging
       toast.error("Failed to end match: " + (error?.message || "Unknown error"));
     }
   };
