@@ -1,9 +1,5 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
-<<<<<<< HEAD
 import { exactAmharicTranslations, languages, type LanguageCode, wordAmharicTranslations } from "@/lib/translations";
-=======
-import { exactAmharicTranslations, languages, type LanguageCode } from "@/lib/translations";
->>>>>>> pr-5
 
 type LanguageContextValue = {
   language: LanguageCode;
@@ -34,7 +30,6 @@ function isProbablyUserContent(value: string) {
   );
 }
 
-<<<<<<< HEAD
 function matchCase(source: string, translated: string) {
   if (source === source.toUpperCase() && source.length > 1) return translated;
   return translated;
@@ -57,26 +52,11 @@ function translateWithWordFallback(value: string) {
     const translated = wordAmharicTranslations[word.toLowerCase()];
     return translated ? matchCase(word, translated) : word;
   });
-=======
-function translateCuratedPhrase(value: string) {
-  const normalized = normalizeText(value);
-  const exact = exactAmharicTranslations[normalized];
-
-  if (!exact) return value;
-
-  const leadingWhitespace = value.match(/^\s*/)?.[0] ?? "";
-  const trailingWhitespace = value.match(/\s*$/)?.[0] ?? "";
-  return `${leadingWhitespace}${exact}${trailingWhitespace}`;
->>>>>>> pr-5
 }
 
 function translateValue(value: string, language: LanguageCode) {
   if (language === "en" || isProbablyUserContent(value)) return value;
-<<<<<<< HEAD
   return translateWithWordFallback(value);
-=======
-  return translateCuratedPhrase(value);
->>>>>>> pr-5
 }
 
 function shouldSkipNode(node: Node) {
@@ -102,14 +82,10 @@ function applyTranslations(root: ParentNode, language: LanguageCode) {
   textNodes.forEach((node) => {
     if (!originalText.has(node)) originalText.set(node, node.textContent ?? "");
     const source = originalText.get(node) ?? "";
-<<<<<<< HEAD
     const translated = translateValue(source, language);
     if (node.textContent !== translated) {
       node.textContent = translated;
     }
-=======
-    node.textContent = translateValue(source, language);
->>>>>>> pr-5
   });
 
   document.querySelectorAll<HTMLElement>("[placeholder], [title], [aria-label], img[alt]").forEach((element) => {
@@ -125,14 +101,10 @@ function applyTranslations(root: ParentNode, language: LanguageCode) {
       const current = element.getAttribute(attribute);
       if (!current || isProbablyUserContent(current)) return;
       if (!attributeMap.has(attribute)) attributeMap.set(attribute, current);
-<<<<<<< HEAD
       const translated = translateValue(attributeMap.get(attribute) ?? current, language);
       if (element.getAttribute(attribute) !== translated) {
         element.setAttribute(attribute, translated);
       }
-=======
-      element.setAttribute(attribute, translateValue(attributeMap.get(attribute) ?? current, language));
->>>>>>> pr-5
     });
   });
 }
@@ -160,7 +132,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     applyTranslations(document.body, language);
 
     const observer = new MutationObserver(() => {
-<<<<<<< HEAD
       observer.disconnect();
       applyTranslations(document.body, language);
       observer.observe(document.body, {
@@ -170,9 +141,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         attributes: true,
         attributeFilter: translatableAttributes,
       });
-=======
-      applyTranslations(document.body, language);
->>>>>>> pr-5
     });
 
     observer.observe(document.body, {

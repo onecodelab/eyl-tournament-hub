@@ -6,25 +6,8 @@ export const languages: Record<LanguageCode, { label: string; nativeLabel: strin
 };
 
 export const exactAmharicTranslations: Record<string, string> = {
-<<<<<<< HEAD
   "Ethiopian Youth League": "የኢትዮጵያ ወጣቶች ሊግ",
   "ETHIOPIAN YOUTH LEAGUE": "የኢትዮጵያ ወጣቶች ሊግ",
-  "About Us": "ስለ እኛ",
-  "Events": "ዝግጅቶች",
-  "Youth Competitions": "የወጣቶች ውድድሮች",
-  "Media": "ሚዲያ",
-  "Tournaments": "ውድድሮች",
-  "Fixtures": "የጨዋታ መርሃግብር",
-  "News": "ዜና",
-  "Watch Live": "በቀጥታ ይመልከቱ",
-  "Signed In": "ገብተዋል",
-  "Sign In": "ይግቡ",
-  "Sign Out": "ውጣ",
-  "Dashboard": "ዳሽቦርድ",
-  "Management": "አስተዳደር",
-=======
-  "Ethiopian Youth League": "Ethiopian Youth League",
-  "ETHIOPIAN YOUTH LEAGUE": "ETHIOPIAN YOUTH LEAGUE",
   "EYL Admin": "EYL አስተዳደር",
   "Control Panel": "የአስተዳደር መቆጣጠሪያ",
   "© 2026 ETHIOPIAN YOUTH LEAGUE": "© 2026 ETHIOPIAN YOUTH LEAGUE",
@@ -42,24 +25,16 @@ export const exactAmharicTranslations: Record<string, string> = {
   "Sign Out": "ውጣ",
   "Dashboard": "የአስተዳደር መነሻ",
   "Management": "የውድድር አስተዳደር",
->>>>>>> pr-5
   "Teams": "ቡድኖች",
   "Players": "ተጫዋቾች",
   "Matches": "ጨዋታዎች",
   "Match Reports": "የጨዋታ ሪፖርቶች",
   "Videos": "ቪዲዮዎች",
   "Sponsors": "ስፖንሰሮች",
-<<<<<<< HEAD
-  "Data Center": "የመረጃ ማዕከል",
-  "User Roles": "የተጠቃሚ ሚናዎች",
-  "Tournament Host Organization Admin": "የውድድር አዘጋጅ ድርጅት አስተዳዳሪ",
-  "THO Admin": "የአዘጋጅ አስተዳዳሪ",
-=======
   "Data Center": "የሊጉ መረጃ ማዕከል",
   "User Roles": "የተጠቃሚ ሚናዎች",
   "Tournament Host Organization Admin": "የውድድር አዘጋጅ ድርጅት አስተዳዳሪ",
-  "THO Admin": "THO Admin",
->>>>>>> pr-5
+  "THO Admin": "የአዘጋጅ አስተዳዳሪ",
   "Select Tournament": "ውድድር ይምረጡ",
   "Loading...": "በመጫን ላይ...",
   "Loading": "በመጫን ላይ",
@@ -92,27 +67,6 @@ export const exactAmharicTranslations: Record<string, string> = {
   "Published": "ታትሟል",
   "Active": "ንቁ",
   "Inactive": "ንቁ አይደለም",
-<<<<<<< HEAD
-  "Add Match": "ጨዋታ ጨምር",
-  "Edit Match": "ጨዋታ አርትዕ",
-  "Add New Match": "አዲስ ጨዋታ ጨምር",
-  "Update match details": "የጨዋታ ዝርዝሮችን አዘምን",
-  "Schedule a new match": "አዲስ ጨዋታ መርሃግብር ያዘጋጁ",
-  "Match Stage": "የጨዋታ ደረጃ",
-  "Match Stage *": "የጨዋታ ደረጃ *",
-  "Home Team": "የቤት ቡድን",
-  "Home Team *": "የቤት ቡድን *",
-  "Away Team": "የእንግዳ ቡድን",
-  "Away Team *": "የእንግዳ ቡድን *",
-  "Match Date & Time": "የጨዋታ ቀን እና ሰዓት",
-  "Assign Referee": "ዳኛ መድብ",
-  "Select referee": "ዳኛ ይምረጡ",
-  "Search referee by email...": "ዳኛን በኢሜይል ፈልግ...",
-  "No matching referees found": "ተዛማጅ ዳኞች አልተገኙም",
-  "Assigned Referee": "የተመደበ ዳኛ",
-  "Unknown Referee": "ያልታወቀ ዳኛ",
-  "No referees available.": "ምንም ዳኛ የለም።",
-=======
   "Add Match": "አዲስ ጨዋታ ያቅዱ",
   "Edit Match": "የጨዋታ ዝርዝር አስተካክል",
   "Add New Match": "አዲስ ጨዋታ ያቅዱ",
@@ -132,7 +86,6 @@ export const exactAmharicTranslations: Record<string, string> = {
   "Assigned Referee": "የተመደበ ዳኛ",
   "Unknown Referee": "የዳኛው መረጃ አልተገኘም",
   "No referees available.": "ለመመደብ የተመዘገበ ዳኛ አልተገኘም።",
->>>>>>> pr-5
   "No referees available. Create referee users in User Roles first.": "ምንም ዳኛ የለም። መጀመሪያ በተጠቃሚ ሚናዎች ውስጥ የዳኛ ተጠቃሚዎችን ይፍጠሩ።",
   "No referee accounts are available yet. A super admin must create referee users first; tournament admins can only assign existing referees.": "እስካሁን የዳኛ መለያዎች የሉም። መጀመሪያ ሱፐር አስተዳዳሪ የዳኛ ተጠቃሚዎችን መፍጠር አለበት፤ የውድድር አስተዳዳሪዎች ያሉትን ዳኞች ብቻ መመደብ ይችላሉ።",
   "Only referees can set matches to \"Live\" or \"Completed\".": "ጨዋታዎችን \"በቀጥታ\" ወይም \"ተጠናቋል\" ማድረግ የሚችሉት ዳኞች ብቻ ናቸው።",
@@ -146,26 +99,15 @@ export const exactAmharicTranslations: Record<string, string> = {
   "Enable extra time for tied knockout matches": "በኖክአውት ጨዋታ አቻ ሲሆን ተጨማሪ ሰዓት አንቃ",
   "Match will go directly to penalty shootout if tied": "ጨዋታው አቻ ከሆነ በቀጥታ ወደ ፔናልቲ ምት ይሄዳል",
   "Total extra time (typically 2x15 = 30 minutes)": "ጠቅላላ ተጨማሪ ሰዓት (ብዙውን ጊዜ 2x15 = 30 ደቂቃ)",
-<<<<<<< HEAD
-  "Stadium name": "የስታዲየም ስም",
-  "Match description": "የጨዋታ መግለጫ",
-  "Tagline": "መግለጫ መስመር",
-=======
   "Stadium name": "ጨዋታው የሚካሄድበት ሜዳ",
   "Match description": "የጨዋታ መግለጫ",
   "Tagline": "የጨዋታ አጭር መልዕክት",
->>>>>>> pr-5
   "Select home team": "የቤት ቡድን ይምረጡ",
   "Select away team": "የእንግዳ ቡድን ይምረጡ",
   "Select stage": "ደረጃ ይምረጡ",
   "Select": "ይምረጡ",
-<<<<<<< HEAD
-  "No matches found.": "ምንም ጨዋታ አልተገኘም።",
-  "No upcoming matches": "መጪ ጨዋታዎች የሉም",
-=======
   "No matches found.": "በዚህ ጊዜ የተመዘገበ ጨዋታ የለም።",
   "No upcoming matches": "በቅርቡ የታቀደ ጨዋታ የለም",
->>>>>>> pr-5
   "No news articles": "የዜና ጽሁፎች የሉም",
   "Select a tournament to manage matches": "ጨዋታዎችን ለማስተዳደር ውድድር ይምረጡ",
   "Add at least 2 teams before creating matches": "ጨዋታ ከመፍጠርዎ በፊት ቢያንስ 2 ቡድኖችን ያክሉ",
@@ -250,11 +192,7 @@ export const exactAmharicTranslations: Record<string, string> = {
   "Return Home": "ወደ መነሻ ተመለስ",
   "Standings": "የደረጃ ሰንጠረዥ",
   "Statistics": "ስታቲስቲክስ",
-<<<<<<< HEAD
-  "Latest News": "የቅርብ ጊዜ ዜና",
-=======
   "Latest News": "ከሊጉ የቅርብ ዜና",
->>>>>>> pr-5
   "Latest Video": "የቅርብ ጊዜ ቪዲዮ",
   "Clubs": "ክለቦች",
   "Table": "ሰንጠረዥ",
@@ -266,15 +204,6 @@ export const exactAmharicTranslations: Record<string, string> = {
   "Accessibility": "ተደራሽነት",
   "Upcoming Matches": "መጪ ጨዋታዎች",
   "Match Results": "የጨዋታ ውጤቶች",
-<<<<<<< HEAD
-  "Featured Tournaments": "ተለይተው የቀረቡ ውድድሮች",
-  "Season Highlights": "የወቅቱ ዋና ዋና ነጥቦች",
-  "Partners": "አጋሮች",
-  "Read More": "ተጨማሪ ያንብቡ",
-  "View All": "ሁሉንም ይመልከቱ",
-  "View Details": "ዝርዝሮችን ይመልከቱ",
-  "Learn More": "ተጨማሪ ይወቁ",
-=======
   "Featured Tournaments": "በEYL የተመረጡ ውድድሮች",
   "Season Highlights": "የወቅቱ ዋና ዋና ነጥቦች",
   "Partners": "አጋሮች",
@@ -282,7 +211,6 @@ export const exactAmharicTranslations: Record<string, string> = {
   "View All": "ሙሉውን ይመልከቱ",
   "View Details": "ዝርዝሮችን ይመልከቱ",
   "Learn More": "በተጨማሪ ይወቁ",
->>>>>>> pr-5
   "Full Time": "ሙሉ ሰዓት",
   "Half Time": "ግማሽ ሰዓት",
   "Kick Off": "ጨዋታ መጀመሪያ",
@@ -295,10 +223,7 @@ export const exactAmharicTranslations: Record<string, string> = {
   "End Match": "ጨዋታ ጨርስ",
   "Submit Report": "ሪፖርት አስገባ",
 };
-<<<<<<< HEAD
 
 export const wordAmharicTranslations: Record<string, string> = {
   about: "ስለ", account: "መለያ", action: "ተግባር", actions: "ተግባራት", active: "ንቁ", add: "ጨምር", admin: "አስተዳዳሪ", admins: "አስተዳዳሪዎች", age: "ዕድሜ", all: "ሁሉም", already: "አስቀድሞ", amharic: "አማርኛ", and: "እና", appearance: "ተሳትፎ", appearances: "ተሳትፎዎች", article: "ጽሁፍ", articles: "ጽሁፎች", assist: "አሲስት", assists: "አሲስቶች", assign: "መድብ", assigned: "ተመድቧል", author: "ጸሐፊ", available: "ያሉ", away: "እንግዳ", back: "ተመለስ", banner: "ባነር", bottom: "ታች", by: "በ", cancel: "ይቅር", card: "ካርድ", cards: "ካርዶች", category: "ምድብ", centre: "መሃል", champion: "ሻምፒዮን", change: "ቀይር", choose: "ይምረጡ", club: "ክለብ", clubs: "ክለቦች", coach: "አሰልጣኝ", completed: "ተጠናቋል", content: "ይዘት", create: "ፍጠር", created: "ተፈጥሯል", current: "አሁን", dashboard: "ዳሽቦርድ", data: "መረጃ", date: "ቀን", delete: "ሰርዝ", deleted: "ተሰርዟል", description: "መግለጫ", details: "ዝርዝሮች", division: "ክፍል", draft: "ረቂቅ", duration: "ቆይታ", edit: "አርትዕ", email: "ኢሜይል", end: "መጨረሻ", english: "እንግሊዝኛ", error: "ስህተት", event: "ክስተት", events: "ክስተቶች", existing: "ያሉ", export: "ላክ", featured: "ተለይተው", file: "ፋይል", filter: "አጣራ", final: "ፍፃሜ", fixtures: "መርሃግብር", format: "ቅርጸት", found: "ተገኘ", full: "ሙሉ", game: "ጨዋታ", games: "ጨዋታዎች", goal: "ግብ", goals: "ግቦች", group: "ምድብ", half: "ግማሽ", header: "ራስጌ", highlights: "ዋና ነጥቦች", history: "ታሪክ", home: "መነሻ", host: "አዘጋጅ", image: "ምስል", import: "አስገባ", inactive: "ንቁ አይደለም", kickoff: "መጀመሪያ", knockout: "ኖክአውት", language: "ቋንቋ", latest: "የቅርብ", league: "ሊግ", live: "በቀጥታ", loading: "በመጫን ላይ", logo: "ሎጎ", manage: "አስተዳድር", management: "አስተዳደር", match: "ጨዋታ", matches: "ጨዋታዎች", media: "ሚዲያ", name: "ስም", nationality: "ዜግነት", new: "አዲስ", news: "ዜና", no: "የለም", number: "ቁጥር", of: "የ", official: "ኦፊሴላዊ", option: "አማራጭ", organization: "ድርጅት", password: "የይለፍ ቃል", penalties: "ፔናልቲዎች", penalty: "ፔናልቲ", photo: "ፎቶ", player: "ተጫዋች", players: "ተጫዋቾች", policy: "ፖሊሲ", position: "ቦታ", postponed: "ተራዝሟል", profile: "መገለጫ", published: "ታትሟል", read: "አንብብ", referee: "ዳኛ", referees: "ዳኞች", report: "ሪፖርት", reports: "ሪፖርቶች", required: "ያስፈልጋል", result: "ውጤት", results: "ውጤቶች", role: "ሚና", roles: "ሚናዎች", round: "ዙር", save: "አስቀምጥ", schedule: "መርሃግብር", scheduled: "ተይዟል", score: "ውጤት", search: "ፈልግ", season: "ወቅት", select: "ይምረጡ", semi: "ግማሽ", settings: "ቅንብሮች", short: "አጭር", sign: "ግባ", sponsor: "ስፖንሰር", sponsors: "ስፖንሰሮች", squad: "ስብስብ", stage: "ደረጃ", standings: "ደረጃ", start: "መጀመሪያ", statistics: "ስታቲስቲክስ", status: "ሁኔታ", submit: "አስገባ", success: "ተሳክቷል", table: "ሰንጠረዥ", tagline: "መግለጫ", team: "ቡድን", teams: "ቡድኖች", third: "ሶስተኛ", thumbnail: "ሽፋን", time: "ሰዓት", title: "ርዕስ", to: "ወደ", top: "ላይ", tournament: "ውድድር", tournaments: "ውድድሮች", type: "አይነት", unassigned: "አልተመደበም", unknown: "ያልታወቀ", upcoming: "መጪ", update: "አዘምን", updated: "ተዘምኗል", upload: "ጫን", url: "URL", user: "ተጠቃሚ", users: "ተጠቃሚዎች", venue: "ቦታ", video: "ቪዲዮ", videos: "ቪዲዮዎች", view: "ይመልከቱ", watch: "ይመልከቱ", website: "ድር ጣቢያ", winner: "አሸናፊ", youth: "ወጣቶች",
 };
-=======
->>>>>>> pr-5

@@ -7,11 +7,8 @@ import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-<<<<<<< HEAD
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-=======
->>>>>>> pr-5
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Login from "./pages/Login";
@@ -47,23 +44,17 @@ import THOMatchReports from "./pages/tho-admin/THOMatchReports";
 import THOSponsors from "./pages/tho-admin/THOSponsors";
 import TournamentHistory from "./pages/TournamentHistory";
 
-/**
- * Security-hardened QueryClient configuration.
- * - Prevents excessive refetching (performance / DoS mitigation)
- * - Limits retry attempts to prevent infinite request loops
- */
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes — reduces unnecessary refetches
-      retry: 2, // Limit retries to prevent infinite loops
-      refetchOnWindowFocus: false, // Prevent refetch storms on tab switch
+      staleTime: 5 * 60 * 1000,
+      retry: 2,
+      refetchOnWindowFocus: false,
     },
   },
 });
 
 const App = () => (
-<<<<<<< HEAD
   <ErrorBoundary>
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
@@ -75,9 +66,6 @@ const App = () => (
               <BrowserRouter>
                 <ScrollToTop />
                 <Routes>
-                  {/* ══════════════════════════════════════════════════════════ */}
-                  {/* PUBLIC ROUTES — No authentication required               */}
-                  {/* ══════════════════════════════════════════════════════════ */}
                   <Route path="/" element={<Index />} />
                   <Route path="/about" element={<About />} />
                   <Route path="/login" element={<Login />} />
@@ -89,10 +77,6 @@ const App = () => (
                   <Route path="/news/:id" element={<NewsDetail />} />
                   <Route path="/tournaments/:id/history" element={<TournamentHistory />} />
 
-                  {/* ══════════════════════════════════════════════════════════ */}
-                  {/* ADMIN ROUTES — Requires "admin" role                     */}
-                  {/* MobSF Fix: CWE-284, CWE-602 — Server-verified RBAC     */}
-                  {/* ══════════════════════════════════════════════════════════ */}
                   <Route path="/admin" element={
                     <ProtectedRoute allowedRoles={["admin"]}>
                       <AdminDashboard />
@@ -149,9 +133,6 @@ const App = () => (
                     </ProtectedRoute>
                   } />
 
-                  {/* ══════════════════════════════════════════════════════════ */}
-                  {/* THO ADMIN ROUTES — Requires "admin" or "tho_admin" role  */}
-                  {/* ══════════════════════════════════════════════════════════ */}
                   <Route path="/tho-admin" element={
                     <ProtectedRoute allowedRoles={["admin", "tho_admin"]}>
                       <THODashboard />
@@ -193,9 +174,6 @@ const App = () => (
                     </ProtectedRoute>
                   } />
 
-                  {/* ══════════════════════════════════════════════════════════ */}
-                  {/* REFEREE ROUTES — Requires "admin" or "referee" role       */}
-                  {/* ══════════════════════════════════════════════════════════ */}
                   <Route path="/referee" element={
                     <ProtectedRoute allowedRoles={["admin", "referee"]}>
                       <RefereeDashboard />
@@ -212,7 +190,6 @@ const App = () => (
                     </ProtectedRoute>
                   } />
 
-                  {/* 404 Catch-all */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
@@ -222,59 +199,6 @@ const App = () => (
       </QueryClientProvider>
     </ThemeProvider>
   </ErrorBoundary>
-=======
-  <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <LanguageProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            
-            <Route path="/matches" element={<Matches />} />
-            <Route path="/standings" element={<Standings />} />
-            <Route path="/tournaments/:id" element={<TournamentDetail />} />
-            <Route path="/news" element={<News />} />
-            <Route path="/news/:id" element={<NewsDetail />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/tournaments" element={<AdminTournaments />} />
-            <Route path="/admin/teams" element={<AdminTeams />} />
-            <Route path="/admin/players" element={<AdminPlayers />} />
-            <Route path="/admin/matches" element={<AdminMatches />} />
-            <Route path="/admin/news" element={<AdminNews />} />
-            <Route path="/admin/videos" element={<AdminVideos />} />
-            <Route path="/admin/sponsors" element={<AdminSponsors />} />
-            <Route path="/admin/match-reports" element={<AdminMatchReports />} />
-            <Route path="/admin/data-center" element={<AdminDataCenter />} />
-            <Route path="/admin/roles" element={<AdminRoles />} />
-            <Route path="/tho-admin" element={<THODashboard />} />
-            <Route path="/tho-admin/teams" element={<THOTeams />} />
-            <Route path="/tho-admin/players" element={<THOPlayers />} />
-            <Route path="/tho-admin/matches" element={<THOMatches />} />
-            <Route path="/tho-admin/news" element={<THONews />} />
-            <Route path="/tho-admin/videos" element={<THOVideos />} />
-            <Route path="/tho-admin/match-reports" element={<THOMatchReports />} />
-            <Route path="/tho-admin/sponsors" element={<THOSponsors />} />
-            <Route path="/referee" element={<RefereeDashboard />} />
-            <Route path="/referee/match/:id" element={<LiveMatch />} />
-            <Route path="/referee/match/:id/report" element={<MatchReport />} />
-            <Route path="/tournaments/:id/history" element={<TournamentHistory />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </LanguageProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
->>>>>>> pr-5
 );
 
 export default App;
