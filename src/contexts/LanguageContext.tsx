@@ -82,7 +82,10 @@ function applyTranslations(root: ParentNode, language: LanguageCode) {
   textNodes.forEach((node) => {
     if (!originalText.has(node)) originalText.set(node, node.textContent ?? "");
     const source = originalText.get(node) ?? "";
-    node.textContent = translateValue(source, language);
+    const translated = translateValue(source, language);
+    if (node.textContent !== translated) {
+      node.textContent = translated;
+    }
   });
 
   document.querySelectorAll<HTMLElement>("[placeholder], [title], [aria-label], img[alt]").forEach((element) => {
@@ -98,7 +101,10 @@ function applyTranslations(root: ParentNode, language: LanguageCode) {
       const current = element.getAttribute(attribute);
       if (!current || isProbablyUserContent(current)) return;
       if (!attributeMap.has(attribute)) attributeMap.set(attribute, current);
-      element.setAttribute(attribute, translateValue(attributeMap.get(attribute) ?? current, language));
+      const translated = translateValue(attributeMap.get(attribute) ?? current, language);
+      if (element.getAttribute(attribute) !== translated) {
+        element.setAttribute(attribute, translated);
+      }
     });
   });
 }
@@ -126,7 +132,15 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     applyTranslations(document.body, language);
 
     const observer = new MutationObserver(() => {
+      observer.disconnect();
       applyTranslations(document.body, language);
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: translatableAttributes,
+      });
     });
 
     observer.observe(document.body, {
