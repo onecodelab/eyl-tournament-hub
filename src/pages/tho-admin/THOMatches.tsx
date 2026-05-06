@@ -133,8 +133,6 @@ export default function THOMatches() {
       status: match.status || "scheduled",
       referee_id: match.referee_id || "",
       stage: match.stage || "group",
-      extra_time_enabled: match.extra_time_option !== "no_extra_time",
-      extra_time_duration: match.extra_time_duration_minutes || 30,
       extra_time_option: match.extra_time_option || "extra_time",
     });
     setDialogOpen(true);
@@ -161,7 +159,6 @@ export default function THOMatches() {
       stage: formData.stage,
       extra_time_option: isKnockoutStage ? formData.extra_time_option : null,
       tournament_id: selectedTournamentId,
-      extra_time_duration_minutes: formData.extra_time_enabled ? formData.extra_time_duration : null,
     };
 
     try {
@@ -272,17 +269,12 @@ export default function THOMatches() {
       onTournamentChange={setSelectedTournamentId}
     >
       <div className="space-y-6">
-        {/* GIANT DEBUG BANNER */}
-        <div className="bg-red-600 text-white p-4 text-center font-bold text-2xl animate-pulse rounded-lg shadow-xl">
-          !!! DEBUG VERSION V4 LOADED !!!
-        </div>
-        {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Calendar className="h-8 w-8 text-primary" />
             <div>
-              <h1 className="text-2xl font-bold bg-yellow-500 text-black px-2">Matches Management (DEBUG V3)</h1>
-            <div className="text-muted-foreground text-sm">
+              <h1 className="text-2xl font-bold">Matches Management</h1>
+              <div className="text-muted-foreground text-sm">
                 {selectedTournament ? `Managing matches for ${(selectedTournament as any).name}` : "Select a tournament"}
                 {tournamentDetails && (
                   <span className="ml-2">
@@ -300,14 +292,14 @@ export default function THOMatches() {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md max-h-[90vh] flex flex-col p-0">
-              <DialogHeader className="p-6 pb-0">
+              <DialogHeader className="p-4 pb-0 border-b pb-4">
                 <DialogTitle>{editingMatch ? "Edit Match" : "Add New Match"}</DialogTitle>
                 <DialogDescription>
                   {editingMatch ? "Update match details" : "Schedule a new match"}
                 </DialogDescription>
               </DialogHeader>
 
-              <div className="flex-1 overflow-y-auto p-6 max-h-[60vh] border-y border-border/50">
+              <div className="flex-1 overflow-y-auto p-4 max-h-[70vh]">
                 <form onSubmit={handleSubmit} id="match-form" className="space-y-4">
                   {/* Match Stage Selection */}
                   <div className="space-y-2">
@@ -326,118 +318,60 @@ export default function THOMatches() {
                     </Select>
                   </div>
 
-                  {/* Extra Time Toggle - only for knockout stages */}
-                  {isKnockoutStage && (
-                    <div className="space-y-4 border rounded-lg p-4 bg-muted/30">
-                      <div className="flex items-center justify-between">
-                        <div className="space-y-0.5">
-                          <Label className="flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
-                            Extra Time
-                          </Label>
-                          <p className="text-xs text-muted-foreground">
-                            Enable extra time for tied knockout matches
-                          </p>
-                        </div>
-                        <Switch
-                          checked={formData.extra_time_enabled}
-                          onCheckedChange={(checked) => setFormData({ 
-                            ...formData, 
-                            extra_time_enabled: checked,
-                            extra_time_option: checked ? "extra_time" : "direct_penalty"
-                          })}
-                        />
-                      </div>
-                      
-                      {formData.extra_time_enabled && (
-                        <>
-                          <div className="space-y-2">
-                            <Label>Extra Time Duration (minutes)</Label>
-                            <Input
-                              type="number"
-                              min={10}
-                              max={60}
-                              value={formData.extra_time_duration}
-                              onChange={(e) => setFormData({ ...formData, extra_time_duration: parseInt(e.target.value) || 30 })}
-                              placeholder="30"
-                            />
-                            <p className="text-xs text-muted-foreground">
-                              Total extra time (typically 2x15 = 30 minutes)
-                            </p>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <Label>Tie-breaker Option</Label>
-                            <Select value={formData.extra_time_option} onValueChange={(val) => setFormData({ ...formData, extra_time_option: val })}>
-                              <SelectTrigger>
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {EXTRA_TIME_OPTIONS.map((option) => (
-                                  <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </>
-                      )}
-                      
-                      {!formData.extra_time_enabled && (
-                        <p className="text-xs text-amber-600">
-                          Match will go directly to penalty shootout if tied
-                        </p>
-                      )}
+                  {/* Teams Selection */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Home Team *</Label>
+                      <Select value={formData.home_team_id} onValueChange={(val) => setFormData({ ...formData, home_team_id: val })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select home team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teams.map((team: any) => (
+                            <SelectItem key={team.id} value={team.id}>
+                              {team.name} {team.group_name && `(${team.group_name})`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  )}
+                    <div className="space-y-2">
+                      <Label>Away Team *</Label>
+                      <Select value={formData.away_team_id} onValueChange={(val) => setFormData({ ...formData, away_team_id: val })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select away team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {teams.filter((t: any) => t.id !== formData.home_team_id).map((team: any) => (
+                            <SelectItem key={team.id} value={team.id}>
+                              {team.name} {team.group_name && `(${team.group_name})`}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
 
-                  <div className="space-y-2">
-                    <Label>Home Team *</Label>
-                    <Select value={formData.home_team_id} onValueChange={(val) => setFormData({ ...formData, home_team_id: val })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select home team" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {teams.map((team: any) => (
-                          <SelectItem key={team.id} value={team.id}>
-                            {team.name} {team.group_name && `(${team.group_name})`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                  {/* Match Details */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Match Date & Time</Label>
+                      <Input
+                        type="datetime-local"
+                        value={formData.match_date}
+                        onChange={(e) => setFormData({ ...formData, match_date: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Venue</Label>
+                      <Input
+                        value={formData.venue}
+                        onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
+                        placeholder="Stadium name"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Away Team *</Label>
-                    <Select value={formData.away_team_id} onValueChange={(val) => setFormData({ ...formData, away_team_id: val })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select away team" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {teams.filter((t: any) => t.id !== formData.home_team_id).map((team: any) => (
-                          <SelectItem key={team.id} value={team.id}>
-                            {team.name} {team.group_name && `(${team.group_name})`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Match Date & Time</Label>
-                    <Input
-                      type="datetime-local"
-                      value={formData.match_date}
-                      onChange={(e) => setFormData({ ...formData, match_date: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Venue</Label>
-                    <Input
-                      value={formData.venue}
-                      onChange={(e) => setFormData({ ...formData, venue: e.target.value })}
-                      placeholder="Stadium name"
-                    />
-                  </div>
+
                   <div className="space-y-2">
                     <Label>Status</Label>
                     <Select value={formData.status} onValueChange={(val) => setFormData({ ...formData, status: val })}>
@@ -449,30 +383,48 @@ export default function THOMatches() {
                         <SelectItem value="postponed">Postponed</SelectItem>
                       </SelectContent>
                     </Select>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[10px] text-muted-foreground">
                       Note: Only referees can set matches to "Live" or "Completed" during the match workflow.
                     </p>
                   </div>
-                  <div className="space-y-2">
+
+                  {/* Tie-breaker Option - only for knockout stages */}
+                  {isKnockoutStage && (
+                    <div className="space-y-2 pt-2 border-t">
+                      <Label className="flex items-center gap-2 text-primary">
+                        <Clock className="h-4 w-4" />
+                        Tie-breaker Rule
+                      </Label>
+                      <Select value={formData.extra_time_option} onValueChange={(val) => setFormData({ ...formData, extra_time_option: val })}>
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {EXTRA_TIME_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className="space-y-2 pt-2 border-t">
                     <Label className="flex items-center gap-2">
                       <UserCheck className="h-4 w-4" />
                       Assign Referee
                     </Label>
 
-                    <div className="p-2 bg-blue-500/10 border border-blue-500 rounded text-[10px] mb-2">
-                      DEBUG: Referees loaded: {referees.length} | Loading: {isLoadingReferees ? "YES" : "NO"} | Error: {refereeError ? "YES" : "NO"}
-                    </div>
-
                     {/* Show currently selected referee */}
                     {formData.referee_id ? (() => {
                       const sel = (referees as any[]).find((r) => r.user_id === formData.referee_id);
                       return (
-                        <div className="flex items-center justify-between bg-primary/10 border-2 border-green-500 rounded-md px-3 py-2 mb-2">
+                        <div className="flex items-center justify-between bg-primary/5 border border-primary/20 rounded-md px-3 py-2">
                           <div className="flex flex-col">
                             <span className="text-sm font-medium">
                               {sel ? sel.email : "Assigned Referee"}
                             </span>
-                            {!sel && <span className="text-[10px] text-muted-foreground">ID: {formData.referee_id.slice(0, 8)}...</span>}
                           </div>
                           <Button
                             type="button"
@@ -487,7 +439,7 @@ export default function THOMatches() {
                       );
                     })() : (
                       /* Search box */
-                      <div className="space-y-2 border-2 border-dashed border-primary p-2 rounded-md">
+                      <div className="space-y-2">
                         <div className="relative">
                           <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                           <Input
@@ -504,13 +456,13 @@ export default function THOMatches() {
                         </div>
                         
                         {!isLoadingReferees && referees.length === 0 && (
-                          <p className="text-xs text-orange-500 bg-orange-500/10 p-2 rounded border border-orange-500/20">
-                            No users with the 'referee' role were found in the system.
+                          <p className="text-xs text-orange-500 bg-orange-500/5 p-2 rounded border border-orange-500/10 text-center">
+                            No active referees found in the system.
                           </p>
                         )}
 
                         {refereeSearch && (
-                          <div className="border rounded-md max-h-40 overflow-y-auto bg-background shadow-sm">
+                          <div className="border rounded-md max-h-40 overflow-y-auto bg-background shadow-lg">
                             {filteredReferees.length === 0 ? (
                               <p className="text-xs text-muted-foreground text-center py-3">No matching referees found</p>
                             ) : (
@@ -536,7 +488,7 @@ export default function THOMatches() {
                   </div>
                 </form>
               </div>
-              <DialogFooter className="p-6 pt-2">
+              <DialogFooter className="p-4 pt-2 border-t">
                 <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
                   Cancel
                 </Button>
