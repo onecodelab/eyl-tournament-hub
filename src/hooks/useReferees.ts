@@ -38,28 +38,16 @@ export function useRefereesWithEmail() {
   return useQuery({
     queryKey: ["referees-with-email"],
     queryFn: async () => {
-      // 1. Get all user IDs with the 'referee' role
-      const { data: roles, error: rolesError } = await supabase
-        .from("user_roles")
-        .select("*")
-        .eq("role", "referee");
-      
-      if (rolesError) throw rolesError;
-      
-      // 2. Resolve emails for each referee
-      const refereesWithEmail = await Promise.all(
-        (roles || []).map(async (role) => {
-          try {
-            const { data: email } = await supabase
-              .rpc("get_user_email", { _user_id: role.user_id });
-            return { ...role, email: email || "Unknown Referee" };
-          } catch (e) {
-            return { ...role, email: "Unknown Referee" };
-          }
-        })
-      );
-      
-      return refereesWithEmail as RefereeWithEmail[];
+      // Tournament admins cannot read every row in user_roles because of RLS,
+      // so use the security-definer RPC that returns referee accounts with email addresses.
+      const { data, error } = await supabase.rpc("get_referees_with_email");
+
+      if (error) throw error;
+
+      return (data || []).map((referee) => ({
+        ...referee,
+        email: referee.email || "Unknown Referee",
+      })) as RefereeWithEmail[];
     },
   });
 }
