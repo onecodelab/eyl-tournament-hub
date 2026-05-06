@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
-import { useMatchWithTeams, useTournaments } from "@/hooks/useSupabaseData";
+import { useMatchWithTeams, useTournaments, useTournamentHubs } from "@/hooks/useSupabaseData";
 import { Calendar, Clock, MapPin, Users, Trophy, Info, MapPinned, ClipboardList } from "lucide-react";
 import { format } from "date-fns";
 import { useState, useMemo, useEffect } from "react";
@@ -87,8 +87,11 @@ const tournamentRules = [
 ];
 
 export default function MatchesPage() {
-  const { data: matches = [], isLoading } = useMatchWithTeams();
+  const { data: matches = [], isLoading: isLoadingMatches } = useMatchWithTeams();
   const { data: tournaments = [] } = useTournaments();
+  const { data: hubs = [] } = useTournamentHubs();
+  
+  const isLoading = isLoadingMatches;
   const [filter, setFilter] = useState("all");
   const [selectedTournament, setSelectedTournament] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -102,14 +105,25 @@ export default function MatchesPage() {
   const groupedTournaments = useMemo(() => {
     const groups = new Map<string, { id: string; name: string; ids: string[] }>();
     tournaments.forEach(t => {
-      const normName = normalizeTournamentName(t.name);
-      if (!groups.has(normName)) {
-        groups.set(normName, { id: normName, name: normName, ids: [] });
+      let groupName: string;
+      let groupId: string;
+
+      if ((t as any).hub_id) {
+        const hub = hubs.find(h => h.id === (t as any).hub_id);
+        groupName = hub?.name || t.name;
+        groupId = (t as any).hub_id;
+      } else {
+        groupName = normalizeTournamentName(t.name);
+        groupId = `name-${groupName}`;
       }
-      groups.get(normName)!.ids.push(t.id);
+
+      if (!groups.has(groupId)) {
+        groups.set(groupId, { id: groupId, name: groupName, ids: [] });
+      }
+      groups.get(groupId)!.ids.push(t.id);
     });
     return Array.from(groups.values());
-  }, [tournaments]);
+  }, [tournaments, hubs]);
 
   const filteredMatches = useMemo(() => {
     let result = matches;

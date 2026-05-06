@@ -286,7 +286,7 @@ export default function StandingsPage() {
                               </div>
                               <div>
                                 <div className="text-xs font-bold text-foreground group-hover/item:text-primary transition-colors">
-                                  {t.name.split(/\s+/).pop()?.toUpperCase()} Division
+                                  {t.name}
                                 </div>
                                 <div className="text-[10px] text-muted-foreground">
                                   {t.max_teams || 0} Teams • {t.status === 'active' ? 'Live Now' : 'Upcoming'}
