@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, Search, X, LogIn, LogOut, User, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   DropdownMenu,
@@ -105,6 +106,7 @@ export function Navbar() {
 
             {/* Right: Theme Toggle + Search + Auth */}
             <div className="flex items-center gap-2 shrink-0">
+              <LanguageToggle />
               <ThemeToggle />
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Select,
@@ -168,6 +169,7 @@ export function THOAdminLayout({ children, selectedTournamentId, onTournamentCha
               </span>
             </div>
             <div className="flex items-center gap-3">
+              <LanguageToggle />
               {user && (
                 <span className="hidden md:block text-xs text-muted-foreground truncate max-w-[200px]">
                   {user.email}
