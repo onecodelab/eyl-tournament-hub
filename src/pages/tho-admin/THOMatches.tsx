@@ -456,8 +456,8 @@ export default function THOMatches() {
                         </div>
                         
                         {!isLoadingReferees && referees.length === 0 && (
-                          <p className="text-xs text-orange-500 bg-orange-500/5 p-2 rounded border border-orange-500/10 text-center">
-                            No active referees found in the system.
+                          <p className="text-xs text-orange-500 bg-orange-500/10 p-2 rounded border border-orange-500/20 text-center">
+                            No referee accounts are available yet. A super admin must create referee users first; tournament admins can only assign existing referees.
                           </p>
                         )}
 

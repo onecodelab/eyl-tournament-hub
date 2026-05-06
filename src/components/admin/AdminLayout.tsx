@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EYLLogo } from "@/components/EYLLogo";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Sidebar,
@@ -127,6 +128,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
             <div className="flex items-center gap-3">
+              <LanguageToggle />
               {user && (
                 <span className="hidden md:block text-xs text-muted-foreground truncate max-w-[200px]">
                   {user.email}

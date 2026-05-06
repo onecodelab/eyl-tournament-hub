@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, Search, X, LogIn, LogOut, User, Shield, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import {
@@ -113,22 +114,7 @@ export function Navbar() {
 
             {/* Right: Theme Toggle + Search + Auth */}
             <div className="flex items-center gap-2 shrink-0">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative" title="Change Language">
-                    <Globe className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-40">
-                  <DropdownMenuItem onClick={() => i18n.changeLanguage('en')} className={`cursor-pointer ${i18n.language === 'en' ? 'bg-primary/20' : ''}`}>
-                    English
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => i18n.changeLanguage('am')} className={`cursor-pointer ${i18n.language === 'am' ? 'bg-primary/20' : ''}`}>
-                    አማርኛ
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
+              <LanguageToggle />
               <ThemeToggle />
               <Button variant="ghost" size="icon">
                 <Search className="h-5 w-5" />
